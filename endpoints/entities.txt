@@ -80,6 +80,7 @@ Alert
   Region, Enum
   Classification, Classification
   Creation Date, Date
+  Last Modified Date, Date
   From Date, Date
   To Date, Date
   Notification, String
