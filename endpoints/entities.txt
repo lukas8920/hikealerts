@@ -11,6 +11,9 @@ Param <Optional> Trail Name, String
 Param <Optional> Only Perfect Name Match, Boolean, Default True
 Param <Optional> With Coordinates, Boolean, Default False
 
+Response
+List<Alert> alerts
+
 /search/findnearby
 GET
 Param <Latitude, Longitude or Name required> Latitude, Double
@@ -23,7 +26,7 @@ Param <Optional> Issuer, Enum
 Param <Optional> Response Limit, Integer
 
 Response
-List<Alert>  
+List<Alert> alerts
 
 /user/register
 POST
@@ -45,8 +48,34 @@ Param Name, String
 PUT
 Param Name, String
 
+/alert
+POST
+Param <Latitude, Longitude or Name required> Trailname, String
+Param <Latitude, Longitude or Name required> coordinates, List<Latitude, Longitude>
+Param Classification, String
+Param <Optional> fromDate, Date
+Param <Optional> toDate, Date
+Param Notification, String
+
+/alert
+PUT
+Param <Latitude, Longitude or Name required> Trailname, String
+Param <Latitude, Longitude or Name required> coordinates, List<Latitude, Longitude>
+Param <Optional> newTrailname, String
+Param <Optional> newCoordinates, List<Latitude, Longitude>
+Param <Optional> Classification, String
+Param <Optional> fromDate, Date
+Param <Optional> toDate, Date
+Param <Optional> Notification, String
+
+/alert
+DELETE
+Param <Latitude, Longitude or Name required> Trailname, String
+Param <Latitude, Longitude or Name required> coordinates, List<Latitude, Longitude>
+
 Alert
   Trailname, String
+  List<Trailname Synonym>, String
   Country, String
   Region, Enum
   Classification, Classification
@@ -59,7 +88,7 @@ Alert
   List<Latitude, Longitude> coordinates, Double
 
 User
-  Name, String
+  Name / Issuing Organisation, String
   Created, Date
   Last Modified, Date
   Issuer, Enum
