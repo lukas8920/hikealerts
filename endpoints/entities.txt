@@ -2,7 +2,7 @@
 
 GET
 Param <Optional> Region, Enum
-Param <Optional> 
+Param <Optional> coordinates, List<Latitude, Longitude>
 Param <Optional> fromDate, Date
 Param <Optional> toDate, Date
 Param <Optional> Issuer, Enum 
