@@ -1,0 +1,222 @@
+openapi: 3.0.3
+info:
+  title: Hiking Path Event Information API
+  description: This API provides information to hikers about dangers, weather impacts, and other events that affect the accessibility of hiking paths.
+  version: 1.0.0
+servers:
+  - url: https://api.hikingevents.com/v1
+    description: Production server
+  - url: https://sandbox.api.hikingevents.com/v1
+    description: Sandbox server for testing
+paths:
+  /events:
+    get:
+      summary: Search for published events
+      description: Search for events affecting hiking paths based on various criteria.
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude of the geospatial coordinate.
+          schema:
+            type: number
+            format: float
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude of the geospatial coordinate.
+          schema:
+            type: number
+            format: float
+        - name: radius
+          in: query
+          description: Radius of the affected area in kilometers.
+          schema:
+            type: number
+            format: float
+        - name: country
+          in: query
+          description: Name of the country.
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Name of the region.
+          schema:
+            type: string
+        - name: trail
+          in: query
+          description: Name of the hiking trail.
+          schema:
+            type: string
+        - name: organization
+          in: query
+          description: Name of the issuing organization.
+          schema:
+            type: string
+        - name: issuer
+          in: query
+          description: Name of the issuer.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of events matching the search criteria.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid search criteria.
+        '500':
+          description: Internal server error.
+    post:
+      summary: Create a new event
+      description: Official institutions can create and publish a new event.
+      requestBody:
+        description: Event to be created.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Event created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid input.
+        '500':
+          description: Internal server error.
+  /events/{eventId}:
+    get:
+      summary: Get event details
+      description: Retrieve detailed information about a specific event.
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Event details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found.
+        '500':
+          description: Internal server error.
+    put:
+      summary: Update an existing event
+      description: Official institutions can update an existing event.
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event to update.
+          schema:
+            type: string
+      requestBody:
+        description: Updated event information.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: Event updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid input.
+        '404':
+          description: Event not found.
+        '500':
+          description: Internal server error.
+    delete:
+      summary: Delete an event
+      description: Official institutions can delete an event.
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: ID of the event to delete.
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Event deleted successfully.
+        '404':
+          description: Event not found.
+        '500':
+          description: Internal server error.
+components:
+  schemas:
+    Event:
+      type: object
+      required:
+        - geospatial_coordinate
+      properties:
+        eventId:
+          type: string
+          description: Unique identifier for the event.
+        geospatial_coordinate:
+          type: object
+          required:
+            - latitude
+            - longitude
+          properties:
+            latitude:
+              type: number
+              format: float
+            longitude:
+              type: number
+              format: float
+        radius:
+          type: number
+          format: float
+          description: Radius of the affected area in kilometers.
+        validity:
+          type: object
+          properties:
+            from_date:
+              type: string
+              format: date-time
+              description: Start date and time of the event validity.
+            to_date:
+              type: string
+              format: date-time
+              description: End date and time of the event validity.
+        publisher:
+          type: string
+          description: Name of the publisher.
+        response_limit:
+          type: number
+          description: Maximum number of responses for the event.
+        country:
+          type: string
+          description: Country affected by the event.
+        region:
+          type: string
+          description: Region affected by the event.
+        trail:
+          type: string
+          description: Hiking trail affected by the event.
+        organization:
+          type: string
+          description: Issuing organization.
+        issuer:
+          type: string
+          description: Issuer of the event.

@@ -1,0 +1,12 @@
+Generate a maven pom file for a project that includes dependencies and configurations for:
+- spring-boot web
+- spring-boot jpa
+- spring-boot security
+- spring-boot test
+- lombok
+- code generation from openapi specs
+
+Use the newest compatible versions for all dependencies.
+Use the following maven coordinates:
+- groupId: devbros
+- artifactId: blackbird-hackathon
