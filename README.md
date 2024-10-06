@@ -13,6 +13,7 @@ An event is described by:
 - optional: validity (from date, to date)
 - optional: publisher
 - optional: response limit
+- license
 
 The API enables official institutions to manage and publish events.
 The API provides a search for published events. The results are intended to be used by third party applications like hiking apps.
