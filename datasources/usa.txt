@@ -38,3 +38,8 @@ GET
       ]
     }
   }
+
+https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails_Geographic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json
+GET
+
+Trail coordinates
