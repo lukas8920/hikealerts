@@ -9,15 +9,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.3</version> <!-- Use the latest stable version -->
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.1.3</version>
     </parent>
 
     <properties>
         <java.version>17</java.version>
         <lombok.version>1.18.28</lombok.version>
-        <openapi-generator-maven-plugin.version>6.5.0
-        </openapi-generator-maven-plugin.version> <!-- Use the latest stable version -->
+        <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -53,8 +51,18 @@
         <!-- OpenAPI Generator -->
         <dependency>
             <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator</artifactId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
             <version>${openapi-generator-maven-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>2.2.22</version>
         </dependency>
     </dependencies>
 
@@ -80,11 +88,12 @@
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <modelPackage>devbros.blackbird.model</modelPackage>
-                            <apiPackage>devbros.blackbird.api</apiPackage>
+                            <modelPackage>org.devbros.blackbird.model</modelPackage>
+                            <apiPackage>org.devbros.blackbird.api</apiPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useLombok>true</useLombok>
+                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
                         </configuration>
                     </execution>

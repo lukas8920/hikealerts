@@ -1,4 +1,4 @@
-package de.devbros.blackbird_hackathon;
+package org.devbros.blackbird_hackathon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
