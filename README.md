@@ -9,8 +9,7 @@ The purpose of the API is to provide information to hikers about dangers, weathe
 that affect the accessibility of certain hiking paths.
 
 An event is described by:
-- geospatial coordinate
-- optional: radius of affected area
+- geospatial coordinates
 - optional: validity (from date, to date)
 - optional: publisher
 - optional: response limit
