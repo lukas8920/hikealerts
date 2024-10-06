@@ -1,1 +1,150 @@
+Department of Conservation API
+https://api.doc.govt.nz/
+Creative Commons Attribute 4.0 International License. Needs to attribute Doc.
 
+/tracks/alerts
+GET
+Response
+List <Alert> alerts
+{
+    "assetId": "bf02a2a6-033d-4a34-87dd-c2afd3f8b53f",
+    "name": "Mount Stokes Track",
+    "alerts": [
+      {
+        "displayDate": "27 August 2024",
+        "heading": "Kenepuru Road closed to visitors",
+        "detail": "<p>Kenepuru Road and all side roads from it are closed to non-residents due to major flood damage and roadworks. The area is only accessible by boat.</p>\n<p>There is no road access to:</p>\n<ul>\n<li>Moetapu Bay Campsite</li>\n<li>Camp Bay Campsite</li>\n<li>Cowshed Bay Campsite</li>\n<li>Nikau Cove Campsite</li>\n<li>Picnic Bay Campsite</li>\n<li>Kenepuru Head Campsite</li>\n<li>Waimaru Campsite</li>\n</ul>\n<p>There is no road access to the following tracks in the Kenepuru and Queen Charlotte Sounds/Totaranui area:</p>\n<ul>\n<li>Queen Charlotte Track at Te Mahia, Torea and Kenepuru Saddles (limited road access is available at Anakiwa, see map below)</li>\n<li>Mistletoe Bay Tracks</li>\n<li>Mount Stokes Track</li>\n</ul>\n<p>Check the&nbsp;<a href=\"https://nzta-marlboroughroadsrecovery.createsend1.com/t/t-l-exhrdt-l-u/\">Civil Defence Emergency Management map</a>&nbsp;for road access restrictions.&nbsp;</p> First published on 16 December 2022. Last reviewed on 27 August 2024."
+      }
+    ]
+  }
+
+link with coordinates via assetID
+
+/tracks
+GET
+Response
+{
+    "assetId": "0c3b4ce6-4c56-412c-9bb8-87a78524c45b",
+    "name": "A Frame Hut & Takapari Road Track",
+    "region": [
+      "Hawke’s Bay"
+    ],
+    "lon": 176.022541,
+    "lat": -40.114852,
+    "line": [
+      [
+        [
+          176.030151,
+          -40.120691
+        ],
+        [
+          176.030415,
+          -40.120706
+        ],
+        [
+          176.030151,
+          -40.120691
+        ],
+        [
+          176.030234,
+          -40.120555
+        ],
+        [
+          176.028995,
+          -40.120073
+        ],
+        [
+          176.028989,
+          -40.120071
+        ],
+        [
+          176.028744,
+          -40.119984
+        ],
+        [
+          176.027936,
+          -40.118519
+        ],
+        [
+          176.027255,
+          -40.117981
+        ],
+        [
+          176.026321,
+          -40.117703
+        ],
+        [
+          176.024538,
+          -40.117548
+        ],
+        [
+          176.023565,
+          -40.117219
+        ],
+        [
+          176.02051,
+          -40.115064
+        ],
+        [
+          176.020383,
+          -40.114781
+        ],
+        [
+          176.020931,
+          -40.114677
+        ],
+        [
+          176.022416,
+          -40.115053
+        ],
+        [
+          176.022541,
+          -40.114852
+        ],
+        [
+          176.020304,
+          -40.1131
+        ],
+        [
+          176.018165,
+          -40.110879
+        ],
+        [
+          176.017783,
+          -40.110233
+        ],
+        [
+          176.018049,
+          -40.109661
+        ],
+        [
+          176.017797,
+          -40.109263
+        ],
+        [
+          176.014888,
+          -40.109315
+        ],
+        [
+          176.014014,
+          -40.108951
+        ],
+        [
+          176.013694,
+          -40.108497
+        ],
+        [
+          176.013728,
+          -40.108113
+        ],
+        [
+          176.014057,
+          -40.107642
+        ],
+        [
+          176.014083,
+          -40.107012
+        ]
+      ]
+    ]
+  }
