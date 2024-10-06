@@ -1,1 +1,48 @@
+/search/findall
 
+GET
+Param <Optional> Region, Enum
+Param <Optional> 
+Param <Optional> fromDate, Date
+Param <Optional> toDate, Date
+Param <Optional> Issuer, Enum 
+Param <Optional> Response Limit, Integer
+Param <Optional> Trail Name, String
+Param <Optional> Only Perfect Name Match, Boolean, Default True
+Param <Optional> With Coordinates, Boolean, Default False
+
+/search/findnearby
+GET
+Param <Latitude, Longitude or Name required>, Double
+Param <Latitude, Longitude or Name required>, Double
+Param <Latitude, Longitude or Name required> Trail Name, String
+Param <Optional> Only Perfect Name Match, Boolean, Default True
+Param <Optional> fromDate, Date
+Param <Optional> toDate, Date
+Param <Optional> Issuer, Enum 
+Param <Optional> Response Limit, Integer
+
+Response
+List<Alert>  
+
+Alert
+  Trailname, String
+  Country, String
+  Region, Enum
+  Classification, Classification
+  Creation Date, Date
+  From Date, Date
+  To Date, Date
+  Notification, String
+  Issuing Organisation, String
+  Issuer, Enum
+  List<Latitude, Longitude> coordinates, Double
+
+Enum Region
+  Africa, Asia, Europe...
+
+Enum Issuer
+  Official, Community, All
+
+Classification
+  Yellow, Red
