@@ -13,8 +13,8 @@ Param <Optional> With Coordinates, Boolean, Default False
 
 /search/findnearby
 GET
-Param <Latitude, Longitude or Name required>, Double
-Param <Latitude, Longitude or Name required>, Double
+Param <Latitude, Longitude or Name required> Latitude, Double
+Param <Latitude, Longitude or Name required> Longitude, Double
 Param <Latitude, Longitude or Name required> Trail Name, String
 Param <Optional> Only Perfect Name Match, Boolean, Default True
 Param <Optional> fromDate, Date
@@ -24,6 +24,26 @@ Param <Optional> Response Limit, Integer
 
 Response
 List<Alert>  
+
+/user/register
+POST
+Param User
+
+/user/modify
+PUT
+Param User
+
+/user/delete
+DELETE
+Param Name, String
+
+/user/approve
+PUT
+Param Name, String
+
+/user/block
+PUT
+Param Name, String
 
 Alert
   Trailname, String
@@ -37,6 +57,13 @@ Alert
   Issuing Organisation, String
   Issuer, Enum
   List<Latitude, Longitude> coordinates, Double
+
+User
+  Name, String
+  Created, Date
+  Last Modified, Date
+  Issuer, Enum
+  Blocked, Boolean
 
 Enum Region
   Africa, Asia, Europe...
