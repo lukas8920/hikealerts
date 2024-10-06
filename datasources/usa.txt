@@ -1,1 +1,16 @@
+National Park Service API
+https://www.nps.gov/subjects/developer/api-documentation.htm#/
 
+/alerts
+GET
+
+{
+            "id": "63366E6C-BEBF-407C-A312-8A0323CD4B2E",
+            "url": "",
+            "title": "Park Closed due to Hurricane Milton",
+            "parkCode": "casa",
+            "description": "Castillo de San Marcos National Monument will be closed starting October 7, 2024, in anticipation of severe weather and potential impacts from Hurricane Milton. Follow                 our social media pages and website for updates.",
+            "category": "Park Closure",
+            "relatedRoadEvents": [],
+            "lastIndexedDate": "2024-10-06 10:27:21.0"
+}
