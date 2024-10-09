@@ -1,9 +1,14 @@
-For each alert identify most likely matching trails based on country, area and trail information provided with the alert.     
+For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. 
+    
 Output the results as json list. Each json item:   
 - has an event id  
 - Has a country   
-- Must have either a park name or region, a trail name. One has to be present. Trail names might be in the alert description. Ignore alerts where no trail name, no park name or no region can be identified.
+- Must have either a park name or region, a trail name. One has to be present. Trail names might be in the alert description. 
 - Might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY.
+
+Ignore alerts where no trail name, no park name or no region can be identified.
+Ignore trails or regions without problems.
+
 One alert can have zero, one or multiple json items.  
 Replace any known abbreviations and correct known misspellings.    
 Respond only with the data without any additional comments.
