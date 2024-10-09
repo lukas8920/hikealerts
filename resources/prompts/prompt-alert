@@ -14,14 +14,134 @@ Replace any known abbreviations and correct known misspellings.
 Respond only with the data without any additional comments.
 
 Input:
-{
-  "country": "US",
-  "alerts": [
-    {
-      "event_id": 1
-      "title": "Chimney Rock Area Closure from Friday, October 11 to Tuesday, October 15",
-      "parkCode": "pore",
-      "description": "Cleanup operations of the Westerly shipwreck will be conducted from Friday, October 11 to Tuesday, October 15. The Chimney Rock area, including Chimney Rock Trail, Elephant Seal Overlook, and the lifeboat station, will be closed during these days."
-    }
-  ]
+{    
+  "country": "US",    
+  "alerts": [    
+    {    
+      "event_id": 1,    
+      "title": "Chimney Rock Area Closure from Friday, October 11 to Tuesday, October 15",    
+      "parkCode": "pore",    
+      "description": "Cleanup operations of the Westerly shipwreck will be conducted from Friday, October 11 to Tuesday, October 15. The Chimney Rock area, including Chimney Rock Trail, Elephant Seal Overlook, and the lifeboat station, will be closed during these days."    
+    },    
+    {    
+      "event_id": 2,    
+      "title": "Knob Creek Tavern Visitor Center OPEN on Friday, October 11, 2024",    
+      "parkCode": "abli",    
+      "description": "The Knob Creek Tavern Visitor Center at the Boyhood Home Unit at Knob Creek will be open on Friday, October 11, 2024 starting at 10:00am (EST). It will remain open through the Night Sky Program held that day from 7:30pm to 9:00pm (EST)."    
+    },    
+    {    
+      "event_id": 3,    
+      "title": "Closure: Karl Knapp Trail at Prairie Creek Redwoods State Park",    
+      "parkCode": "redw",    
+      "description": "The Karl Knapp (Prairie Creek) trail in front of Prairie Creek Visitor Center will be closed for maintenance and bridge repair from October 7 to October 31."    
+    },    
+    {    
+      "event_id": 4,    
+      "title": "Hurricane Milton Closure",    
+      "parkCode": "bicy",    
+      "description": "Due to the potential impacts of Hurricane Milton, operations at Big Cypress National Preserve will be closed starting Monday, October 7th at 10:00am. Campgrounds (except for Monument and Midway) and the ORV office will also close until further notice."    
+    },    
+    {    
+      "event_id": 5,    
+      "title": "Parks Closed Due to Storm Cleanup",    
+      "parkCode": "ovvi",    
+      "description": "The Southern Campaign Parks Group is currently closed due to impacts from Hurricane Helene, including all trails, park grounds, and facilities. The parks will re-open once damage assessments have been made and the park is deemed safe for visitation."    
+    },    
+    {    
+      "event_id": 6,    
+      "title": "Charles Pinckney House Closed for the Season",    
+      "parkCode": "chpi",    
+      "description": "The Charles Pinckney House is closed for the season. The site grounds will remain open from 9 AM -- 5 PM, Wednesday -- Sunday."    
+    },    
+    {    
+      "event_id": 7,    
+      "title": "Wildlife Activity Alert: Coyotes have attacked dogs at Crissy Field",    
+      "parkCode": "prsf",    
+      "description": "Staff are monitoring the area as a result of recent coyote activity. Leash pets and keep kids close. Do not approach or feed wildlife. Report coyote encounters to park dispatch 415-561-5505. Follow wildlife viewing guidelines linked below."    
+    },    
+    {    
+      "event_id": 8,    
+      "title": "Commercial vehicles prohibited on US 441/Newfound Gap Road",    
+      "parkCode": "grsm",    
+      "description": "Commercial vehicles are prohibited on US 441/Newfound Gap Road. Newfound Gap Road in particular is not safe for large commercial vehicles—it is a curvy two-lane road with steep continuous grades."    
+    },    
+    {    
+      "event_id": 9,    
+      "title": "Mission San Juan Museum Closed Mon-Fri Oct 7-11",    
+      "parkCode": "saan",    
+      "description": "Monday Oct. 7, 2024 through Friday Oct. 11, 2024 the Mission San Juan Museum will be closed due to necessary maintenance. Bathrooms will still be available."    
+    },    
+    {    
+      "event_id": 10,    
+      "title": "Village Connector Trails from Great Meadow Loop to Great Meadow Drive",    
+      "parkCode": "acad",    
+      "description": "Village connector trails outside the park, along Cromwell Harbor Road from Great Meadow Loop to Great Meadow Drive, are closed to improve safety and accessibility. Hikers can walk along the roadway to access trails into the Sieur de Monts area."    
+    }    
+  ]    
 }
+
+Output:
+[
+  {
+    "event_id": 1,
+    "country": "US",
+    "park_name": "Point Reyes National Seashore",
+    "trail_name": "Chimney Rock Trail",
+    "from_date": "11/10/YYYY",
+    "to_date": "15/10/YYYY"
+  },
+  {
+    "event_id": 3,
+    "country": "US",
+    "park_name": "Redwood National and State Parks",
+    "trail_name": "Karl Knapp Trail",
+    "from_date": "07/10/YYYY",
+    "to_date": "31/10/YYYY"
+  },
+  {
+    "event_id": 4,
+    "country": "US",
+    "park_name": "Big Cypress National Preserve",
+    "from_date": "07/10/YYYY",
+    "to_date": "null"
+  },
+  {
+    "event_id": 5,
+    "country": "US",
+    "park_name": "null",
+    "region": "Southern Campaign Parks Group",
+    "from_date": "null",
+    "to_date": "null"
+  },
+  {
+    "event_id": 7,
+    "country": "US",
+    "park_name": "Presidio of San Francisco",
+    "trail_name": "Crissy Field",
+    "from_date": "null",
+    "to_date": "null"
+  },
+  {
+    "event_id": 8,
+    "country": "US",
+    "park_name": "Great Smoky Mountains National Park",
+    "from_date": "null",
+    "to_date": "null"
+  },
+  {
+    "event_id": 9,
+    "country": "US",
+    "park_name": "San Antonio Missions National Historical Park",
+    "trail_name": "null",
+    "from_date": "07/10/YYYY",
+    "to_date": "11/10/YYYY"
+  },
+  {
+    "event_id": 10,
+    "country": "US",
+    "park_name": "Acadia National Park",
+    "trail_name": "Village Connector Trails",
+    "from_date": "null",
+    "to_date": "null"
+  }
+]
