@@ -4,6 +4,7 @@ Output the results as json list. Each json item:
 - Has a country 
 - Must have either a park name or region, a trail name or both. Ignore alerts where no trail name or region can be identified.
 - Might have a from and to date in format dd/mm/YYYY
+One alert can have zero, one or multiple json items.
 Replace any known abbreviations and correct known misspellings.  
 Respond only with the data without any additional comments. 
 
