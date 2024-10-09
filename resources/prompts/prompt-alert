@@ -1,5 +1,6 @@
 For each alert identify most likely matching trails based on country, area and trail information provided with the alert.   
 Output the results as json list. Each json item: 
+- has an event id
 - Has a country 
 - Must have either a park name or region, a trail name or both. Ignore alerts where no trail name or region can be identified.
 - Might have a from and to date in format dd/mm/YYYY
@@ -11,6 +12,7 @@ Input:
   "country": "US",
   "alerts": [
     {
+      "event_id": 1
       "title": "Chimney Rock Area Closure from Friday, October 11 to Tuesday, October 15",
       "parkCode": "pore",
       "description": "Cleanup operations of the Westerly shipwreck will be conducted from Friday, October 11 to Tuesday, October 15. The Chimney Rock area, including Chimney Rock Trail, Elephant Seal Overlook, and the lifeboat station, will be closed during these days."
