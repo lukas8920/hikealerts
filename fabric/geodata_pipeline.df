@@ -1,6 +1,6 @@
 {
-    "name": "us_geodata_pipeline",
-    "objectId": "5f628ea9-9720-4a0f-a7fc-adf31bf8871c",
+    "name": "Geodata Pipeline",
+    "objectId": "8c27fdd5-7d38-45ab-8230-8e052456df14",
     "properties": {
         "activities": [
             {
@@ -62,8 +62,8 @@
                     },
                     "activities": [
                         {
-                            "name": "Get trail datasets",
-                            "type": "WebActivity",
+                            "name": "Parse response",
+                            "type": "TridentNotebook",
                             "dependsOn": [],
                             "policy": {
                                 "timeout": "0.12:00:00",
@@ -73,37 +73,24 @@
                                 "secureInput": false
                             },
                             "typeProperties": {
-                                "method": "GET",
-                                "relativeUrl": {
-                                    "value": "@concat('/arcgis/rest/services/NationalDatasets/NPS_Public_Trails/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=', variables('offset'), '&resultRecordCount=', variables('batchSize'))",
-                                    "type": "Expression"
-                                }
-                            },
-                            "externalReferences": {
-                                "connection": "c93b95a0-145f-4165-8580-92ee2bbb3b63"
-                            }
-                        },
-                        {
-                            "name": "Parse response",
-                            "type": "TridentNotebook",
-                            "dependsOn": [
-                                {
-                                    "activity": "Get trail datasets",
-                                    "dependencyConditions": [
-                                        "Succeeded"
-                                    ]
-                                }
-                            ],
-                            "policy": {
-                                "timeout": "0.12:00:00",
-                                "retry": 0,
-                                "retryIntervalInSeconds": 30,
-                                "secureOutput": false,
-                                "secureInput": false
-                            },
-                            "typeProperties": {
                                 "notebookId": "3daa8aca-de79-42af-81af-23bdbd572566",
-                                "workspaceId": "907658b2-3909-4360-831a-1e6b84a2d6ee"
+                                "workspaceId": "907658b2-3909-4360-831a-1e6b84a2d6ee",
+                                "parameters": {
+                                    "offset": {
+                                        "value": {
+                                            "value": "@variables('offset')",
+                                            "type": "Expression"
+                                        },
+                                        "type": "int"
+                                    },
+                                    "batchSize": {
+                                        "value": {
+                                            "value": "@variables('batchSize')",
+                                            "type": "Expression"
+                                        },
+                                        "type": "int"
+                                    }
+                                }
                             }
                         },
                         {
@@ -151,6 +138,29 @@
                                     "type": "Expression"
                                 }
                             }
+                        },
+                        {
+                            "name": "Fail pipeline",
+                            "type": "SetVariable",
+                            "dependsOn": [
+                                {
+                                    "activity": "Parse response",
+                                    "dependencyConditions": [
+                                        "Failed"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "typeProperties": {
+                                "variableName": "offset",
+                                "value": {
+                                    "value": "@add(variables('totalCount'), 1)",
+                                    "type": "Expression"
+                                }
+                            }
                         }
                     ],
                     "timeout": "0.12:00:00"
@@ -175,6 +185,6 @@
             }
         },
         "lastModifiedByObjectId": "4ef995fb-2d51-4dc7-92b7-6d8c8d248b82",
-        "lastPublishTime": "2024-10-09T04:33:44Z"
+        "lastPublishTime": "2024-10-10T00:56:28Z"
     }
 }
