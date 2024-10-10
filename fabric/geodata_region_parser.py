@@ -56,8 +56,11 @@ for unitcode in resultlist:
 
     features = data.get("features")
     for feature in features:
-        geometry = feature.get('geometry', {})
-        polygons = [Polygon(p[0]).wkt for p in geometry['coordinates']]
+        try:
+            geometry = feature.get('geometry', {})
+            polygons = [Polygon(p[0]).wkt for p in geometry['coordinates']]
+        except:
+            continue
 
         # Create a DataFrame from the list
         df = spark.createDataFrame([(polygon,) for polygon in polygons], ['boundaries'])
