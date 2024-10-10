@@ -56,12 +56,15 @@ con = driver_manager.getConnection(jdbc_url, sql_username, sql_password)
 
 # Iterate over each row in the DataFrame and execute the statement
 for row in df.collect():  # collect() brings all rows to the driver
-    statement = f"EXEC dbo.InsertGeodataTrails {row.id}, '{row.trailname}', '{row.maplabel}', '{row.regioncode}', '{row.maintainer}', '{row.coordinates}'"
+    try:
+        statement = f"EXEC dbo.InsertGeodataTrails {row.id}, '{row.trailname}', '{row.maplabel}', '{row.regioncode}', '{row.maintainer}', '{row.coordinates}'"
 
-    # Create callable statement and execute it
-    exec_statement = con.prepareCall(statement)
-    exec_statement.execute()
-    exec_statement.close()  # Close the statement after execution
+        # Create callable statement and execute it
+        exec_statement = con.prepareCall(statement)
+        exec_statement.execute()
+        exec_statement.close()  # Close the statement after execution
+    except Exception as e:
+        print("Error while parsing row")
 
 # Close the connection
 con.close()
