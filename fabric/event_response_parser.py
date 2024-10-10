@@ -10,7 +10,7 @@ sql_password = <<password>>
 conn = http.client.HTTPSConnection("developer.nps.gov")
 # Define headers
 headers = {
-    "X-Api-Key": "s4uV0AQhlglLURd58hRuaCogxzyc2Rd0SQRv2ayk"
+    "X-Api-Key": <<api-key>>
 }
 
 conn.request("GET", "/api/v1/alerts?limit=1&start=0", headers=headers)
