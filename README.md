@@ -3,7 +3,7 @@
 - [Concept](resources/doc/concept.md)
 
 # System Setup
-![system_setup](https://github.com/user-attachments/assets/fe4e8f44-f797-4adc-b4f5-295da6b1bdaf)
+![system_setup_v1](https://github.com/user-attachments/assets/c184d0b2-730c-4805-ba19-0eb6ca25ebd1)
 
 # Use Case Description
 **_Can be used as a prompt for spec generation_**
