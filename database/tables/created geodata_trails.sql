@@ -1,6 +1,8 @@
-CREATE TABLE [prod-testapp-nz-sql].dbo.us_geodata_trails (
+CREATE TABLE [hiking-sql-db].dbo.geodata_trails (
 	id int IDENTITY(1,1) NOT NULL,
+	trail_id int NOT NULL,
 	trailname varchar(200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	country varchar(2) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	maplabel varchar(200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 	unitcode varchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	unitname varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
