@@ -1,6 +1,9 @@
-# Blackbird Hackathon: Hiking Alerts
+# Microsoft Fabric and AI Hackathon: Hiking Alerts
 
 - [Concept](resources/doc/concept.md)
+
+# System Setup
+![system_setup](https://github.com/user-attachments/assets/fe4e8f44-f797-4adc-b4f5-295da6b1bdaf)
 
 # Use Case Description
 **_Can be used as a prompt for spec generation_**
