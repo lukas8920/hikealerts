@@ -12,13 +12,13 @@ BEGIN
             *,
             ROW_NUMBER() OVER (PARTITION BY id ORDER BY __$start_lsn DESC) AS rn
         FROM 
-            cdc.dbo_us_raw_events_CT
+            cdc.dbo_raw_events_CT
         WHERE 
             __$operation IN (2, 4) -- Include both insert (2) and update (4)
             AND __$start_lsn > @LastLSN -- Only fetch changes after the last processed LSN
     )
     SELECT 
-        id, title, create_date, park_code, description, url
+        event_id, country, title, create_date, park_code, description, url
     FROM 
         LatestChanges
     WHERE 
@@ -27,7 +27,7 @@ BEGIN
     -- Update the last processed LSN
     DECLARE @MaxLSN binary(10);
     SELECT @MaxLSN = MAX(__$start_lsn) 
-    FROM cdc.dbo_us_raw_events_CT 
+    FROM cdc.dbo_raw_events_CT 
     WHERE __$operation IN (2, 4) AND __$start_lsn > @LastLSN;
 
     IF @MaxLSN IS NOT NULL
