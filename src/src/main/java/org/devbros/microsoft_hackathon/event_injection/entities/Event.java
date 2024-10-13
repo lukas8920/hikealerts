@@ -27,7 +27,7 @@ public class Event {
     private boolean displayMidCoordinate;
     private String title;
     private String description;
-    private String publisher;
+    private Long publisherId;
     private String url;
 
     //todo: add further properties once known
@@ -44,7 +44,7 @@ public class Event {
         this.title = event.getTitle();
         this.description = event.getDescription();
         this.url = event.getUrl();
-        this.publisher = event.getPublisher();
+        this.publisherId = event.getPublisherId();
     }
 
     public Event(RawEvent rawEvent, OpenAiEvent openAiEvent){
@@ -58,7 +58,7 @@ public class Event {
         this.event_id = openAiEvent.getEventId();
         this.description = rawEvent.getDescription();
         this.url = rawEvent.getUrl();
-        this.publisher = rawEvent.getPublisher();
+        this.publisherId = rawEvent.getPublisherId();
     }
 
     public void calculateMidCoordinate(Trail trail){

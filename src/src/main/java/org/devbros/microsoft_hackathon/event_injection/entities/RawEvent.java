@@ -18,6 +18,5 @@ public class RawEvent {
     private String unitCode;
     private String description;
     private String url;
-    //todo needs to be added to the db
-    private String publisher;
+    private Long publisherId;
 }
