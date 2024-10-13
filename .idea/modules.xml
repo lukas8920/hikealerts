@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/src/blackbird-hackathon.iml" filepath="$PROJECT_DIR$/src/blackbird-hackathon.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/hikealerts.iml" filepath="$PROJECT_DIR$/.idea/hikealerts.iml" />
     </modules>
   </component>

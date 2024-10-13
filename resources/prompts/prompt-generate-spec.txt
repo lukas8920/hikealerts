@@ -2,7 +2,7 @@ Generate an OpenAPI spec in yaml format.
 The purpose of the API is to provide information to hikers about dangers, weather impacts etc. (called events in the following)
 that affect the accessibility of certain hiking paths.
 
-An event is described by:
+An rawEvent is described by:
 - geospatial coordinate
 - optional: radius of affected area
 - optional: validity (from date, to date)

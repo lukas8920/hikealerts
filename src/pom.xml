@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>devbros</groupId>
-    <artifactId>blackbird-hackathon</artifactId>
+    <artifactId>microsoft-hackathon</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -16,6 +16,7 @@
         <java.version>17</java.version>
         <lombok.version>1.18.28</lombok.version>
         <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
+        <sqlserver.version>12.8.1.jre11</sqlserver.version>
     </properties>
 
     <dependencies>
@@ -46,6 +47,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Microsoft SQL Driver -->
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>${sqlserver.version}</version>
         </dependency>
 
         <!-- OpenAPI Generator -->
