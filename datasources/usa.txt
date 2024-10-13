@@ -15,6 +15,7 @@ GET
             "lastIndexedDate": "2024-10-06 10:27:21.0"
 }
 
+get parkcodes from alerts for each parkcode:
 /mapdata/parkboundaries/{park}
 GET
 
@@ -39,6 +40,10 @@ GET
     }
   }
 
+1) Get total record count 
+https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails/FeatureServer/0/query?where=1%3D1&returnCountOnly=true&f=json
+2) Paginate
+https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=0&resultRecordCount=1000
 https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails_Geographic/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json
 GET
 
