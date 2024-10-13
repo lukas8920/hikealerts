@@ -24,6 +24,7 @@ public class Event {
     private Long trailId;
     private double midLongitudeCoordinate;
     private double midLatitudeCoordinate;
+    private boolean displayMidCoordinate;
     private String title;
     private String description;
     private String publisher;

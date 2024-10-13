@@ -1,9 +1,6 @@
 package org.devbros.microsoft_hackathon.event_injection.countries;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;
-import org.devbros.microsoft_hackathon.event_injection.entities.RawEvent;
-import org.devbros.microsoft_hackathon.event_injection.entities.Region;
-import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_injection.entities.*;
 import org.devbros.microsoft_hackathon.event_injection.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.event_injection.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.event_injection.repository.regions.IRegionRepository;
@@ -117,5 +114,28 @@ public class USInjectorTest {
         boolean result = this.usInjector.matchTrails(openAiEvent);
 
         assertThat(result, is(false));
+    }
+
+    @Test
+    public void testThatDisplayMidCoordinateWorks(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1)};
+        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
+        LinearRing linearRing = new LinearRing(coordinateSequence, geometryFactory);
+        Polygon polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
+
+        Region region = new Region();
+        region.setPolygon(polygon);
+        Trail trail = new Trail();
+        trail.setLine(line);
+        Event event = new Event();
+        event.setRegion("region");
+
+        when(iRegionRepository.findRegionByRegionName("region")).thenReturn(region);
+        when(iTrailRepository.findTrailsInRegion(region.getPolygon())).thenReturn(List.of(trail));
+
+        List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
+
+        assertThat(events.get(0).isDisplayMidCoordinate(), is(true));
     }
 }

@@ -60,7 +60,7 @@ public abstract class BaseCountryInjector {
             Trail trail = this.iTrailRepository.findTrailByUnitCodeAndCountry(rawEvent.getUnitCode(), event.getCountry());
             if (trail != null){
                 event.setTrailId(trail.getId());
-                //todo: clarify how to handle trails segmented into multi datasets / multi events / set flag here?
+                event.setDisplayMidCoordinate(true);
                 event.calculateMidCoordinate(trail);
                 events.add(event);
             }
@@ -79,8 +79,14 @@ public abstract class BaseCountryInjector {
                 Event tmpEvent = new Event(event);
                 tmpEvent.setTrailId(trail.getId());
                 event.calculateMidCoordinate(trail);
+                event.setDisplayMidCoordinate(false);
                 events.add(event);
             });
+        }
+        //set Display Mid Coordinate flag for one part of the trail
+        if (events.size() > 0){
+            int index = (int) Math.ceil(events.size() / 2);
+            events.get(index).setDisplayMidCoordinate(true);
         }
         return events;
     }
