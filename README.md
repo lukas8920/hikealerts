@@ -11,7 +11,7 @@
 The purpose of the API is to provide information to hikers about dangers, weather impacts etc. (called events in the following)
 that affect the accessibility of certain hiking paths.
 
-An rawEvent is described by:
+An openAiEvent is described by:
 - geospatial coordinates
 - optional: validity (from date, to date)
 - optional: publisher
