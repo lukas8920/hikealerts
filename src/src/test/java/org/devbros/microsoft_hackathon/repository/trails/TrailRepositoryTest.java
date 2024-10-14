@@ -117,9 +117,9 @@ public class TrailRepositoryTest {
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());
         iTrailJpaRepository.saveTrail(trail3.getTrailId(), trail3.getCountry(), trail3.getUnitcode(), trail3.getCoordinates());
 
-        when(geoMatcher.match(any(), any())).then((Answer<Trail>) invocationOnMock -> {
+        when(geoMatcher.match(any(), any())).then((Answer<List<Trail>>) invocationOnMock -> {
             callsToMatcherCounter.addAndGet(1);
-            return new Trail();
+            return List.of(new Trail());
         });
 
         List<Trail> trails = this.trailRepository.findTrailsInRegion(null, "ZZ");

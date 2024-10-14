@@ -65,7 +65,7 @@ public class TrailRepository implements ITrailRepository {
             slice = this.iTrailJpaRepository.findAllByCountry(country, pageable);
             slice.getContent().forEach(trail -> {
                 // Process each entity
-                trails.add(this.geoMatcher.match(polygon, trail));
+                trails.addAll(this.geoMatcher.match(polygon, trail));
             });
             pageable = pageable.next();  // Move to the next page
         } while (slice.hasContent());

@@ -8,7 +8,6 @@ import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
-import org.locationtech.jts.io.WKBWriter;
 
 import java.util.ArrayList;
 import java.util.List;
