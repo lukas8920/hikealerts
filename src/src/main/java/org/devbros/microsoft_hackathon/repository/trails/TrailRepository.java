@@ -37,6 +37,9 @@ public class TrailRepository implements ITrailRepository {
     public Trail findTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
         int pageNumber = 0;  // start from page 0
 
+        // smaller pageSize because the unit code is known
+        pageSize = 100;
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Slice<Trail> slice;
 

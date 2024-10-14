@@ -13,6 +13,7 @@
     </parent>
 
     <properties>
+        <apache.commons>1.12.0</apache.commons>
         <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
         <jts.version>1.20.0</jts.version>
@@ -71,6 +72,13 @@
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>
             <version>${jts.version}</version>
+        </dependency>
+
+        <!-- String matching algorithms -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${apache.commons}</version>
         </dependency>
 
         <!-- OpenAPI Generator -->

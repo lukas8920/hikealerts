@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "geodata_trails", schema = "dbo")
-public class Trail {
+public class Trail extends MatchProvider {
     @Id
     private Long id;
     private Long trailId;
@@ -24,4 +24,8 @@ public class Trail {
     private String regioncode;
     private String maintainer;
     private byte[] coordinates;
+
+    public String[] getCandidateStrings(){
+        return new String[]{trailname, maplabel};
+    }
 }

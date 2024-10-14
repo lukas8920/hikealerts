@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "geodata_regions")
-public class Region {
+public class Region extends MatchProvider {
     @Id
     private Long id;
     private String regionId;
@@ -22,4 +22,9 @@ public class Region {
     private String name;
     @Column(name = "boundaries")
     private byte[] polygon;
+
+    @Override
+    public String[] getCandidateStrings() {
+        return new String[]{name};
+    }
 }
