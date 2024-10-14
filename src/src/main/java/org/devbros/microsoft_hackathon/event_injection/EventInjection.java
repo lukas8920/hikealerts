@@ -5,10 +5,11 @@ import org.devbros.microsoft_hackathon.event_injection.countries.BaseCountryInje
 import org.devbros.microsoft_hackathon.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;
-import org.devbros.microsoft_hackathon.event_injection.repository.events.IEventRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.raw_events.IRawEventRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.regions.IRegionRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.trails.ITrailRepository;
+import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
+import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
+import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
+import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
+import org.locationtech.jts.io.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -74,7 +75,12 @@ public class EventInjection implements IEventInjection {
                 return;
             }
 
-            boolean flag = injector.matchTrails(openAiEvent);
+            boolean flag = false;
+            try {
+                flag = injector.matchTrails(openAiEvent);
+            } catch (ParseException e) {
+                // not able to create the event, because mid point calculation failed
+            }
 
             if (!flag){
                 Message message = new Message(openAiEvent.getEventId(), "Processing the event was not possible because there is no matching source data.");

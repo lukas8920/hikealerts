@@ -6,6 +6,7 @@ import org.devbros.microsoft_hackathon.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.io.ParseException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ public class EventInjectionTest {
     }
 
     @Test
-    public void testValidDateTimeFormats() throws BadRequestException {
+    public void testValidDateTimeFormats() throws BadRequestException, ParseException {
         EventInjection injection = spy(new EventInjection(null, null, null, null));
         USInjector usInjector = mock(USInjector.class);
 

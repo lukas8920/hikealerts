@@ -1,19 +1,23 @@
 package org.devbros.microsoft_hackathon.event_injection.countries;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.*;
-import org.devbros.microsoft_hackathon.event_injection.repository.events.IEventRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.raw_events.IRawEventRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.regions.IRegionRepository;
-import org.devbros.microsoft_hackathon.event_injection.repository.trails.ITrailRepository;
+import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
+import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
+import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
+import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBWriter;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +46,8 @@ public class USInjectorTest {
     }
 
     @Test
-    public void testThatMatchTrailsWorksForTrailname(){
+    public void testThatMatchTrailsWorksForTrailname() throws ParseException {
+        WKBWriter wkbWriter = new WKBWriter();
         RawEvent rawEvent = new RawEvent();
         rawEvent.setUnitCode("abc");
         OpenAiEvent openAiEvent = new OpenAiEvent();
@@ -50,10 +55,10 @@ public class USInjectorTest {
         openAiEvent.setCountry("US");
         openAiEvent.setTrailName("dummy");
         Trail trail = new Trail();
-        trail.setLine(line);
+        trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iTrailRepository.findTrailByUnitCodeAndCountry("abc", "US")).thenReturn(trail);
+        when(iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), "abc", "US")).thenReturn(trail);
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -61,8 +66,9 @@ public class USInjectorTest {
     }
 
     @Test
-    public void testThatMatchTrailsWorksForTrailFoundViaRegion(){
+    public void testThatMatchTrailsWorksForTrailFoundViaRegion() throws ParseException {
         GeometryFactory geometryFactory = new GeometryFactory();
+        WKBWriter wkbWriter = new WKBWriter();
         Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1)};
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
         LinearRing linearRing = new LinearRing(coordinateSequence, geometryFactory);
@@ -74,13 +80,13 @@ public class USInjectorTest {
         openAiEvent.setCountry("US");
         openAiEvent.setRegion("region");
         Region region = new Region();
-        region.setPolygon(polygon);
+        region.setPolygon(wkbWriter.write(polygon));
         Trail trail = new Trail();
-        trail.setLine(line);
+        trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iRegionRepository.findRegionByRegionName("region")).thenReturn(region);
-        when(iTrailRepository.findTrailsInRegion(region.getPolygon())).thenReturn(List.of(trail));
+        when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
+        when(iTrailRepository.findTrailsInRegion(any(), eq("US"))).thenReturn(List.of(trail));
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -88,7 +94,7 @@ public class USInjectorTest {
     }
 
     @Test
-    public void testThatMatchTrailsQuitsForEmptyEvents(){
+    public void testThatMatchTrailsQuitsForEmptyEvents() throws ParseException {
         RawEvent rawEvent = new RawEvent();
         rawEvent.setUnitCode("abc");
         OpenAiEvent openAiEvent = new OpenAiEvent();
@@ -97,7 +103,7 @@ public class USInjectorTest {
         openAiEvent.setTrailName("dummy");
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iTrailRepository.findTrailByUnitCodeAndCountry("abc", "US")).thenReturn(null);
+        when(iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName() , "abc", "US")).thenReturn(null);
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -105,7 +111,7 @@ public class USInjectorTest {
     }
 
     @Test
-    public void testThatMatchTrailsQuitsForNullRawEvent(){
+    public void testThatMatchTrailsQuitsForNullRawEvent() throws ParseException {
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(null);
         OpenAiEvent openAiEvent = new OpenAiEvent();
         openAiEvent.setEventId("1");
@@ -117,7 +123,8 @@ public class USInjectorTest {
     }
 
     @Test
-    public void testThatDisplayMidCoordinateWorks(){
+    public void testThatDisplayMidCoordinateWorks() throws ParseException {
+        WKBWriter wkbWriter = new WKBWriter();
         GeometryFactory geometryFactory = new GeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1)};
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
@@ -125,14 +132,15 @@ public class USInjectorTest {
         Polygon polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
 
         Region region = new Region();
-        region.setPolygon(polygon);
+        region.setPolygon(wkbWriter.write(polygon));
         Trail trail = new Trail();
-        trail.setLine(line);
+        trail.setCoordinates(wkbWriter.write(line));
         Event event = new Event();
         event.setRegion("region");
+        event.setCountry("US");
 
-        when(iRegionRepository.findRegionByRegionName("region")).thenReturn(region);
-        when(iTrailRepository.findTrailsInRegion(region.getPolygon())).thenReturn(List.of(trail));
+        when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
+        when(iTrailRepository.findTrailsInRegion(any(), eq("US"))).thenReturn(List.of(trail));
 
         List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
 

@@ -13,6 +13,7 @@
     </parent>
 
     <properties>
+        <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
         <jts.version>1.20.0</jts.version>
         <lombok.version>1.18.28</lombok.version>
@@ -57,7 +58,15 @@
             <version>${sqlserver.version}</version>
         </dependency>
 
-        <!-- Library for geospatial calculations -->
+        <!-- H2 SQL Driver -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Libraries for geospatial support -->
         <dependency>
             <groupId>org.locationtech.jts</groupId>
             <artifactId>jts-core</artifactId>

@@ -7,6 +7,8 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBWriter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -93,13 +95,14 @@ public class EventTest {
     }//1 1, 2 1, 3 1, 9 1
 
     @Test
-    public void test(){
+    public void testMidPointOfLinestring() throws ParseException {
+        WKBWriter wkbWriter = new WKBWriter();
         Trail trail = new Trail();
         GeometryFactory geometryFactory = new GeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 1), new Coordinate(3, 1), new Coordinate(9, 1)};
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
         LineString lineString = new LineString(coordinateSequence, geometryFactory);
-        trail.setLine(lineString);
+        trail.setCoordinates(wkbWriter.write(lineString));
 
         event.calculateMidCoordinate(trail);
 

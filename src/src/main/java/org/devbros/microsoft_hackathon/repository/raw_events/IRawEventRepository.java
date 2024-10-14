@@ -1,4 +1,4 @@
-package org.devbros.microsoft_hackathon.event_injection.repository.raw_events;
+package org.devbros.microsoft_hackathon.repository.raw_events;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.RawEvent;
 

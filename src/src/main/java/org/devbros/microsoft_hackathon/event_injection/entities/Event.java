@@ -1,9 +1,16 @@
 package org.devbros.microsoft_hackathon.event_injection.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import java.time.LocalDate;
@@ -11,10 +18,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 public class Event {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String event_id;
     private String region;
     private String country;
@@ -30,8 +41,8 @@ public class Event {
     private Long publisherId;
     private String url;
 
-    //todo: add further properties once known
     public Event(Event event){
+        this.id = event.getId();
         this.event_id = event.getEvent_id();
         this.region = event.getRegion();
         this.country = event.getCountry();
@@ -41,6 +52,7 @@ public class Event {
         this.trailId = event.getTrailId();
         this.midLatitudeCoordinate = event.getMidLatitudeCoordinate();
         this.midLongitudeCoordinate = event.getMidLongitudeCoordinate();
+        this.displayMidCoordinate = event.isDisplayMidCoordinate();
         this.title = event.getTitle();
         this.description = event.getDescription();
         this.url = event.getUrl();
@@ -61,11 +73,13 @@ public class Event {
         this.publisherId = rawEvent.getPublisherId();
     }
 
-    public void calculateMidCoordinate(Trail trail){
+    public void calculateMidCoordinate(Trail trail) throws ParseException {
+        WKBReader wkbReader = new WKBReader();
+        LineString line = (LineString) wkbReader.read(trail.getCoordinates());
         // Use LengthIndexedLine to find points along the line based on its length
-        LengthIndexedLine indexedLine = new LengthIndexedLine(trail.getLine());
+        LengthIndexedLine indexedLine = new LengthIndexedLine(line);
         // Get the total length of the line
-        double totalLength = trail.getLine().getLength();
+        double totalLength = line.getLength();
         // Find the midpoint, which is at half the total length
         double midpointLength = totalLength / 2;
         // Get the coordinate at the midpoint length
