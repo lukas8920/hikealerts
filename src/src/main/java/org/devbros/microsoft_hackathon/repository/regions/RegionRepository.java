@@ -1,7 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.Region;
-import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -42,6 +41,9 @@ public class RegionRepository implements IRegionRepository {
 
         Region topMatching = this.nameMatcher.getTopMatchingEntity();
 
-        return topMatching == null ? new ArrayList<>() : this.iRegionJpaRepository.findAllByCountryAndName(country, topMatching.getName());
+        if (topMatching != null){
+            return this.iRegionJpaRepository.findAllByCountryAndName(country, topMatching.getName());
+        }
+        return new ArrayList<>();
     }
 }

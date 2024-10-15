@@ -2,6 +2,7 @@ package org.devbros.microsoft_hackathon.repository.regions;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.Region;
 import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.*;
@@ -28,6 +29,19 @@ public class RegionRepositoryTest {
     private NameMatcher<Region> nameMatcher;
     private RegionRepository regionRepository;
 
+    private static WKBWriter wkbWriter;
+    private static Polygon polygon;
+
+    @BeforeAll
+    private static void init(){
+        wkbWriter = new WKBWriter();
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1)};
+        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
+        LinearRing linearRing = new LinearRing(coordinateSequence, geometryFactory);
+        polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
+    }
+
     @BeforeEach
     public void setup(){
         this.nameMatcher = mock(NameMatcher.class);
@@ -36,13 +50,6 @@ public class RegionRepositoryTest {
 
     @Test
     public void test(){
-        WKBWriter wkbWriter = new WKBWriter();
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1), new Coordinate(1, 1)};
-        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
-        LinearRing linearRing = new LinearRing(coordinateSequence, geometryFactory);
-        Polygon polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
-
         Region region = new Region();
         region.setRegionId("55555L");
         region.setCountry("ZZ");
@@ -68,5 +75,42 @@ public class RegionRepositoryTest {
         assertThat(results.size(), is(1));
 
         this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region.getRegionId(), region.getCountry());
+    }
+
+    @Test
+    public void testMultipleRegionsWithSameName(){
+        Region region1 = new Region();
+        region1.setRegionId("55555L");
+        region1.setCountry("ZZ");
+        region1.setCode("code");
+        region1.setName("name");
+        region1.setPolygon(wkbWriter.write(polygon));
+        Region region2 = new Region();
+        region2.setRegionId("66666L");
+        region2.setCountry("ZZ");
+        region2.setCode("code");
+        region2.setName("name");
+        region2.setPolygon(wkbWriter.write(polygon));
+
+        AtomicInteger callsToMatcherCounter = new AtomicInteger();
+
+        doAnswer(invocation -> {
+            callsToMatcherCounter.addAndGet(1);
+            return null; // return null for void methods
+        }).when(nameMatcher).match(any(), any());
+        when(nameMatcher.getTopMatchingEntity()).thenReturn(region1);
+
+        this.iRegionJpaRepository.saveRegion(region1.getRegionId(), region1.getCountry(), region1.getCode(),
+                region1.getName(), region1.getPolygon());
+        this.iRegionJpaRepository.saveRegion(region2.getRegionId(), region2.getCountry(), region2.getCode(),
+                region2.getName(), region2.getPolygon());
+
+        List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region1.getName(), region1.getCountry());
+
+        assertThat(callsToMatcherCounter.get(), is(1));
+        assertThat(results.size(), is(2));
+
+        this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region1.getRegionId(), region1.getCountry());
+        this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region2.getRegionId(), region2.getCountry());
     }
 }

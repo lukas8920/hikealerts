@@ -25,10 +25,19 @@ public interface IRegionJpaRepository extends JpaRepository<Region, Long> {
     @Transactional
     void deleteAllByRegionIdAndCountry(String region_id, String country);
 
-    @Query(value = "SELECT id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries " +
-            "FROM geodata_regions " +
-            "WHERE country = :country", nativeQuery = true)
+    @Query(value = """
+            SELECT id, region_id, country, code, name, boundaries 
+            FROM (
+                SELECT id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries, 
+                       ROW_NUMBER() OVER (PARTITION BY name ORDER BY id) AS rn
+                FROM geodata_regions
+                WHERE country = :country
+            ) AS RankedRegions
+            WHERE rn = 1;""", nativeQuery = true)
     Slice<Region> findRegionsByCountry(String country, Pageable pageable);
 
-    List<Region> findAllByCountryAndName(String country, String name);
+    @Query(value = "SELECT id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries \n" +
+            "FROM geodata_regions\n" +
+            "WHERE country = :country AND name = :name", nativeQuery = true)
+    List<Region> findAllByCountryAndName(@Param("country") String country, @Param("name") String name);
 }
