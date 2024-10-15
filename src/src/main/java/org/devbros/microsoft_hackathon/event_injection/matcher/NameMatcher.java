@@ -1,5 +1,6 @@
 package org.devbros.microsoft_hackathon.event_injection.matcher;
 
+import lombok.Getter;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.devbros.microsoft_hackathon.event_injection.entities.MatchProvider;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 @Component
 public class NameMatcher<T extends MatchProvider> {
     private static final Logger logger = LoggerFactory.getLogger(NameMatcher.class.getName());
@@ -69,10 +71,6 @@ public class NameMatcher<T extends MatchProvider> {
                 return;
             }
         }
-    }
-
-    public T getTopMatchingEntity(){
-        return this.t;
     }
 
     // Function to calculate the Jaccard Similarity between two sets of words

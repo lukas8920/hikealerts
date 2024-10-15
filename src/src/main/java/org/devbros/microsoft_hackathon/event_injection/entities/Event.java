@@ -26,13 +26,16 @@ public class Event {
     private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String event_id;
     private String region;
     private String country;
+    @Column(name = "create_date_time")
     private LocalDateTime createDatetime;
+    @Column(name = "from_date_time")
     private LocalDateTime fromDatetime;
+    @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
     private Long trailId;
     private double midLongitudeCoordinate;

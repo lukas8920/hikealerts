@@ -83,6 +83,7 @@ public abstract class BaseCountryInjector {
                 logger.info("Next region: " + region.getName());
                 WKBReader wkbReader = new WKBReader();
                 Polygon polygon = (Polygon) wkbReader.read(region.getPolygon());
+                // todo: in case of us search by unit code instead of just country
                 List<Trail> trails = this.iTrailRepository.findTrailsInRegion(polygon, event.getCountry());
                 for (Trail trail: trails){
                     Event tmpEvent = new Event(event);

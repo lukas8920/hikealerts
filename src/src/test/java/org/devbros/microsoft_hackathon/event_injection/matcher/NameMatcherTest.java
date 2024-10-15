@@ -27,7 +27,7 @@ public class NameMatcherTest {
         nameMatcher.match(searchString, trail2);
         nameMatcher.match(searchString, trail3);
 
-        assertThat(nameMatcher.getTopMatchingEntity(), is(trail1));
+        assertThat(nameMatcher.getT(), is(trail1));
     }
 
     @Test
@@ -50,6 +50,6 @@ public class NameMatcherTest {
         nameMatcher.match(searchString, trail2);
         nameMatcher.match(searchString, trail3);
 
-        assertThat(nameMatcher.getTopMatchingEntity(), nullValue());
+        assertThat(nameMatcher.getT(), nullValue());
     }
 }

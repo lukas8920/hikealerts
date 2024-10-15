@@ -13,12 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
@@ -44,8 +41,7 @@ public class RegionRepositoryTest {
 
     @BeforeEach
     public void setup(){
-        this.nameMatcher = mock(NameMatcher.class);
-        this.regionRepository = new RegionRepository(iRegionJpaRepository, nameMatcher);
+        this.regionRepository = new RegionRepository(iRegionJpaRepository);
     }
 
     @Test
@@ -57,21 +53,12 @@ public class RegionRepositoryTest {
         region.setName("name");
         region.setPolygon(wkbWriter.write(polygon));
 
-        AtomicInteger callsToMatcherCounter = new AtomicInteger();
-
-        doAnswer(invocation -> {
-            callsToMatcherCounter.addAndGet(1);
-            return null; // return null for void methods
-        }).when(nameMatcher).match(any(), any());
-        when(nameMatcher.getTopMatchingEntity()).thenReturn(region);
-
         this.iRegionJpaRepository.saveRegion(region.getRegionId(), region.getCountry(), region.getCode(),
                 region.getName(), region.getPolygon());
 
         List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region.getName(), region.getCountry());
         //first identify top then all with same name
 
-        assertThat(callsToMatcherCounter.get(), is(1));
         assertThat(results.size(), is(1));
 
         this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region.getRegionId(), region.getCountry());
@@ -92,14 +79,6 @@ public class RegionRepositoryTest {
         region2.setName("name");
         region2.setPolygon(wkbWriter.write(polygon));
 
-        AtomicInteger callsToMatcherCounter = new AtomicInteger();
-
-        doAnswer(invocation -> {
-            callsToMatcherCounter.addAndGet(1);
-            return null; // return null for void methods
-        }).when(nameMatcher).match(any(), any());
-        when(nameMatcher.getTopMatchingEntity()).thenReturn(region1);
-
         this.iRegionJpaRepository.saveRegion(region1.getRegionId(), region1.getCountry(), region1.getCode(),
                 region1.getName(), region1.getPolygon());
         this.iRegionJpaRepository.saveRegion(region2.getRegionId(), region2.getCountry(), region2.getCode(),
@@ -107,7 +86,6 @@ public class RegionRepositoryTest {
 
         List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region1.getName(), region1.getCountry());
 
-        assertThat(callsToMatcherCounter.get(), is(2));
         assertThat(results.size(), is(2));
 
         this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region1.getRegionId(), region1.getCountry());
