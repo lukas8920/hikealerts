@@ -121,8 +121,8 @@
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
-                            <modelPackage>org.devbros.blackbird.model</modelPackage>
-                            <apiPackage>org.devbros.blackbird.api</apiPackage>
+                            <modelPackage>org.devbros.microsoft_hackathon.model</modelPackage>
+                            <apiPackage>org.devbros.microsoft_hackathon.api</apiPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useLombok>true</useLombok>
