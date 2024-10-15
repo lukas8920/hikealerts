@@ -4,6 +4,8 @@ import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
 import org.locationtech.jts.geom.Polygon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @Component
 public class TrailRepository implements ITrailRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TrailRepository.class.getName());
+
     private final ITrailJpaRepository iTrailJpaRepository;
     private final GeoMatcher geoMatcher;
     private final NameMatcher<Trail> nameMatcher;
@@ -65,6 +69,7 @@ public class TrailRepository implements ITrailRepository {
 
         List<Trail> trails = new ArrayList<>();
         do {
+            logger.info("Next slice.");
             slice = this.iTrailJpaRepository.findAllByCountry(country, pageable);
             slice.getContent().forEach(trail -> {
                 // Process each entity

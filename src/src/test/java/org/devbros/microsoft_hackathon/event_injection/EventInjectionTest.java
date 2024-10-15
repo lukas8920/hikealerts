@@ -53,9 +53,9 @@ public class EventInjectionTest {
         when(usInjector.matchTrails(openAiEvent2)).thenReturn(true);
         when(usInjector.matchTrails(openAiEvent3)).thenReturn(true);
 
-        Message message = injection.injectEvent(openAiEvents);
+        List<Message> messages = injection.injectEvent(openAiEvents);
 
-        assertThat(message.getMessage(), is("All events processed."));
+        assertThat(messages.get(0).getMessage(), is("All events processed."));
     }
 
     @Test
@@ -74,11 +74,9 @@ public class EventInjectionTest {
         openAiEvent6.setToDate("12/05/24");
         List<OpenAiEvent> openAiEvents = Arrays.asList(openAiEvent1, openAiEvent2, openAiEvent3, openAiEvent4, openAiEvent5, openAiEvent6);
 
-        BadRequestException e = assertThrows(BadRequestException.class, () -> {
-            eventInjection.injectEvent(openAiEvents);
-        });
+        List<Message> messages = eventInjection.injectEvent(openAiEvents);
 
-        assertThat(e.getMessages().size(), is(6));
+        assertThat(messages.size(), is(6));
     }
 
     @Test
@@ -95,15 +93,13 @@ public class EventInjectionTest {
         openAiEvent2.setRegion("region");
         List<OpenAiEvent> openAiEvents = Arrays.asList(openAiEvent1, openAiEvent2);
 
-        BadRequestException e = assertThrows(BadRequestException.class, () -> {
-            eventInjection.injectEvent(openAiEvents);
-        });
+        List<Message> messages = eventInjection.injectEvent(openAiEvents);
 
-        assertThat(e.getMessages().size(), is(2));
+        assertThat(messages.size(), is(2));
     }
 
     @Test
-    public void testInvalidRegion(){
+    public void testInvalidRegion() throws BadRequestException {
         OpenAiEvent openAiEvent1 = new OpenAiEvent();
         openAiEvent1.setFromDate("12/05/2024 12:12:12");
         openAiEvent1.setToDate("12/05/2024");
@@ -116,10 +112,8 @@ public class EventInjectionTest {
         openAiEvent2.setRegion(null);
         List<OpenAiEvent> openAiEvents = Arrays.asList(openAiEvent1, openAiEvent2);
 
-        BadRequestException e = assertThrows(BadRequestException.class, () -> {
-            eventInjection.injectEvent(openAiEvents);
-        });
+        List<Message> messages = eventInjection.injectEvent(openAiEvents);
 
-        assertThat(e.getMessages().size(), is(2));
+        assertThat(messages.size(), is(2));
     }
 }

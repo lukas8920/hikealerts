@@ -1,5 +1,6 @@
 package org.devbros.microsoft_hackathon.event_injection.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,11 +9,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class OpenAiEvent {
+    @JsonProperty("event_id")
     private String eventId;
     private String country;
+    @JsonProperty("park_name")
     private String parkName;
     private String region;
+    @JsonProperty("trail_name")
     private String trailName;
+    @JsonProperty("from_date")
     private String fromDate;
+    @JsonProperty("to_date")
     private String toDate;
 }

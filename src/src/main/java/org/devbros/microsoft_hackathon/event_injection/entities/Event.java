@@ -12,6 +12,8 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +25,8 @@ import java.time.format.DateTimeParseException;
 @Setter
 @NoArgsConstructor
 public class Event {
+    private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -127,8 +131,15 @@ public class Event {
                 : toDatetime.replace("YYYY", String.valueOf(year)));
     }
 
-    private LocalDateTime parseTimeString(String dateTime){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-        return LocalDateTime.parse(dateTime, formatter);
+    private LocalDateTime parseTimeString(String dateTime) throws DateTimeParseException {
+        logger.debug("Trying to parse: " + dateTime);
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            return LocalDateTime.parse(dateTime, formatter);
+        } catch (DateTimeParseException e){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate localDate = LocalDate.parse(dateTime, formatter);
+            return localDate.atStartOfDay();
+        }
     }
 }

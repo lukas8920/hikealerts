@@ -59,7 +59,6 @@ public abstract class BaseCountryInjector {
         List<Event> events = new ArrayList<>();
         if (rawEvent.getUnitCode() != null){
             //find best matching trail
-            //todo: algorithm implementation / paging through datasets / !! name is missing
             Trail trail = this.iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
             if (trail != null){
                 event.setTrailId(trail.getId());
@@ -73,13 +72,12 @@ public abstract class BaseCountryInjector {
 
     protected List<Event> identifyTrailsViaRegion(Event event) throws ParseException {
         List<Event> events = new ArrayList<>();
-        //todo: algorithm implementation / paging through datasets
         List<Region> regions = this.iRegionRepository.findRegionByRegionNameAndCountry(event.getRegion(), event.getCountry());
         if (!regions.isEmpty()){
             for (Region region: regions){
-                //todo: implement finding point in polygon with sql syntax?
                 WKBReader wkbReader = new WKBReader();
                 Polygon polygon = (Polygon) wkbReader.read(region.getPolygon());
+                // todo: first identify by unit code
                 List<Trail> trails = this.iTrailRepository.findTrailsInRegion(polygon, event.getCountry());
                 for (Trail trail: trails){
                     Event tmpEvent = new Event(event);

@@ -48,7 +48,7 @@ public class EventInjection implements IEventInjection {
     }
 
     @Override
-    public Message injectEvent(List<OpenAiEvent> openAiEvents) throws BadRequestException {
+    public List<Message> injectEvent(List<OpenAiEvent> openAiEvents) {
         List<Message> errorMessages = new ArrayList<>();
         // check valid input parameters before injecting events
         openAiEvents.forEach(openAiEvent -> {
@@ -89,10 +89,10 @@ public class EventInjection implements IEventInjection {
         });
 
         if (!errorMessages.isEmpty()){
-            throw new BadRequestException(errorMessages);
+            return errorMessages;
         }
 
-        return new Message("0", "All events processed.");
+        return List.of(new Message("0", "All events processed."));
     }
 
     protected BaseCountryInjector assignCountryInjector(OpenAiEvent openAiEvent) {

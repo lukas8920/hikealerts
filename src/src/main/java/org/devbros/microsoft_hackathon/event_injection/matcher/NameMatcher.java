@@ -2,6 +2,8 @@ package org.devbros.microsoft_hackathon.event_injection.matcher;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.devbros.microsoft_hackathon.event_injection.entities.MatchProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 @Component
 public class NameMatcher<T extends MatchProvider> {
+    private static final Logger logger = LoggerFactory.getLogger(NameMatcher.class.getName());
     private static final double MATCHING_THRESHOLD = 0.19;
 
     private T t;
@@ -24,6 +27,8 @@ public class NameMatcher<T extends MatchProvider> {
         String[] words1 = searchName.split("\\s+");
 
         for (String str: candidateStrings){
+            logger.debug("Search string: " + str);
+            logger.debug("Candidate string: " + str);
             if (str == null || str.length() < 1){
                 break;
             }
@@ -33,6 +38,7 @@ public class NameMatcher<T extends MatchProvider> {
 
             // 1. Calculate Jaccard Similarity for the overall word match
             double jaccardSimilarity = calculateJaccardSimilarity(words1, words2);
+            logger.debug("Jaccard: " + jaccardSimilarity);
 
             // 2. Calculate Levenshtein similarity for each word pair (where words don't exactly match)
             double totalLevenshteinSimilarity = 0.0;
@@ -55,6 +61,7 @@ public class NameMatcher<T extends MatchProvider> {
             // 3. Combine Jaccard and Levenshtein, giving 50% weight to each
             double combinedScore = 0.38 * jaccardSimilarity + 0.62 * averageLevenshteinSimilarity;
 
+            logger.debug("Score: " + combinedScore);
             // 4. Check whether optimum pick
             if (combinedScore > matchingScore){
                 this.matchingScore = combinedScore;

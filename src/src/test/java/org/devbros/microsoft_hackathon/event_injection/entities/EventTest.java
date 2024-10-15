@@ -32,7 +32,7 @@ public class EventTest {
     @Test
     public void testTimeIntervalParsingWorks(){
         String fromDatetime = "31/12/YYYY 12:50:33";
-        String toDatetime = "31/12/YYYY 15:48:20";
+        String toDatetime = "31/12/YYYY";
 
         event.parseTimeInterval(fromDatetime, toDatetime);
 
@@ -91,7 +91,7 @@ public class EventTest {
             event.parseTimeInterval(fromDatetime, toDatetime);
         });
 
-        assertThat(exception.getMessage(), is("Text '01/13/2024 00:01:33' could not be parsed: Invalid value for MonthOfYear (valid values 1 - 12): 13"));
+        assertThat(exception.getMessage(), is("Text '01/13/2024 00:01:33' could not be parsed, unparsed text found at index 10"));
     }//1 1, 2 1, 3 1, 9 1
 
     @Test
