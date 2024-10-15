@@ -16,6 +16,8 @@ import org.locationtech.jts.io.WKBWriter;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -64,7 +66,6 @@ public class TrailRepositoryTest {
         trail2.setCountry("ZZ");
 
         AtomicInteger callsToMatcherCounter = new AtomicInteger();
-        this.trailRepository.setPageSize(1);
 
         doAnswer(invocation -> {
             callsToMatcherCounter.addAndGet(1);
@@ -111,7 +112,6 @@ public class TrailRepositoryTest {
         trail3.setCoordinates(wkbWriter.write(line));
 
         AtomicInteger callsToMatcherCounter = new AtomicInteger();
-        this.trailRepository.setPageSize(2);
 
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), trail1.getCoordinates());
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());

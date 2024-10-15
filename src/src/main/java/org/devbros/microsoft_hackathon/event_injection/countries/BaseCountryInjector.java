@@ -8,11 +8,15 @@ import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseCountryInjector {
+    private static final Logger logger = LoggerFactory.getLogger(BaseCountryInjector.class.getName());
+
     private final IRawEventRepository iRawEventRepository;
     private final IEventRepository iEventRepository;
     private final ITrailRepository iTrailRepository;
@@ -74,10 +78,11 @@ public abstract class BaseCountryInjector {
         List<Event> events = new ArrayList<>();
         List<Region> regions = this.iRegionRepository.findRegionByRegionNameAndCountry(event.getRegion(), event.getCountry());
         if (!regions.isEmpty()){
+            logger.info("Number of regions: " + regions.size());
             for (Region region: regions){
+                logger.info("Next region: " + region.getName());
                 WKBReader wkbReader = new WKBReader();
                 Polygon polygon = (Polygon) wkbReader.read(region.getPolygon());
-                // todo: first identify by unit code
                 List<Trail> trails = this.iTrailRepository.findTrailsInRegion(polygon, event.getCountry());
                 for (Trail trail: trails){
                     Event tmpEvent = new Event(event);

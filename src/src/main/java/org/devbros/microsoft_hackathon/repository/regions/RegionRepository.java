@@ -29,20 +29,22 @@ public class RegionRepository implements IRegionRepository {
     @Override
     public List<Region> findRegionByRegionNameAndCountry(String regionName, String country) {
         logger.info("Try to identify region by name: " + regionName);
-        int pageNumber = 0;  // start from page 0
-        int pageSize = 200;
+        long offset = 0;  // start from page 0
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Slice<Region> slice;
+        List<Region> slice = this.iRegionJpaRepository.findRegionsByCountry(country, offset);
 
         do {
-            slice = this.iRegionJpaRepository.findRegionsByCountry(country, pageable);
-            slice.getContent().forEach(region -> {
+            logger.info("Next slice - size: " + slice.size());
+            logger.info(String.valueOf(offset));
+
+            slice.forEach(region -> {
                 // Process each entity
                 this.nameMatcher.match(regionName, region);
             });
-            pageable = pageable.next();  // Move to the next page
-        } while (slice.hasContent());
+            // Update pageable to the next page
+            offset = slice.get((slice.size() - 1)).getId();
+            slice = this.iRegionJpaRepository.findRegionsByCountry(country, offset);
+        } while (slice != null && !slice.isEmpty());
 
         Region topMatching = this.nameMatcher.getTopMatchingEntity();
 

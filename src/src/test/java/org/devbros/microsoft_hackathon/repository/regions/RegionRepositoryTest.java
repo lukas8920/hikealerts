@@ -49,7 +49,7 @@ public class RegionRepositoryTest {
     }
 
     @Test
-    public void test(){
+    public void testSingleRegion(){
         Region region = new Region();
         region.setRegionId("55555L");
         region.setCountry("ZZ");
@@ -107,7 +107,7 @@ public class RegionRepositoryTest {
 
         List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region1.getName(), region1.getCountry());
 
-        assertThat(callsToMatcherCounter.get(), is(1));
+        assertThat(callsToMatcherCounter.get(), is(2));
         assertThat(results.size(), is(2));
 
         this.iRegionJpaRepository.deleteAllByRegionIdAndCountry(region1.getRegionId(), region1.getCountry());

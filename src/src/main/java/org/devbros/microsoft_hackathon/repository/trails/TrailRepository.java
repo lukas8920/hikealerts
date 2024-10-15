@@ -7,9 +7,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,13 +20,6 @@ public class TrailRepository implements ITrailRepository {
     private final GeoMatcher geoMatcher;
     private final NameMatcher<Trail> nameMatcher;
 
-    private int pageSize = 1000;
-
-    //for testing purposes only
-    protected void setPageSize(int pageSize){
-        this.pageSize = pageSize;
-    }
-
     @Autowired
     public TrailRepository(ITrailJpaRepository iTrailJpaRepository, GeoMatcher geoMatcher, NameMatcher<Trail> nameMatcher){
         this.iTrailJpaRepository = iTrailJpaRepository;
@@ -39,22 +29,18 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public Trail findTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
-        int pageNumber = 0;  // start from page 0
+        long offset = 0;  // start from page 0
 
-        // smaller pageSize because the unit code is known
-        pageSize = 100;
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Slice<Trail> slice;
+        List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
 
         do {
-            slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, pageable);
-            slice.getContent().forEach(trail -> {
+            slice.forEach(trail -> {
                 // Process each entity
                 this.nameMatcher.match(searchName, trail);
             });
-            pageable = pageable.next();  // Move to the next page
-        } while (slice.hasContent());
+            offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
+            slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
+        } while (slice != null && !slice.isEmpty());
 
 
         return this.nameMatcher.getTopMatchingEntity();
@@ -62,21 +48,27 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public List<Trail> findTrailsInRegion(Polygon polygon, String country) {
-        int pageNumber = 0;  // start from page 0
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Slice<Trail> slice;
+        logger.info("Try to identify trails in polygon for country: " + country);
+        long offset = 0;  // start from page 0
 
         List<Trail> trails = new ArrayList<>();
+        List<Trail> slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
+
         do {
-            logger.info("Next slice.");
-            slice = this.iTrailJpaRepository.findAllByCountry(country, pageable);
-            slice.getContent().forEach(trail -> {
+            logger.info("Next slice - size: " + slice.size());
+            logger.info(String.valueOf(offset));
+
+            slice.forEach(trail -> {
                 // Process each entity
                 trails.addAll(this.geoMatcher.match(polygon, trail));
             });
-            pageable = pageable.next();  // Move to the next page
-        } while (slice.hasContent());
+
+            // Update pageable to the next page
+            offset = slice.get((slice.size() - 1)).getId();
+            slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
+        } while (slice != null && !slice.isEmpty());  // Continue while there's content
+
+        logger.info("Identified number of trails: " + trails.size());
 
         return trails;
     }

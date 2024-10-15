@@ -1,8 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.Region;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,16 +23,11 @@ public interface IRegionJpaRepository extends JpaRepository<Region, Long> {
     @Transactional
     void deleteAllByRegionIdAndCountry(String region_id, String country);
 
-    @Query(value = """
-            SELECT id, region_id, country, code, name, boundaries 
-            FROM (
-                SELECT id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries, 
-                       ROW_NUMBER() OVER (PARTITION BY name ORDER BY id) AS rn
-                FROM geodata_regions
-                WHERE country = :country
-            ) AS RankedRegions
-            WHERE rn = 1;""", nativeQuery = true)
-    Slice<Region> findRegionsByCountry(String country, Pageable pageable);
+    @Query(value = "SELECT TOP 200 id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries " +
+            "FROM geodata_regions " +
+            "WHERE country = :country AND id > :offset " +
+            "ORDER BY id", nativeQuery = true)
+    List<Region> findRegionsByCountry(@Param("country") String country, @Param("offset") Long offset);
 
     @Query(value = "SELECT id, region_id, country, code, name, boundaries.STAsBinary() AS boundaries \n" +
             "FROM geodata_regions\n" +

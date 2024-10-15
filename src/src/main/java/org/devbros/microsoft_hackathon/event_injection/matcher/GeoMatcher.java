@@ -4,6 +4,8 @@ import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.List;
 
 @Component
 public class GeoMatcher {
+    private static final Logger logger = LoggerFactory.getLogger(GeoMatcher.class.getName());
+
     private final GeometryFactory geometryFactory;
     private final WKBReader wkbReader;
 

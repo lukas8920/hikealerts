@@ -1,13 +1,13 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
 import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     //for test purposes only
@@ -21,13 +21,15 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     @Transactional
     void deleteAllByTrailIdAndCountry(Long trail_id, String country);
 
-    @Query(value = "SELECT id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
+    @Query(value = "SELECT TOP 100 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
             "FROM geodata_trails " +
-            "WHERE unitcode = :unitcode AND country = :country", nativeQuery = true)
-    Slice<Trail> findAllByUnitcodeAndCountry(@Param("unitcode") String unitCode,@Param("country") String country, Pageable pageable);
+            "WHERE unitcode = :unitcode AND country = :country AND id > :offset " +
+            "ORDER BY id", nativeQuery = true)
+    List<Trail> findAllByUnitcodeAndCountry(@Param("unitcode") String unitCode,@Param("country") String country, @Param("offset") Long offset);
 
-    @Query(value = "SELECT id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
+    @Query(value = "SELECT TOP 1000 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
             "FROM geodata_trails " +
-            "WHERE country = :country", nativeQuery = true)
-    Slice<Trail> findAllByCountry(@Param("country") String country, Pageable pageable);
+            "where country = :country AND id > :offset " +
+            "ORDER BY id", nativeQuery = true)
+    List<Trail> findAllByCountry(@Param("country") String country, @Param("offset") Long offset);
 }
