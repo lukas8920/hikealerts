@@ -1,11 +1,14 @@
 package org.devbros.microsoft_hackathon.event_injection.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
@@ -38,6 +41,8 @@ public class Event {
     @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
     private Long trailId;
+    @JsonIgnore
+    private String helperTrailName;
     private double midLongitudeCoordinate;
     private double midLatitudeCoordinate;
     private boolean displayMidCoordinate;
@@ -58,6 +63,7 @@ public class Event {
         this.midLatitudeCoordinate = event.getMidLatitudeCoordinate();
         this.midLongitudeCoordinate = event.getMidLongitudeCoordinate();
         this.displayMidCoordinate = event.isDisplayMidCoordinate();
+        this.helperTrailName = event.getHelperTrailName();
         this.title = event.getTitle();
         this.description = event.getDescription();
         this.url = event.getUrl();
@@ -80,17 +86,24 @@ public class Event {
 
     public void calculateMidCoordinate(Trail trail) throws ParseException {
         WKBReader wkbReader = new WKBReader();
-        LineString line = (LineString) wkbReader.read(trail.getCoordinates());
-        // Use LengthIndexedLine to find points along the line based on its length
-        LengthIndexedLine indexedLine = new LengthIndexedLine(line);
-        // Get the total length of the line
-        double totalLength = line.getLength();
-        // Find the midpoint, which is at half the total length
-        double midpointLength = totalLength / 2;
-        // Get the coordinate at the midpoint length
-        Coordinate midpoint = indexedLine.extractPoint(midpointLength);
-        this.midLatitudeCoordinate = midpoint.y;
-        this.midLongitudeCoordinate = midpoint.x;
+        Geometry geometry = wkbReader.read(trail.getCoordinates());
+
+        if (!(geometry instanceof Point)){
+            LineString line = (LineString) geometry;
+            // Use LengthIndexedLine to find points along the line based on its length
+            LengthIndexedLine indexedLine = new LengthIndexedLine(line);
+            // Get the total length of the line
+            double totalLength = line.getLength();
+            // Find the midpoint, which is at half the total length
+            double midpointLength = totalLength / 2;
+            // Get the coordinate at the midpoint length
+            Coordinate midpoint = indexedLine.extractPoint(midpointLength);
+            this.midLatitudeCoordinate = midpoint.y;
+            this.midLongitudeCoordinate = midpoint.x;
+        } else {
+            this.midLatitudeCoordinate = ((Point) geometry).getX();
+            this.midLongitudeCoordinate = ((Point) geometry).getY();
+        }
     };
 
     public void parseTimeInterval(String fromDatetime, String toDatetime) throws DateTimeParseException {

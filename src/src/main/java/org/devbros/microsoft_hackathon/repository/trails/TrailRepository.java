@@ -32,7 +32,7 @@ public class TrailRepository implements ITrailRepository {
     }
 
     @Override
-    public Trail findTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
+    public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
         long offset = 0;  // start from page 0
 
         List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
@@ -82,5 +82,10 @@ public class TrailRepository implements ITrailRepository {
         logger.info("Identified number of trails: " + trails.size());
 
         return trails;
+    }
+
+    @Override
+    public List<Trail> findTrailsByNameCodeAndCountry(Polygon polygon, String country, String code) {
+        return this.iTrailJpaRepository.findAllByCountryAndUnitcode(country, code);
     }
 }

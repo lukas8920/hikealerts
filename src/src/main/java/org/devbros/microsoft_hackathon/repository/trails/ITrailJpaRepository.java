@@ -32,4 +32,6 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
             "where country = :country AND id > :offset " +
             "ORDER BY id", nativeQuery = true)
     List<Trail> findAllByCountry(@Param("country") String country, @Param("offset") Long offset);
+
+    List<Trail> findAllByCountryAndUnitcode(String country, String unitcode);
 }

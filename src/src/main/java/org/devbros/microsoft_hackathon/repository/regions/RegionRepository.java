@@ -2,8 +2,10 @@ package org.devbros.microsoft_hackathon.repository.regions;
 
 import lombok.Getter;
 import org.devbros.microsoft_hackathon.event_injection.entities.Region;
+import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
 import org.devbros.microsoft_hackathon.util.Worker;
+import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,7 @@ public class RegionRepository implements IRegionRepository {
     }
 
     @Override
-    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country) {
+    public List<Region> findUniqueRegionName(String regionName, String country){
         Phaser phaser = new Phaser(1);
         logger.info("Try to identify region by name: " + regionName);
         long offset = 0;  // start from page 0
@@ -61,12 +63,18 @@ public class RegionRepository implements IRegionRepository {
         } while (slice != null && !slice.isEmpty());
 
         phaser.arriveAndAwaitAdvance();
+        return topMatchingHolder.topMatching != null ? List.of(topMatchingHolder.topMatching) : new ArrayList<>();
+    }
 
-        if (topMatchingHolder.getTopMatching() != null){
+    @Override
+    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country) {
+        List<Region> regions = findUniqueRegionName(regionName, country);
+
+        if (!regions.isEmpty()){
             logger.info("Identified top matching region");
-            return this.iRegionJpaRepository.findAllByCountryAndName(country, topMatchingHolder.getTopMatching().getName());
+            return this.iRegionJpaRepository.findAllByCountryAndName(country, regions.get(0).getName());
         }
-        return new ArrayList<>();
+        return regions;
     }
 
     @Getter

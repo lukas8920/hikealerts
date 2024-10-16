@@ -58,7 +58,7 @@ public class USInjectorTest {
         trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), "abc", "US")).thenReturn(trail);
+        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), "abc", "US")).thenReturn(trail);
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -80,13 +80,15 @@ public class USInjectorTest {
         openAiEvent.setCountry("US");
         openAiEvent.setRegion("region");
         Region region = new Region();
+        region.setCode("abc");
+        region.setCountry("US");
         region.setPolygon(wkbWriter.write(polygon));
         Trail trail = new Trail();
         trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
         when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
-        when(iTrailRepository.findTrailsInRegion(any(), eq("US"))).thenReturn(List.of(trail));
+        when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq("US"), any())).thenReturn(List.of(trail));
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -103,7 +105,7 @@ public class USInjectorTest {
         openAiEvent.setTrailName("dummy");
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName() , "abc", "US")).thenReturn(null);
+        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName() , "abc", "US")).thenReturn(null);
 
         boolean flag = usInjector.matchTrails(openAiEvent);
 
@@ -132,6 +134,7 @@ public class USInjectorTest {
         Polygon polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
 
         Region region = new Region();
+        region.setCountry("US");
         region.setPolygon(wkbWriter.write(polygon));
         Trail trail = new Trail();
         trail.setCoordinates(wkbWriter.write(line));
@@ -140,7 +143,7 @@ public class USInjectorTest {
         event.setCountry("US");
 
         when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
-        when(iTrailRepository.findTrailsInRegion(any(), eq("US"))).thenReturn(List.of(trail));
+        when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq("US"), any())).thenReturn(List.of(trail));
 
         List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
 

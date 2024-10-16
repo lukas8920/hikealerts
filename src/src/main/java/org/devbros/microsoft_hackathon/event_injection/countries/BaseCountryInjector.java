@@ -13,14 +13,16 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class BaseCountryInjector {
     private static final Logger logger = LoggerFactory.getLogger(BaseCountryInjector.class.getName());
 
-    private final IRawEventRepository iRawEventRepository;
-    private final IEventRepository iEventRepository;
-    private final ITrailRepository iTrailRepository;
-    private final IRegionRepository iRegionRepository;
+    protected final IRawEventRepository iRawEventRepository;
+    protected final IEventRepository iEventRepository;
+    protected final ITrailRepository iTrailRepository;
+    protected final IRegionRepository iRegionRepository;
 
     public BaseCountryInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository,
                                ITrailRepository iTrailRepository, IRegionRepository iRegionRepository){
@@ -63,7 +65,7 @@ public abstract class BaseCountryInjector {
         List<Event> events = new ArrayList<>();
         if (rawEvent.getUnitCode() != null){
             //find best matching trail
-            Trail trail = this.iTrailRepository.findTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
+            Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
             if (trail != null){
                 event.setTrailId(trail.getId());
                 event.setDisplayMidCoordinate(true);
@@ -76,29 +78,51 @@ public abstract class BaseCountryInjector {
 
     protected List<Event> identifyTrailsViaRegion(Event event) throws ParseException {
         List<Event> events = new ArrayList<>();
-        List<Region> regions = this.iRegionRepository.findRegionByRegionNameAndCountry(event.getRegion(), event.getCountry());
+        List<Region> regions = findRegionsInDatabase(event.getRegion(), event.getCountry());
         if (!regions.isEmpty()){
             logger.info("Number of regions: " + regions.size());
             for (Region region: regions){
                 logger.info("Next region: " + region.getName());
                 WKBReader wkbReader = new WKBReader();
                 Polygon polygon = (Polygon) wkbReader.read(region.getPolygon());
-                // todo: in case of us search by unit code instead of just country
-                List<Trail> trails = this.iTrailRepository.findTrailsInRegion(polygon, event.getCountry());
+                List<Trail> trails = this.findTrailsInDatabaseWithRegion(polygon, region);
                 for (Trail trail: trails){
                     Event tmpEvent = new Event(event);
                     tmpEvent.setTrailId(trail.getId());
-                    event.calculateMidCoordinate(trail);
-                    event.setDisplayMidCoordinate(false);
-                    events.add(event);
+                    tmpEvent.calculateMidCoordinate(trail);
+                    // then we assume that trails belong together
+                    tmpEvent.setHelperTrailName(trail.getTrailname() + " / " + trail.getMaplabel());
+                    logger.info(tmpEvent.getHelperTrailName());
+                    tmpEvent.setDisplayMidCoordinate(false);
+                    events.add(tmpEvent);
                 }
             }
         }
         //set Display Mid Coordinate flag for one part of the trail
         if (events.size() > 0){
-            int index = (int) Math.ceil(events.size() / 2);
-            events.get(index).setDisplayMidCoordinate(true);
+            Map<String, Event> middleEvents = selectMiddleTrails(events);
+            middleEvents.values().forEach(tmpEvent -> tmpEvent.setDisplayMidCoordinate(true));
         }
         return events;
     }
+
+    private Map<String, Event> selectMiddleTrails(List<Event> events){
+        Map<String, List<Event>> groupedByString = events.stream()
+                .collect(Collectors.groupingBy(Event::getHelperTrailName));
+
+        // For each group, get the middle object
+        return groupedByString.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,  // The string key
+                        entry -> {
+                            List<Event> objects = entry.getValue();
+                            int middleIndex = objects.size() / 2;  // Get middle index (rounds down for even size)
+                            return objects.get(middleIndex);       // Get the middle object
+                        }
+                ));
+    }
+
+    protected abstract List<Trail> findTrailsInDatabaseWithRegion(Polygon polygon, Region region);
+
+    protected abstract List<Region> findRegionsInDatabase(String regionName, String country);
 }

@@ -74,7 +74,7 @@ public class TrailRepositoryTest {
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), trail1.getCoordinates());
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());
 
-        Trail trail = this.trailRepository.findTrailByNameUnitCodeAndCountry("dummy", trail1.getUnitcode(), trail1.getCountry());
+        Trail trail = this.trailRepository.searchTrailByNameUnitCodeAndCountry("dummy", trail1.getUnitcode(), trail1.getCountry());
 
         assertThat(trail.getTrailId(), is(55555L));
         assertThat(wkbReader.read(trail.getCoordinates()).getCoordinates()[0].x, is(1.0));

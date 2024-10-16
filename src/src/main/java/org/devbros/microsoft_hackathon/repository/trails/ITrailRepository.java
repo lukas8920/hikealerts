@@ -6,6 +6,7 @@ import org.locationtech.jts.geom.Polygon;
 import java.util.List;
 
 public interface ITrailRepository {
-    Trail findTrailByNameUnitCodeAndCountry(String name, String unitCode, String country);
+    Trail searchTrailByNameUnitCodeAndCountry(String name, String unitCode, String country);
     List<Trail> findTrailsInRegion(Polygon polygon, String country);
+    List<Trail> findTrailsByNameCodeAndCountry(Polygon polygon, String country, String code);
 }
