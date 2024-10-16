@@ -20,7 +20,9 @@ jobs:
           distribution: 'adopt'
 
       - name: Build Spring Boot app
-        run: mvn clean package  # or ./gradlew build for Gradle
+        run: |
+          cd src  # Change to the subdirectory
+          mvn clean package  # Build the Spring Boot app
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.DOCKER_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
