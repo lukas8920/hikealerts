@@ -1,0 +1,4 @@
+dependencies:
+  - pip:
+      - azure-keyvault-secrets==4.8.0
+      - shapely==2.0.6

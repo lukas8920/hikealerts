@@ -1,0 +1,187 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "SetVariable",
+        "typeProperties": {
+          "variableName": "totalCount",
+          "value": {
+            "value": "@activity('Count trail datasets').output.count",
+            "type": "Expression"
+          }
+        },
+        "policy": {
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Set totalCount",
+        "dependsOn": [
+          {
+            "activity": "Count trail datasets",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "WebActivity",
+        "typeProperties": {
+          "method": "GET",
+          "headers": {}
+        },
+        "externalReferences": {
+          "connection": "1cf0578e-f1a0-42df-87d7-739296beb165"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Count trail datasets",
+        "dependsOn": []
+      },
+      {
+        "type": "Until",
+        "typeProperties": {
+          "expression": {
+            "value": "@greaterOrEquals(variables('offset'), variables('totalCount'))",
+            "type": "Expression"
+          },
+          "timeout": "0.12:00:00",
+          "activities": [
+            {
+              "type": "TridentNotebook",
+              "typeProperties": {
+                "notebookId": "d29db6c1-2038-49aa-8e85-d095ebbce201",
+                "workspaceId": "00000000-0000-0000-0000-000000000000",
+                "parameters": {
+                  "offset": {
+                    "value": {
+                      "value": "@variables('offset')",
+                      "type": "Expression"
+                    },
+                    "type": "int"
+                  },
+                  "batchSize": {
+                    "value": {
+                      "value": "@variables('batchSize')",
+                      "type": "Expression"
+                    },
+                    "type": "int"
+                  }
+                }
+              },
+              "policy": {
+                "timeout": "0.12:00:00",
+                "retry": 0,
+                "retryIntervalInSeconds": 30,
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Parse response",
+              "dependsOn": []
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "offsetIncr",
+                "value": {
+                  "value": "@add(variables('offset'), variables('batchSize'))",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set offsetIncr",
+              "dependsOn": [
+                {
+                  "activity": "Parse response",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "offset",
+                "value": {
+                  "value": "@variables('offsetIncr')",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Set offset",
+              "dependsOn": [
+                {
+                  "activity": "Set offsetIncr",
+                  "dependencyConditions": [
+                    "Succeeded"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SetVariable",
+              "typeProperties": {
+                "variableName": "offset",
+                "value": {
+                  "value": "@add(variables('totalCount'), 1)",
+                  "type": "Expression"
+                }
+              },
+              "policy": {
+                "secureInput": false,
+                "secureOutput": false
+              },
+              "name": "Fail pipeline",
+              "dependsOn": [
+                {
+                  "activity": "Parse response",
+                  "dependencyConditions": [
+                    "Failed"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "name": "For each dataset",
+        "dependsOn": [
+          {
+            "activity": "Set totalCount",
+            "dependencyConditions": [
+              "Completed"
+            ]
+          }
+        ]
+      }
+    ],
+    "variables": {
+      "batchSize": {
+        "type": "Integer",
+        "defaultValue": 500
+      },
+      "offset": {
+        "type": "Integer",
+        "defaultValue": 14500
+      },
+      "totalCount": {
+        "type": "Integer"
+      },
+      "offsetIncr": {
+        "type": "Integer",
+        "defaultValue": 0
+      }
+    }
+  }
+}
