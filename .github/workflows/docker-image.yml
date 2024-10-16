@@ -17,7 +17,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -f ./src/Dockerfile -t ghcr.io/${{ github.actor }}/hikealerts-springboot:latest ./docker
+        run: docker build -f ./src/Dockerfile -t ghcr.io/${{ github.actor }}/hikealerts-springboot:latest ./src
 
       - name: Push Docker image
         run: docker push ghcr.io/${{ github.actor }}/hikealerts-springboot:latest
