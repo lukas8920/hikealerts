@@ -87,7 +87,7 @@ public class USInjectorTest {
         trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
-        when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
+        when(iRegionRepository.findUniqueRegionName("region", "US")).thenReturn(List.of(region));
         when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq("US"), any())).thenReturn(List.of(trail));
 
         boolean flag = usInjector.matchTrails(openAiEvent);
@@ -142,7 +142,7 @@ public class USInjectorTest {
         event.setRegion("region");
         event.setCountry("US");
 
-        when(iRegionRepository.findRegionByRegionNameAndCountry("region", "US")).thenReturn(List.of(region));
+        when(iRegionRepository.findUniqueRegionName("region", "US")).thenReturn(List.of(region));
         when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq("US"), any())).thenReturn(List.of(trail));
 
         List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
