@@ -1,6 +1,5 @@
 package org.devbros.microsoft_hackathon.controller;
 
-import org.devbros.microsoft_hackathon.BadRequestException;
 import org.devbros.microsoft_hackathon.event_injection.IEventInjection;
 import org.devbros.microsoft_hackathon.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;

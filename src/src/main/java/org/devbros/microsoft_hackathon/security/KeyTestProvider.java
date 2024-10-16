@@ -3,19 +3,16 @@ package org.devbros.microsoft_hackathon.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
-public class KeyVaultProvider {
-    private static final String PROD_PROFILE = "prod";
-
-    @Value("spring.profiles.active")
-    private String activeProfile;
+@Profile("test")
+public class KeyTestProvider {
+    @Value("event.endpoint.bearer.token")
+    private String bearerToken;
 
     @Bean(name = "bearerToken")
     public String bearerToken(){
-        if (activeProfile.equals(PROD_PROFILE)){
-            return "prod";
-        }
-        return "test";
+        return this.bearerToken;
     }
 }

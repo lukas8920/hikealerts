@@ -14,8 +14,10 @@
 
     <properties>
         <apache.commons>1.12.0</apache.commons>
+        <azure.keyvault.version>4.0.0</azure.keyvault.version>
         <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
+        <jetty.version>12.0.12</jetty.version>
         <jts.version>1.20.0</jts.version>
         <lombok.version>1.18.28</lombok.version>
         <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
@@ -35,6 +37,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- Jetty -->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
 
         <!-- Lombok -->
@@ -57,6 +71,13 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
             <version>${sqlserver.version}</version>
+        </dependency>
+
+        <!-- Azure Keyvault Library -->
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-keyvault-secrets</artifactId>
+            <version>${azure.keyvault.version}</version>
         </dependency>
 
         <!-- H2 SQL Driver -->
