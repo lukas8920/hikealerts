@@ -33,5 +33,8 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
             "ORDER BY id", nativeQuery = true)
     List<Trail> findAllByCountry(@Param("country") String country, @Param("offset") Long offset);
 
+    @Query(value = "SELECT TOP 100 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
+            "FROM geodata_trails " +
+            "WHERE unitcode = :unitcode AND country = :country", nativeQuery = true)
     List<Trail> findAllByCountryAndUnitcode(String country, String unitcode);
 }

@@ -122,6 +122,7 @@ public abstract class BaseCountryInjector {
                 ));
     }
 
+    // Implemented are identification via code or search via country solely / which takes significant longer
     protected abstract List<Trail> findTrailsInDatabaseWithRegion(Polygon polygon, Region region);
 
     protected abstract List<Region> findRegionsInDatabase(String regionName, String country);

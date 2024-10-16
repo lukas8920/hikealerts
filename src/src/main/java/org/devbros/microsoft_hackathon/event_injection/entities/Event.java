@@ -94,12 +94,16 @@ public class Event {
             LengthIndexedLine indexedLine = new LengthIndexedLine(line);
             // Get the total length of the line
             double totalLength = line.getLength();
+            logger.debug("total length: " + totalLength);
             // Find the midpoint, which is at half the total length
             double midpointLength = totalLength / 2;
+            logger.debug("midpoint length: " + midpointLength);
             // Get the coordinate at the midpoint length
             Coordinate midpoint = indexedLine.extractPoint(midpointLength);
             this.midLatitudeCoordinate = midpoint.y;
+            logger.debug("Y: " + midpoint.y);
             this.midLongitudeCoordinate = midpoint.x;
+            logger.debug("X: " + midpoint.x);
         } else {
             this.midLatitudeCoordinate = ((Point) geometry).getX();
             this.midLongitudeCoordinate = ((Point) geometry).getY();
