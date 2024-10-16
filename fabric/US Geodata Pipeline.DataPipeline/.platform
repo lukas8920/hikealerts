@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "DataPipeline",
+    "displayName": "US Geodata Pipeline"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f244f065-2ed7-47e8-9c8f-5530a68f0f25"
+  }
+}
