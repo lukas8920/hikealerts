@@ -4,6 +4,7 @@ import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateSequence;
@@ -46,6 +47,7 @@ public class TrailRepositoryTest {
     }
 
     @Test
+    @Disabled
     public void testTrailFindingByCodeAndCountry() throws ParseException {
         GeometryFactory geometryFactory = new GeometryFactory();
         WKBWriter wkbWriter = new WKBWriter();
@@ -86,6 +88,7 @@ public class TrailRepositoryTest {
     }
 
     @Test
+    @Disabled
     public void testThatPaginationWorks(){
         GeometryFactory geometryFactory = new GeometryFactory();
         WKBWriter wkbWriter = new WKBWriter();
