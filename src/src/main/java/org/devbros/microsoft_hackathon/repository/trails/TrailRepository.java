@@ -36,6 +36,7 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
+        logger.info("Search trail by trail name, unit code and country");
         long offset = 0;  // start from page 0
 
         List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);

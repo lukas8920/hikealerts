@@ -23,6 +23,7 @@ public class KeyVaultProdProvider {
     private static final String sqlPassword = "sql-server-password";
     private static final String dbUsername = "sql-server-username";
     private static final String keyStorePassword = "ssl-keystore-password";
+    private static final String queueConnectionString= "queue-connection-string";
 
     @Value("db.driver")
     private String dbDriver;
@@ -42,6 +43,11 @@ public class KeyVaultProdProvider {
     @Bean(name = "bearerToken")
     public String bearerToken(SecretClient secretClient){
         return secretClient.getSecret(eventEndpoint).getValue();
+    }
+
+    @Bean(name = "queueConnectionString")
+    public String queueConnectionString(SecretClient secretClient) {
+        return secretClient.getSecret(queueConnectionString).getValue();
     }
 
     @Bean
