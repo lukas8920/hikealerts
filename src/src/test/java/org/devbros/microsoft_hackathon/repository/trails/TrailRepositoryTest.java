@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Disabled
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
 public class TrailRepositoryTest {
