@@ -20,6 +20,8 @@ import json
 from pyspark.sql import SparkSession
 import datetime
 import http.client
+from azure.storage.queue import QueueClient
+import time
 
 
 def create_list(resultset):
@@ -69,8 +71,12 @@ resultset = statement.executeQuery(query)
 resultlist = create_list(resultset)
 statement.close()  # Close the statement after execution
 
+notebook_failed = False
 if len(resultlist) > 0:
     for i in range(0, len(resultlist), 10):
+        # buffer requests to open ai due to quota limit
+        time.sleep(5)
+
         sublist = resultlist[i:i + 10]
         # Create the desired dictionary structure
         output_dict = {
@@ -79,8 +85,8 @@ if len(resultlist) > 0:
                 {
                     "event_id": item[0],
                     "title": item[2],
-                    "parkCode": item[4],
-                    "description": item[5]
+                    "parkCode": item[3],
+                    "description": item[4]
                 } for item in sublist
             ]
         }
@@ -93,7 +99,7 @@ if len(resultlist) > 0:
             "messages": [
                 {
                     "role": "system",
-                    "content": "Output the results as json list. Each json item:   \n- has an event id  \n- Has a country   \n- Must have either a park name or region, a trail name. One has to be present. Trail names might be in the alert description. \n- might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY.\n\nIgnore alerts where no trail name, no park name or no region can be identified.\nIgnore trails or regions without problems.\n\nOne alert can have zero, one or multiple json items.  \nReplace any known abbreviations and correct known misspellings.    \nRespond only with the data without any additional comments."
+                    "content": "For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Do not output and ignore alerts where: \n - no trail name identification is possible and the problem does not seem to affect trails in the entire park or region. \n - no trail name, no park name or no region can be identified. \n - there seems to be no problem with trail conditions. \n For the remaining alerts, output the results as json list. Each json item consists of: Event id, country, park name, region, trail name, from_date and to_date \n Each item must have either a trail name and a park name and/or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n One alert can have zero, one or multiple json items - each trail should go in a separate json item.  \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments." 
                 },
                 {
                     "role": "user",
@@ -113,7 +119,7 @@ if len(resultlist) > 0:
             "api-key": openai_api_key,
             "Content-Type": "application/json"
         }
-        url = "/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-08-01-preview"
+        url = "/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
 
         conn.request("POST", url, headers=headers, body=json_string)
 
@@ -121,23 +127,20 @@ if len(resultlist) > 0:
         response = conn.getresponse()
         data = json.loads(response.read())
 
-        # Extract content
-        content = data['choices'][0]['message']['content']
+        try:
+            # Extract content
+            content = data['choices'][0]['message']['content']
 
-        # send to spring boot backend
-        # mockserver connection details
-        # todo: replace with spring boot connection
-        postman_mock_endpoint = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'postman-mock-endpoint')
-        conn = http.client.HTTPSConnection("f672f7c7-e1f8-4e3e-9bd0-fa46bbdd1013.mock.pstmn.io")
-        postman_mock_password = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'postman-mock-password')
-        # Define headers
-        headers = {
-            "x-api-key": postman_mock_password,
-            "Content-Type": "application/json"
-        }
-        url = "/events/official"
+            # send via azure queue to spring boot backend
+            connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
+            queue_client = QueueClient.from_connection_string(connect_str, "openai-events")
+            queue_client.send_message(content)
+        except:
+            print(data)
+            notebook_failed = True
 
-        conn.request("POST", url, headers=headers, body=content)
+if notebook_failed:
+    raise RuntimeError("Notebook execution failed due to one or more errors.")
 
 # METADATA ********************
 
