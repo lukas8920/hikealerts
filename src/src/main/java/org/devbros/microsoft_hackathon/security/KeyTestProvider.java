@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("test")
 public class KeyTestProvider {
-    @Value("${event.endpoint.bearer.token}")
+    @Value("${event.endpoint.bearer.token:default}")
     private String bearerToken;
-    @Value("${queue.connection.string}")
+    @Value("${queue.connection.string:default}")
     private String queueConnectionString;
 
     @Bean(name = "bearerToken")
