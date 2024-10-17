@@ -8,11 +8,13 @@ Each item might have a from and to date in format dd/mm/YYYY. If no year mention
 Ignore alerts where no trail name, no park name or no region can be identified.
 Ignore alerts with no trail or no region problem.
 
+When no trail name identification possible, return only those alerts where a problem seems to affect the entire region or park.
+
 One alert can have zero, one or multiple json items.  
 Replace any known abbreviations and correct known misspellings.    
 Respond only with the data without any additional comments.
 
-For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Output the results as json list. Each json item consists of: Event id, country, park name, region, trail name, from_date and to_date \n Each item must have either a trail name and a park name or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n Ignore alerts where no trail name, no park name or no region can be identified. \n Ignore alerts with no trail or no region problem. \n One alert can have zero, one or multiple json items. \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments.
+For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Output the results as json list. Each json item consists of: Event id, country, park name, region, trail name, from_date and to_date \n Each item must have either a trail name and a park name or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n Ignore alerts where no trail name, no park name or no region can be identified. \n Ignore alerts with no trail or no region problem. \n When no trail name identification possible, return only those alerts where a problem seems to affect the entire region or park. \n One alert can have zero, one or multiple json items. \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments.
 
 Input:
 {    
