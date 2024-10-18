@@ -1,0 +1,13 @@
+.mat-toolbar {
+  background: #714fa1;
+  margin: 0;
+  font-size: 16px;
+  padding: 0;
+  color: white;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.title {
+  padding-left: 16px;
+  font-size: 24px;
+}

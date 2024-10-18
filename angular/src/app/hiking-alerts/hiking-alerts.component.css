@@ -1,0 +1,26 @@
+.left {
+  height: calc(100vh - 64px);
+  width: 22%;
+  min-width: 250px;
+  float: left;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+.right {
+  height: calc(100vh - 64px);
+  width: 78%;
+  min-width: 300px;
+  float: left;
+  box-sizing: border-box;
+}
+/* To clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.container {
+  display: flex; /* Use flexbox layout */
+  width: 99%; /* Set a width for the container */
+  margin: 0 auto; /* Center the container */
+}
