@@ -1,7 +1,7 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Region;
-import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Region;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

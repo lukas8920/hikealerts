@@ -1,4 +1,4 @@
-package org.devbros.microsoft_hackathon.event_injection.entities;
+package org.devbros.microsoft_hackathon.event_handling.event_injection.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -15,6 +15,7 @@ import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +26,7 @@ import java.time.format.DateTimeParseException;
 @Setter
 @NoArgsConstructor
 @Table(name = "events")
-public class Event {
+public class Event implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
 
     @Id

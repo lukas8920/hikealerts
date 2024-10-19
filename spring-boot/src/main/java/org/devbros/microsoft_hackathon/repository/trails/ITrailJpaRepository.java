@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

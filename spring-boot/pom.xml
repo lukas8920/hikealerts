@@ -18,10 +18,12 @@
         <azure.queue.version>12.23.0</azure.queue.version>
         <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
+        <jedis.client.version>4.4.8</jedis.client.version>
         <jetty.version>12.0.12</jetty.version>
         <jts.version>1.20.0</jts.version>
         <lombok.version>1.18.28</lombok.version>
         <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
+        <redis.version>3.3.4</redis.version>
         <sqlserver.version>12.8.1.jre11</sqlserver.version>
     </properties>
 
@@ -50,6 +52,29 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
             <version>${jetty.version}</version>
+        </dependency>
+
+        <!-- Caching Library -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>${redis.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId> <!-- Or use lettuce if preferred -->
+            <version>${jedis.client.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.json</groupId>
+                    <artifactId>json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kstyrc</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>0.6</version>
         </dependency>
 
         <!-- Lombok -->

@@ -1,8 +1,8 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
-import org.devbros.microsoft_hackathon.event_injection.matcher.GeoMatcher;
-import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,7 @@
-package org.devbros.microsoft_hackathon.event_injection.entities;
+package org.devbros.microsoft_hackathon.event_handling.event_injection.entities;
 
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;

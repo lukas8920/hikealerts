@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.raw_events;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.RawEvent;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.RawEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

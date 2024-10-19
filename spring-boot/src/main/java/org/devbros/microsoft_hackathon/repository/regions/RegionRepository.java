@@ -1,8 +1,8 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
 import lombok.Getter;
-import org.devbros.microsoft_hackathon.event_injection.entities.Region;
-import org.devbros.microsoft_hackathon.event_injection.matcher.NameMatcher;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Region;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.devbros.microsoft_hackathon.util.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

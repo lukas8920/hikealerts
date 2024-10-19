@@ -1,8 +1,8 @@
-package org.devbros.microsoft_hackathon.event_injection.matcher;
+package org.devbros.microsoft_hackathon.event_handling.event_injection.matcher;
 
 import lombok.Getter;
 import org.apache.commons.text.similarity.LevenshteinDistance;
-import org.devbros.microsoft_hackathon.event_injection.entities.MatchProvider;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MatchProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

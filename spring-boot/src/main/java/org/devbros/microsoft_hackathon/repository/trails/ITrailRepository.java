@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.locationtech.jts.geom.Polygon;
 
 import java.util.List;

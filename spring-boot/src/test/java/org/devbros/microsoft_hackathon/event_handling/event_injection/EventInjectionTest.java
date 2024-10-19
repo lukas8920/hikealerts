@@ -1,9 +1,10 @@
-package org.devbros.microsoft_hackathon.event_injection;
+package org.devbros.microsoft_hackathon.event_handling.event_injection;
 
 import org.devbros.microsoft_hackathon.BadRequestException;
-import org.devbros.microsoft_hackathon.event_injection.countries.USInjector;
-import org.devbros.microsoft_hackathon.event_injection.entities.Message;
-import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.EventInjection;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.io.ParseException;

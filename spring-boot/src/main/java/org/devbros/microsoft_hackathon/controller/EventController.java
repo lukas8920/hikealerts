@@ -1,16 +1,15 @@
 package org.devbros.microsoft_hackathon.controller;
 
-import org.devbros.microsoft_hackathon.event_injection.IEventInjection;
-import org.devbros.microsoft_hackathon.event_injection.entities.Message;
-import org.devbros.microsoft_hackathon.event_injection.entities.OpenAiEvent;
+import org.devbros.microsoft_hackathon.event_handling.EventProviderService;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.IEventInjection;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvents;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,9 +19,11 @@ public class EventController {
     private static final Logger logger = LoggerFactory.getLogger(EventController.class.getName());
 
     private final IEventInjection iEventInjection;
+    private final EventProviderService eventProviderService;
 
     @Autowired
-    public EventController(IEventInjection iEventInjection){
+    public EventController(IEventInjection iEventInjection, EventProviderService eventProviderService){
+        this.eventProviderService = eventProviderService;
         this.iEventInjection = iEventInjection;
     }
 
@@ -31,5 +32,12 @@ public class EventController {
         logger.debug("Received request");
         List<Message> messages = this.iEventInjection.injectEvent(openAiEvents);
         return ResponseEntity.ok(messages);
+    }
+
+    @GetMapping("/pull")
+    public ResponseEntity<MapEvents> getEventData(@RequestParam int offset, @RequestParam int limit){
+        logger.info("Request event data - offset: " + offset + " - limit: " + limit);
+        MapEvents mapEvents = this.eventProviderService.pullData(offset, limit);
+        return ResponseEntity.ok(mapEvents);
     }
 }

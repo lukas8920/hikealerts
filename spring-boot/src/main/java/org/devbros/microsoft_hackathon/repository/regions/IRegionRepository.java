@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Region;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Region;
 
 import java.util.List;
 

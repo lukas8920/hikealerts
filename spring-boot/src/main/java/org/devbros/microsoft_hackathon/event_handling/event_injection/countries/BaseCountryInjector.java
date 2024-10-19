@@ -1,6 +1,6 @@
-package org.devbros.microsoft_hackathon.event_injection.countries;
+package org.devbros.microsoft_hackathon.event_handling.event_injection.countries;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.*;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.*;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -46,7 +46,7 @@ public abstract class BaseCountryInjector {
         if (events.isEmpty()){
             return false;
         }
-        this.iEventRepository.save(events);
+        events.forEach(this.iEventRepository::save);
         return true;
     }
 

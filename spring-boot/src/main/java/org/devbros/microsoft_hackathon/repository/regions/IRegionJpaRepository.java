@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.regions;
 
-import org.devbros.microsoft_hackathon.event_injection.entities.Region;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
