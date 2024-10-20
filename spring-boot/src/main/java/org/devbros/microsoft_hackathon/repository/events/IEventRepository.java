@@ -8,5 +8,5 @@ import java.util.List;
 public interface IEventRepository {
     void save(Event event);
     List<MapEvent> findEvents(int offset, int limit);
-    void deleteEventsNotInList(List<Long> idsToKeep, String country);
+    void deleteEventsNotInList(List<String> idsToKeep, String country);
 }

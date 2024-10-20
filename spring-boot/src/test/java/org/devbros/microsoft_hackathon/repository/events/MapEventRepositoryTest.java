@@ -126,7 +126,7 @@ public class MapEventRepositoryTest {
     @Disabled
     public void testThatDeletingWorks(){
         EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
-        List<Long> ids = Arrays.asList(79L, 80L);
+        List<String> ids = Arrays.asList("79", "80");
 
         RawEvent rawEvent1 = new RawEvent();
         rawEvent1.setId(5L);

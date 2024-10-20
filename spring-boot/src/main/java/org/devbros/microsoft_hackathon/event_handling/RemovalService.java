@@ -53,6 +53,6 @@ public class RemovalService extends ScheduledService {
     @NoArgsConstructor
     class RemovalEntity {
         private String country;
-        private List<Long> ids;
+        private List<String> ids;
     }
 }

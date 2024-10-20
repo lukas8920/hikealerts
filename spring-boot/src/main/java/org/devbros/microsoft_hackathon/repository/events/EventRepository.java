@@ -86,10 +86,10 @@ public class EventRepository implements IEventRepository {
     }
 
     @Transactional
-    public void deleteEventsNotInList(List<Long> idsToKeep, String country) {
+    public void deleteEventsNotInList(List<String> idsToKeep, String country) {
         // get list of ids from sql database
         String listedIds = idsToKeep.stream()
-                .map(String::valueOf)   // Convert each Long to String
+                .map(id -> "'" + id + "'")  // Convert each Long to String
                 .collect(Collectors.joining(", ", "(", ")"));
         List<MapEvent> events = this.iEventJpaRepository.findIdByEventIdAndCountry(listedIds, country);
 
