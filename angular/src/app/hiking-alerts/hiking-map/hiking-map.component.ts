@@ -26,9 +26,14 @@ export class HikingMapComponent implements OnInit {
     this.initializeMap();
     this.fetchMarkers();
     this.updateVisibleMarkers();
+
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => {
       this.updateVisibleMarkers();
+    });
+    // Fetch the GeoJSON data and add it to the map
+    this.apiService.getGeoJsonLayer().subscribe((geoJsonData) => {
+      this.addGeoJsonLayer(geoJsonData);
     });
   }
 
@@ -64,6 +69,10 @@ export class HikingMapComponent implements OnInit {
       // Add the cluster group to the map
       this.map.addLayer(this.markerClusterGroup);
     }
+  }
+
+  addGeoJsonLayer(geoJsonData: any): void {
+    L.geoJSON(geoJsonData).addTo(this.map);
   }
 
   fetchMarkers(): void {

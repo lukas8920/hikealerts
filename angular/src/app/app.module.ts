@@ -9,6 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import {MatCardModule} from "@angular/material/card";
 import {MatChipsModule} from "@angular/material/chips";
 import {MatToolbarModule} from "@angular/material/toolbar";
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
     imports: [
         BrowserModule.withServerTransition({appId: 'serverApp'}),
         AppRoutingModule,
+        HttpClientModule,
         MatCardModule,
         MatChipsModule,
         MatToolbarModule
