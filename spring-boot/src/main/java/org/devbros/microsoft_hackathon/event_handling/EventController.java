@@ -1,7 +1,7 @@
 package org.devbros.microsoft_hackathon.event_handling;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.IEventInjection;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvents;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.slf4j.Logger;
@@ -34,9 +34,9 @@ public class EventController {
     }
 
     @GetMapping("/pull")
-    public ResponseEntity<MapEvents> getEventData(@RequestParam int offset, @RequestParam int limit){
+    public ResponseEntity<List<MapEvent>> getEventData(@RequestParam int offset, @RequestParam int limit){
         logger.info("Request event data - offset: " + offset + " - limit: " + limit);
-        MapEvents mapEvents = this.eventProviderService.pullData(offset, limit);
+        List<MapEvent> mapEvents = this.eventProviderService.pullData(offset, limit);
         return ResponseEntity.ok(mapEvents);
     }
 }

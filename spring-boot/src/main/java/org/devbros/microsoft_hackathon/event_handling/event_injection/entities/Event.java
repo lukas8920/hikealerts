@@ -1,6 +1,5 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +27,6 @@ import java.time.format.DateTimeParseException;
 @Table(name = "events")
 public class Event implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,9 +40,10 @@ public class Event implements Serializable {
     @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
     private Long trailId;
-    @JsonIgnore
     private String helperTrailName;
+    @Column(name = "mid_longitude_coordinate")
     private double midLongitudeCoordinate;
+    @Column(name = "mid_latitude_coordinate")
     private double midLatitudeCoordinate;
     private boolean displayMidCoordinate;
     private String title;

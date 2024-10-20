@@ -28,23 +28,23 @@ Param <Optional> Response Limit, Integer
 Response
 List<Alert> alerts
 
-/user/register
+/publisher/register
 POST
 Param User
 
-/user/modify
+/publisher/modify
 PUT
 Param User
 
-/user/delete
+/publisher/delete
 DELETE
 Param Name, String
 
-/user/approve
+/publisher/approve
 PUT
 Param Name, String
 
-/user/block
+/publisher/block
 PUT
 Param Name, String
 

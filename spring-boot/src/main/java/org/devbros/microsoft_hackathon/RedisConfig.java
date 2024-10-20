@@ -1,6 +1,6 @@
 package org.devbros.microsoft_hackathon;
 
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,8 +16,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Event> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Event> template = new RedisTemplate<>();
+    public RedisTemplate<String, MapEvent> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, MapEvent> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         return template;
     }

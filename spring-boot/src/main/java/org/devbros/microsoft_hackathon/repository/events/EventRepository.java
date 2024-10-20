@@ -1,11 +1,13 @@
 package org.devbros.microsoft_hackathon.repository.events;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import org.devbros.microsoft_hackathon.event_handling.MapEventMapper;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
+import org.devbros.microsoft_hackathon.publisher_management.entities.Publisher;
+import org.devbros.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,12 +27,16 @@ public class EventRepository implements IEventRepository {
 
     private final IEventJpaRepository iEventJpaRepository;
     private final IRawEventJpaRepository iRawEventJpaRepository;
-    private final RedisTemplate<String, Event> redisTemplate;
+    private final IPublisherRepository iPublisherRepository;
+    private final RedisTemplate<String, MapEvent> redisTemplate;
     private final EntityManager entityManager;
+    private final MapEventMapper mapEventMapper;
 
     @Autowired
-    public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, Event> redisTemplate,
-                           EntityManager entityManager, IRawEventJpaRepository iRawEventJpaRepository){
+    public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, MapEvent> redisTemplate, MapEventMapper mapEventMapper,
+                           EntityManager entityManager, IRawEventJpaRepository iRawEventJpaRepository, IPublisherRepository iPublisherRepository){
+        this.mapEventMapper = mapEventMapper;
+        this.iPublisherRepository = iPublisherRepository;
         this.iEventJpaRepository = iEventJpaRepository;
         this.redisTemplate = redisTemplate;
         this.entityManager = entityManager;
@@ -39,35 +45,40 @@ public class EventRepository implements IEventRepository {
 
     @Override
     public void save(Event event) {
-        this.iEventJpaRepository.save(event);
+        Publisher publisher = this.iPublisherRepository.findUserById(event.getPublisherId());
 
-        // Add to Redis
-        redisTemplate.opsForZSet().add(EVENTS_KEY, event, event.getId());
+        if (publisher != null){
+            this.iEventJpaRepository.save(event);
+
+            MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
+            // Add to Redis
+            redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
+        }
     }
 
     @Override
-    public List<Event> findEvents(int offset, int limit) {
+    public List<MapEvent> findEvents(int offset, int limit) {
         // Get events from Redis
-        Set<Event> events = redisTemplate.opsForZSet().range(EVENTS_KEY, offset, offset + limit - 1);
+        Set<MapEvent> mapEvents = redisTemplate.opsForZSet().range(EVENTS_KEY, offset, offset + limit - 1);
 
-        if (events == null || events.isEmpty()) {
+        if (mapEvents == null || mapEvents.isEmpty()) {
             // If not present in cache, fetch from the database
-            List<Event> fetchedEvents = this.findAllByOffsetAndLimit(offset, limit);
+            List<MapEvent> fetchedMapEvents = this.findAllByOffsetAndLimit(offset, limit);
 
             // Add events to Redis (using their IDs as scores)
-            for (Event event : fetchedEvents) {
-                redisTemplate.opsForZSet().add(EVENTS_KEY, event, event.getId()); // Assuming event.getId() returns a unique score
+            for (MapEvent mapEvent : fetchedMapEvents) {
+                redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId()); // Assuming event.getId() returns a unique score
             }
 
-            return fetchedEvents;
+            return fetchedMapEvents;
         }
 
-        return List.copyOf(events);
+        return List.copyOf(mapEvents);
     }
 
-    private List<Event> findAllByOffsetAndLimit(int offset, int limit) {
-        TypedQuery<Event> query = entityManager.createQuery(
-                "SELECT e FROM Event e WHERE e.id >= :offset ORDER BY e.id", Event.class);
+    private List<MapEvent> findAllByOffsetAndLimit(int offset, int limit) {
+        TypedQuery<MapEvent> query = entityManager.createQuery(
+                "SELECT e FROM MapEvent e JOIN Publisher p ON p.id = e.publisherId WHERE e.id >= :offset ORDER BY e.id", MapEvent.class);
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
 
@@ -80,21 +91,21 @@ public class EventRepository implements IEventRepository {
         String listedIds = idsToKeep.stream()
                 .map(String::valueOf)   // Convert each Long to String
                 .collect(Collectors.joining(", ", "(", ")"));
-        List<Event> events = this.iEventJpaRepository.findIdByEventIdAndCountry(listedIds, country);
+        List<MapEvent> events = this.iEventJpaRepository.findIdByEventIdAndCountry(listedIds, country);
 
         // Convert List to Set for faster lookup
-        Set<Long> idsToKeepSet = events.stream().map(Event::getId).collect(Collectors.toSet());
-        Set<Event> eventsToDelete = new HashSet<>(); // To collect keys to delete
+        Set<Long> idsToKeepSet = events.stream().map(MapEvent::getId).collect(Collectors.toSet());
+        Set<MapEvent> eventsToDelete = new HashSet<>(); // To collect keys to delete
 
         // Use RedisTemplate for scanning the sorted set
-        Cursor<ZSetOperations.TypedTuple<Event>> cursor = redisTemplate.opsForZSet().scan(
+        Cursor<ZSetOperations.TypedTuple<MapEvent>> cursor = redisTemplate.opsForZSet().scan(
                 EVENTS_KEY,
                 ScanOptions.scanOptions().match("*").count(1000).build()
         );
 
         while (cursor.hasNext()) {
-            ZSetOperations.TypedTuple<Event> tuple = cursor.next();
-            Event element = tuple.getValue(); // Get the member (ID as String)
+            ZSetOperations.TypedTuple<MapEvent> tuple = cursor.next();
+            MapEvent element = tuple.getValue(); // Get the member (ID as String)
             if (element != null){
                 long id = element.getId(); // Parse the ID
 
@@ -116,10 +127,5 @@ public class EventRepository implements IEventRepository {
         if (!eventsToDelete.isEmpty()) {
             redisTemplate.opsForZSet().remove(EVENTS_KEY, eventsToDelete.toArray());
         }
-    }
-
-    @Override
-    public Long totalNumberOfEvents() {
-        return this.redisTemplate.opsForZSet().size(EVENTS_KEY);
     }
 }

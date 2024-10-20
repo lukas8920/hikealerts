@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 @DataJpaTest
 @ActiveProfiles("mock")
-public class RawEventRepositoryTest {
+public class RawMapEventRepositoryTest {
     @Autowired
     private IRawEventJpaRepository jpaRepository;
 
