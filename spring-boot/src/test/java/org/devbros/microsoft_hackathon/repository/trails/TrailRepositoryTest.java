@@ -1,5 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
+import jakarta.persistence.EntityManager;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
@@ -33,6 +34,8 @@ import static org.mockito.Mockito.*;
 public class TrailRepositoryTest {
     @Autowired
     private ITrailJpaRepository iTrailJpaRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     private TrailRepository trailRepository;
     private WKBReader wkbReader;
@@ -44,7 +47,7 @@ public class TrailRepositoryTest {
         this.wkbReader = new WKBReader();
         this.geoMatcher = mock(GeoMatcher.class);
         this.nameMatcher = mock(NameMatcher.class);
-        this.trailRepository = new TrailRepository(this.iTrailJpaRepository, this.geoMatcher, this.nameMatcher);
+        this.trailRepository = new TrailRepository(this.iTrailJpaRepository, this.geoMatcher, this.nameMatcher, this.entityManager);
     }
 
     @Test
@@ -132,5 +135,37 @@ public class TrailRepositoryTest {
         iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry());
         iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail2.getTrailId(), trail2.getCountry());
         iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail3.getTrailId(), trail3.getCountry());
+    }
+
+    @Test
+    @Disabled
+    //todo run test
+    public void testFetchingTrailsInLimits(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        WKBWriter wkbWriter = new WKBWriter();
+        Coordinate[] coordinates = new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2)};
+        CoordinateSequence coordinateSequence = new CoordinateArraySequence(coordinates);
+        LineString line = new LineString(coordinateSequence, geometryFactory);
+
+        Trail trail1 = new Trail();
+        trail1.setTrailId(55555L);
+        trail1.setCoordinates(wkbWriter.write(line));
+        trail1.setUnitcode("abc");
+        trail1.setCountry("ZZ");
+        Trail trail2 = new Trail();
+        trail2.setTrailId(66666L);
+        trail2.setUnitcode("cba");
+        trail2.setCountry("ZZ");
+        trail2.setCoordinates(wkbWriter.write(line));
+
+        this.iTrailJpaRepository.save(trail1);
+        this.iTrailJpaRepository.save(trail2);
+
+        List<Trail> trails = this.trailRepository.fetchTrails(0, 1);
+
+        assertThat(trails.size(), is(1));
+
+        iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry());
+        iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail2.getTrailId(), trail2.getCountry());
     }
 }

@@ -1,40 +1,27 @@
-package org.devbros.microsoft_hackathon.event_handling;
+package org.devbros.microsoft_hackathon.util;
 
 import com.azure.storage.queue.QueueClient;
 import com.azure.storage.queue.models.QueueMessageItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ScheduledService {
+public abstract class ScheduledService extends BaseScheduler {
     protected final QueueClient queueClient;
     protected final ObjectMapper objectMapper;
-
-    protected ExecutorService executorService;
-    protected volatile boolean running = true;
 
     public ScheduledService(QueueClient queueClient){
         this.queueClient = queueClient;
         this.objectMapper = new ObjectMapper();
     }
 
-    @PostConstruct
-    public void init() {
-        // Start the queue listener in a separate thread
-        executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(this::listenToQueue);
-    }
-
     protected abstract Logger getLogger();
 
     protected abstract void processMessage(String messageBody);
 
-    private void listenToQueue() {
+    @Override
+    protected void runProcedure(){
         while (running && !Thread.currentThread().isInterrupted()) {
             QueueMessageItem message = queueClient.receiveMessage();
             if (message != null) {
@@ -58,22 +45,5 @@ public abstract class ScheduledService {
                 }
             }
         }
-    }
-
-    @PreDestroy
-    public void shutdown() {
-        running = false; // Signal the listener to stop running
-        executorService.shutdown(); // Initiate an orderly shutdown of the ExecutorService
-
-        try {
-            if (!executorService.awaitTermination(30, TimeUnit.SECONDS)) {
-                executorService.shutdownNow(); // Forcefully shut down if tasks don't finish in time
-            }
-        } catch (InterruptedException e) {
-            executorService.shutdownNow(); // Handle any interruption during shutdown
-            Thread.currentThread().interrupt();
-        }
-
-        getLogger().info("Queue listener service has been gracefully shut down.");
     }
 }

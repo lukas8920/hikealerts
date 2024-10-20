@@ -24,8 +24,7 @@ public class EventRepository implements IEventRepository {
     private final IEventJpaRepository iEventJpaRepository;
     private final IRawEventJpaRepository iRawEventJpaRepository;
     private final RedisTemplate<String, Event> redisTemplate;
-
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Autowired
     public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, Event> redisTemplate,

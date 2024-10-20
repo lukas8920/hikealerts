@@ -18,6 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain constantTokenSecurityFilterChain(HttpSecurity http, @Qualifier("bearerToken") String bearerToken) throws Exception {
         http
                 .securityMatcher("/v1/events/inject")  // Apply this filter chain only to /api/constant-token/** endpoints
+                .securityMatcher("/v1/events/pull")
                 .addFilterBefore(new ConstantBearerTokenFilter(bearerToken), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> {

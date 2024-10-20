@@ -1,6 +1,5 @@
-package org.devbros.microsoft_hackathon.controller;
+package org.devbros.microsoft_hackathon.event_handling;
 
-import org.devbros.microsoft_hackathon.event_handling.EventProviderService;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.IEventInjection;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvents;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
