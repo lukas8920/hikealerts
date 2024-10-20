@@ -139,7 +139,6 @@ public class TrailRepositoryTest {
 
     @Test
     @Disabled
-    //todo run test
     public void testFetchingTrailsInLimits(){
         GeometryFactory geometryFactory = new GeometryFactory();
         WKBWriter wkbWriter = new WKBWriter();
@@ -158,8 +157,8 @@ public class TrailRepositoryTest {
         trail2.setCountry("ZZ");
         trail2.setCoordinates(wkbWriter.write(line));
 
-        this.iTrailJpaRepository.save(trail1);
-        this.iTrailJpaRepository.save(trail2);
+        iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), trail1.getCoordinates());
+        iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());
 
         List<Trail> trails = this.trailRepository.fetchTrails(0, 1);
 

@@ -2,7 +2,9 @@ package org.devbros.microsoft_hackathon.repository.events;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
@@ -64,10 +66,10 @@ public class EventRepository implements IEventRepository {
     }
 
     private List<Event> findAllByOffsetAndLimit(int offset, int limit) {
-        String sql = "SELECT TOP :limit * FROM events WHERE id >= :offset";
-        Query query = entityManager.createNativeQuery(sql, Event.class);
-        query.setParameter("limit", limit);
+        TypedQuery<Event> query = entityManager.createQuery(
+                "SELECT e FROM Event e WHERE e.id >= :offset ORDER BY e.id", Event.class);
         query.setParameter("offset", offset);
+        query.setMaxResults(limit);
 
         return query.getResultList();
     }

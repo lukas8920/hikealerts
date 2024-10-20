@@ -2,6 +2,7 @@ package org.devbros.microsoft_hackathon.repository.trails;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
@@ -97,10 +98,10 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public List<Trail> fetchTrails(int offset, int limit) {
-        String sql = "SELECT TOP :limit * FROM geodata_trails WHERE id >= :offset";
-        Query query = entityManager.createNativeQuery(sql, Trail.class);
-        query.setParameter("limit", limit);
+        TypedQuery<Trail> query = entityManager.createQuery(
+                "SELECT g FROM Trail g WHERE g.id >= :offset ORDER BY g.id", Trail.class);
         query.setParameter("offset", offset);
+        query.setMaxResults(limit);
 
         return query.getResultList();
     }
