@@ -111,15 +111,22 @@ if len(resultlist) > 0:
         # Convert the dictionary to a JSON string
         json_string = json.dumps(message_dict)
 
-        # openai connection details
-        conn = http.client.HTTPSConnection("eventopenai.openai.azure.com")
-        openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'openai-api-key')
+        # gpt-4 model
+        #conn = http.client.HTTPSConnection("eventopenai.openai.azure.com")
+        #openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'openai-api-key')
+        # gpt-3 model
+        conn = http.client.HTTPSConnection("https://hikingai.openai.azure.com")
+        openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'hikingai-api-key')
+
         # Define headers
         headers = {
             "api-key": openai_api_key,
             "Content-Type": "application/json"
         }
-        url = "/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
+        
+        #url = "/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
+        # gpt-3 url
+        url = "/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-05-01-preview"
 
         conn.request("POST", url, headers=headers, body=json_string)
 

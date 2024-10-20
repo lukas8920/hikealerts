@@ -19,6 +19,7 @@
 import http.client
 import json
 from pyspark.sql import SparkSession
+from azure.storage.queue import QueueClient
 
 jdbc_url = "jdbc:sqlserver://hiking-sql-server.database.windows.net:1433;database=hiking-sql-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
 sql_username = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-username')
@@ -88,20 +89,20 @@ while True:
         break
 
 # Convert the list to a string with values separated by commas
-id_string = ', '.join(f"'{id}'" for id in id_list)
+#id_string = ', '.join(f"'{id}'" for id in id_list)
+json_ids = json.dumps(id_list)
 
-# remove entries not in id list
-statement = f"DELETE FROM dbo.raw_events WHERE event_id not in ({id_string}) AND country = 'US'"
-exec_statement = con.prepareCall(statement)
-exec_statement.execute()
-exec_statement.close()
-# delete also from final event list
-statement = f"DELETE FROM dbo.events WHERE event_id not in ({id_string}) AND country = 'US'"
-exec_statement = con.prepareCall(statement)
-exec_statement.execute()
-exec_statement.close()
+# Convert to json
+content = {
+    "country": "US",
+    "ids": json_ids
+}
 
-# Close the connection
+# Post to deleted-events queue
+connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
+queue_client = QueueClient.from_connection_string(connect_str, "deleted-events")
+queue_client.send_message(content)
+
 con.close()
 
 # METADATA ********************
