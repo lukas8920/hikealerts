@@ -28,7 +28,7 @@ jobs:
         run: echo "${{ secrets.DOCKER_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker image
-        run:
+        run: |
           docker buildx create --name mybuilder
           docker buildx use mybuilder
           cd spring-boot
