@@ -31,8 +31,7 @@ jobs:
         run: |
           docker buildx create --name mybuilder
           docker buildx use mybuilder
-          cd spring-boot
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.actor }}/hikealerts-springboot:latest .
+          docker buildx build --platform linux/amd64,linux/arm64 -f ./spring-boot/Dockerfile -t ghcr.io/${{ github.actor }}/hikealerts-springboot:latest ./spring-boot
 
 
       - name: Push Docker image
