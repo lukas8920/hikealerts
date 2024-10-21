@@ -11,8 +11,9 @@ public class CredentialService {
         String password = "";
         try {
             // Use a shell command to avoid GPG prompt if necessary
-            ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "pass show " + passName);
-            processBuilder.redirectErrorStream(true); // Combine stdout and stderr
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("docker", "exec", "hiking-alerts_gpg_agent_1", "pass", "show", passName);
+            processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
