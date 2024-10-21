@@ -1,5 +1,7 @@
 package org.devbros.microsoft_hackathon.security;
 
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
@@ -33,10 +35,20 @@ public class KeyVaultProdProvider {
     private String keystoreLocation;
 
     @Bean
-    public SecretClient createSecretClient() {
+    public SecretClient createSecretClient(CredentialService credentialService) {
+        String tenantId = credentialService.getPassword("keyvault/tenantid");
+        String clientId = credentialService.getPassword("keyvault/clientíd");
+        String password = credentialService.getPassword("keyvault/password");
+
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+                .tenantId(tenantId)
+                .clientId(clientId)
+                .clientSecret(password)
+                .build();
+
         return new SecretClientBuilder()
                 .vaultUrl(keyvaultUrl)
-                .credential(new DefaultAzureCredentialBuilder().build())
+                .credential(clientSecretCredential)
                 .buildClient();
     }
 
