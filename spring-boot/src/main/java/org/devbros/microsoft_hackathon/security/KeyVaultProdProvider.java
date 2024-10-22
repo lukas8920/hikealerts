@@ -41,6 +41,7 @@ public class KeyVaultProdProvider {
 
     @Bean
     public SecretClient createSecretClient(GpgService gpgService) throws IOException {
+        logger.info("Init secret client.");
         String tenantId = null;
         String clientId = null;
         String password = null;
@@ -50,10 +51,13 @@ public class KeyVaultProdProvider {
             Response<GpgSecret> clientIdResponse = gpgService.getSecret("keyvault/clientid").execute();
             Response<GpgSecret> passwordResponse = gpgService.getSecret("keyvault/password").execute();
 
+            logger.info("Received response messages from the gpg server.");
             if (tenantIdResponse.body() != null && clientIdResponse.body() != null && passwordResponse.body() != null) {
                 tenantId = tenantIdResponse.body().getPassword();
                 clientId = clientIdResponse.body().getPassword();
                 password = passwordResponse.body().getPassword();
+            } else {
+                logger.info("No response messages from gpg server.");
             }
         } catch (IOException e) {
             logger.error("Error while requesting secrets from GPG Server: " + e.getMessage());
