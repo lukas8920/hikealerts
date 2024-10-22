@@ -15,7 +15,7 @@ export class ApiService {
     let params = new HttpParams()
       .set('offset', offset.toString())
       .set('limit', limit.toString());
-    return this.http.get<any>("https://hiking-alerts_spring-boot-app_v1:8080/events/pull", {headers, params});
+    return this.http.get<any>("https://hiking-alerts_spring-boot-app_v1:8080/v1/events/pull", {headers, params});
   }
 
   getGeoJsonLayer(): Observable<any> {
