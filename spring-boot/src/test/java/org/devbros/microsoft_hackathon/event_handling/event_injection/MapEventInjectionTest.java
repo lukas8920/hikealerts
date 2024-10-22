@@ -1,7 +1,5 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection;
 
-import org.devbros.microsoft_hackathon.BadRequestException;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.EventInjection;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
@@ -25,7 +23,7 @@ public class MapEventInjectionTest {
     }
 
     @Test
-    public void testValidDateTimeFormats() throws BadRequestException, ParseException {
+    public void testValidDateTimeFormats() throws ParseException {
         EventInjection injection = spy(new EventInjection(null, null, null, null));
         USInjector usInjector = mock(USInjector.class);
 
@@ -99,7 +97,7 @@ public class MapEventInjectionTest {
     }
 
     @Test
-    public void testInvalidRegion() throws BadRequestException {
+    public void testInvalidRegion() {
         OpenAiEvent openAiEvent1 = new OpenAiEvent();
         openAiEvent1.setFromDate("12/05/2024 12:12:12");
         openAiEvent1.setToDate("12/05/2024");
