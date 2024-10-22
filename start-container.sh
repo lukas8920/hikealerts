@@ -7,4 +7,4 @@ docker exec -it hiking-alerts_gpg_agent_1 bash -c "pass show keyvault/password >
 
 echo "GPG key has been imported into the container."
 
-docker-compose -f docker-compose.yml up -d spring-boot-app nginx
+docker-compose -f docker-compose.yml up -d spring-boot-app nginx angular

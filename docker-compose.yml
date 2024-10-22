@@ -33,6 +33,11 @@ services:
     networks:
       - app-network
 
+  angular:
+    image: ghcr.io/lukas8920/hikealerts-angular:latest
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge

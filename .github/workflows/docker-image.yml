@@ -37,11 +37,9 @@ jobs:
 
       - name: Build Docker image
         run: |
-          cd angular
-          docker build -t ghcr.io/${{ github.actor }}/hikealerts-angular:latest .
-
-      - name: Push Docker Image
-        run: docker push ghcr.io/${{ github.actor }}/hikealerts-angular:latest
+          docker buildx create --name mybuilder
+          docker buildx use mybuilder
+          docker buildx build --platform linux/amd64,linux/arm64 -f ./angular/Dockerfile --push -t ghcr.io/${{ github.actor }}/hikealerts-angular:latest ./angular
 
   build-spring-boot:
     if: contains(github.event.head_commit.message, 'spring-boot') || github.event_name == 'push'
