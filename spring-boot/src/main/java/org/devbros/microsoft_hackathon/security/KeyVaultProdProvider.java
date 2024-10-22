@@ -32,11 +32,11 @@ public class KeyVaultProdProvider {
     private static final String keyStorePassword = "ssl-keystore-password";
     private static final String queueConnectionString= "queue-connection-string";
 
-    @Value("db.driver")
+    @Value("${db.driver}")
     private String dbDriver;
-    @Value("azure.keyvault.url")
+    @Value("${azure.keyvault.url}")
     private String keyvaultUrl;
-    @Value("server.keystore.location")
+    @Value("${server.keystore.location}")
     private String keystoreLocation;
 
     @Bean
