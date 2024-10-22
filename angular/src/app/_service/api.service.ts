@@ -13,8 +13,8 @@ export class ApiService {
 
   getEvents(offset: Number, limit: Number): Observable<Event[]> {
     let params = new HttpParams()
-      .set('offset', offset)
-      .set('limit', limit);
+      .set('offset', offset.toString())
+      .set('limit', limit.toString());
     return this.http.get<any>("v1/events/pull", {headers, params});
   }
 

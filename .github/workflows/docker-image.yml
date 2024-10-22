@@ -4,9 +4,47 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'spring-boot/**'   # Run jobs when changes are made in the spring-boot subdirectory
+      - 'angular/**'       # Run jobs when changes are made in the angular subdirectory
 
 jobs:
-  build:
+  build-angular:
+    if: contains(github.event.head_commit.message, 'angular') || github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+          uses: actions/setup-node@v2
+          with:
+            node-version: '18'  # Use the version that matches your app
+
+      - name: Install dependencies
+        run: |
+          cd angular
+          npm install
+
+      - name: Build Angular app
+        run: |
+          cd angular
+          npm run build --prod
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.DOCKER_SECRET }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          cd angular
+          docker build -t ghcr.io/${{ github.actor }}/hikealerts-angular:latest .
+
+      - name: Push Docker Image
+        run: docker push ghcr.io/${{ github.actor }}/hikealerts-angular:latest
+
+  build-spring-boot:
+    if: contains(github.event.head_commit.message, 'spring-boot') || github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +70,4 @@ jobs:
           docker buildx create --name mybuilder
           docker buildx use mybuilder
           docker buildx build --platform linux/amd64,linux/arm64 -f ./spring-boot/Dockerfile --push -t ghcr.io/${{ github.actor }}/hikealerts-springboot:latest ./spring-boot
+
