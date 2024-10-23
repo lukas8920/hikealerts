@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +18,7 @@ public class MapLayerController {
         this.mapLayerService = mapLayerService;
     }
 
+    @CrossOrigin("https://v220241074781291394.goodsrv.de")
     @GetMapping("/layer")
     public ResponseEntity<Resource> getJsonLayer() {
         Resource resource = this.mapLayerService.loadJsonLayer();

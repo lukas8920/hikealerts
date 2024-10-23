@@ -33,6 +33,7 @@ public class EventController {
         return ResponseEntity.ok(messages);
     }
 
+    @CrossOrigin(origins = "https://v220241074781291394.goodsrv.de")
     @GetMapping("/pull")
     public ResponseEntity<List<MapEvent>> getEventData(@RequestParam int offset, @RequestParam int limit){
         logger.info("Request event data - offset: " + offset + " - limit: " + limit);
