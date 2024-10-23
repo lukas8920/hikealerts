@@ -1,6 +1,7 @@
 package org.devbros.microsoft_hackathon;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -10,9 +11,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
 public class RedisConfig {
+    @Value("${spring.data.redis.host}")
+    private String redisHost;
+
     @Bean
     public RedisConnectionFactory lettuceConnectionFactory() {
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration("localhost", 6379));
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
     }
 
     @Bean
