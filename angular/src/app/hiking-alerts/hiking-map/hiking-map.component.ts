@@ -91,7 +91,7 @@ export class HikingMapComponent implements OnInit {
           const iconSize = new Point(36,36); // Set the desired size for the icon
           const customIcon = this.leaflet.divIcon({
             className: 'custom-marker', // Add a custom class for styling if needed
-            html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-size: 24px; color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
+            html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-weight: bold; font-size: 36px; display: flex; justify-content: center; align-items: center;  color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
             iconSize: iconSize,
             iconAnchor: [18, 18], // Anchor the icon to the center
           });
