@@ -18,6 +18,7 @@ export class HikingMapComponent implements OnInit {
   private loadedMarkers: Map<string, Event> = new Map<string, Event>(); // Track loaded markers
   private offset = 0; // Initial offset for chunking
   private limit = 100; // Number of markers to fetch per request
+  private leaflet = window.L;
 
   constructor(private apiService: ApiService, private sharedListService: SharedListService) {
   }
@@ -40,7 +41,7 @@ export class HikingMapComponent implements OnInit {
   // Initialize the map
   initializeMap(): void {
     if (!this.map){
-      this.map = L.map('map').setView([51.505, -0.09], 5); // Set initial center and zoom
+      this.map = this.leaflet.map('map').setView([51.505, -0.09], 5); // Set initial center and zoom
 
       // Add OpenStreetMap tile layer
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -51,7 +52,7 @@ export class HikingMapComponent implements OnInit {
 
 
       // Create the marker cluster group
-      this.markerClusterGroup = L.markerClusterGroup({
+      this.markerClusterGroup = this.leaflet.markerClusterGroup({
         showCoverageOnHover: false,
         iconCreateFunction: function(cluster) {
           var count = cluster.getChildCount(); // Get number of markers in the cluster
@@ -88,14 +89,14 @@ export class HikingMapComponent implements OnInit {
           this.loadedMarkers.set(markerKey, event); // Mark this marker as loaded
 
           const iconSize = new Point(36,36); // Set the desired size for the icon
-          const customIcon = L.divIcon({
+          const customIcon = this.leaflet.divIcon({
             className: 'custom-marker', // Add a custom class for styling if needed
             html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-size: 24px; color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
             iconSize: iconSize,
             iconAnchor: [18, 18], // Anchor the icon to the center
           });
 
-          const markerInstance = L.marker(L.latLng(event.lat, event.lng), {icon: customIcon})
+          const markerInstance = this.leaflet.marker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon})
             .addTo(this.markerClusterGroup);
           markerInstance.bindPopup(`${event.title}`);
 
@@ -135,6 +136,6 @@ export class HikingMapComponent implements OnInit {
   }
 
   zoomToMarker(lat: number, lng: number) {
-    this.map.setView(new L.LatLng(lat, lng), 15);
+    this.map.setView(new this.leaflet.LatLng(lat, lng), 15);
   }
 }

@@ -94,7 +94,7 @@ public abstract class BaseCountryInjector {
                     tmpEvent.calculateMidCoordinate(trail);
                     // then we assume that trails belong together
                     tmpEvent.setHelperTrailName(trail.getTrailname() + " / " + trail.getMaplabel());
-                    logger.info(tmpEvent.getHelperTrailName());
+                    logger.debug(tmpEvent.getHelperTrailName());
                     tmpEvent.setDisplayMidCoordinate(false);
                     events.add(tmpEvent);
                 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public class EventListenerService extends ScheduledService {
-    private static final Logger logger = LoggerFactory.getLogger(EventListenerService.class.getName());
+    private final Logger logger;
 
     private final IEventInjection iEventInjection;
 
@@ -26,6 +26,8 @@ public class EventListenerService extends ScheduledService {
                 .connectionString(queueConnectionString)
                 .queueName("openai-events")
                 .buildClient());
+
+        this.logger = LoggerFactory.getLogger(EventListenerService.class.getName());
 
         this.iEventInjection = iEventInjection;
     }

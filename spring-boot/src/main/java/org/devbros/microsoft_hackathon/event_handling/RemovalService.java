@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 public class RemovalService extends ScheduledService {
-    private static final Logger logger = LoggerFactory.getLogger(EventListenerService.class.getName());
+    private final Logger logger;
 
     private final IEventRepository iEventRepository;
 
@@ -27,6 +27,8 @@ public class RemovalService extends ScheduledService {
                 .connectionString(queueConnectionString)
                 .queueName("deleted-events")
                 .buildClient());
+
+        this.logger = LoggerFactory.getLogger(EventListenerService.class.getName());
 
         this.iEventRepository = iEventRepository;
     }

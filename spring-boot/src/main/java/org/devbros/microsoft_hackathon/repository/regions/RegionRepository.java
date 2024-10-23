@@ -38,8 +38,8 @@ public class RegionRepository implements IRegionRepository {
         TopMatchingHolder topMatchingHolder = new TopMatchingHolder();
 
         do {
-            logger.info("Next slice - size: " + slice.size());
-            logger.info(String.valueOf(offset));
+            logger.debug("Next slice - size: " + slice.size());
+            logger.debug(String.valueOf(offset));
 
             NameMatcher<Region> nameMatcher = new NameMatcher<>();
             // Process each entity
@@ -50,7 +50,7 @@ public class RegionRepository implements IRegionRepository {
 
                 Region topMatching = nameMatcher.getT();
                 if (topMatching != null){
-                    logger.info("Identified top matching.");
+                    logger.debug("Identified top matching.");
                     topMatchingHolder.setTopMatching(topMatching, nameMatcher.getMatchingScore());
                 }
             }));
