@@ -26,14 +26,16 @@ public abstract class ScheduledService extends BaseScheduler {
             getLogger().info("Query next message.");
             QueueMessageItem message = queueClient.receiveMessage();
             if (message != null) {
+                getLogger().info("Received Message with id: " + message.getMessageId());
                 // Process the message
                 String messageBody = message.getBody().toString();
                 messageBody = messageBody.replace("None", "null");
-                getLogger().info("Received message: " + messageBody);
+                getLogger().info(" - message: " + messageBody);
 
                 processMessage(messageBody);
 
                 // Delete the message from the queue after processing
+                getLogger().info("Delete message with id: " + message.getMessageId());
                 queueClient.deleteMessage(message.getMessageId(), message.getPopReceipt());
             } else {
                 // No message found, sleep for 5 minutes
