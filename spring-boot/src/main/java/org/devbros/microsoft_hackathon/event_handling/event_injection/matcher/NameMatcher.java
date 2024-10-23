@@ -75,7 +75,7 @@ public class NameMatcher<T extends MatchProvider> {
 
     // Function to calculate the Jaccard Similarity between two sets of words
     private double calculateJaccardSimilarity(String[] words1, String[] words2) {
-        if (words2.length < 4){
+        if (words2.length < 3 && words1.length < 3){
             return 0;
         }
 

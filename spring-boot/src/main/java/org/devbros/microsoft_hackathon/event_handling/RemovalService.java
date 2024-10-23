@@ -51,7 +51,7 @@ public class RemovalService extends ScheduledService {
     @Getter
     @Setter
     @NoArgsConstructor
-    class RemovalEntity {
+    public static class RemovalEntity {
         private String country;
         private List<String> ids;
     }
