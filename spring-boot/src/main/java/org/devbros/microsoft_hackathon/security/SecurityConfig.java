@@ -17,11 +17,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain constantTokenSecurityFilterChain(HttpSecurity http, @Qualifier("bearerToken") String bearerToken) throws Exception {
         http
-                .securityMatcher("/v1/events/inject")  // Apply this filter chain only to /api/constant-token/** endpoints
-                .securityMatcher("/v1/events/pull")
-                .addFilterBefore(new ConstantBearerTokenFilter(bearerToken), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
+                .securityMatcher("/v1/events/inject")  // Apply this filter chain only to /api/constant-token/** endpoints
+                .addFilterBefore(new ConstantBearerTokenFilter(bearerToken), UsernamePasswordAuthenticationFilter.class)
+
                 .authorizeHttpRequests(authz -> {
+                    authz.requestMatchers("/v1/events/pull").permitAll();
+                    authz.requestMatchers("/v1/map/layer").permitAll();
                     authz.anyRequest().authenticated();
                 });
 
