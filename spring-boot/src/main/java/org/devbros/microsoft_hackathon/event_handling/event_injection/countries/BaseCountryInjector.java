@@ -46,9 +46,9 @@ public abstract class BaseCountryInjector {
         if (events.isEmpty()){
             return false;
         }
-        logger.info("Save events to db.");
+
         events.forEach(this.iEventRepository::save);
-        logger.info("Saved " + events.size() + " to db.");
+        logger.info("Saved event to db.");
         return true;
     }
 

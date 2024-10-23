@@ -51,11 +51,12 @@ public class EventRepository implements IEventRepository {
         Publisher publisher = this.iPublisherRepository.findUserById(event.getPublisherId());
 
         if (publisher != null){
-            this.iEventJpaRepository.save(event);
+            this.iEventJpaRepository.saveEvent(event.getEvent_id(), event.getRegion(), event.getCountry(), event.getCreateDatetime(), event.getFromDatetime(), event.getToDatetime(),
+                    event.getTrailId(), event.getHelperTrailName(), event.getMidLongitudeCoordinate(), event.getMidLatitudeCoordinate(), event.isDisplayMidCoordinate(), event.getTitle(),
+                    event.getDescription(), event.getPublisherId(), event.getUrl());
 
             MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
             // Add to Redis
-            logger.info("Persist event to redis db.");
             redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
         }
     }
