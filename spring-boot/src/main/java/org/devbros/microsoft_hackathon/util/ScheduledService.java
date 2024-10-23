@@ -23,6 +23,7 @@ public abstract class ScheduledService extends BaseScheduler {
     @Override
     protected void runProcedure(){
         while (running && !Thread.currentThread().isInterrupted()) {
+            getLogger().info("Query next message.");
             QueueMessageItem message = queueClient.receiveMessage();
             if (message != null) {
                 // Process the message
