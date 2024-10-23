@@ -53,7 +53,7 @@ public class TrailRepository implements ITrailRepository {
             slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
         } while (slice != null && !slice.isEmpty());
 
-
+        logger.info("Identified matching trail.");
         return this.nameMatcher.getT();
     }
 
