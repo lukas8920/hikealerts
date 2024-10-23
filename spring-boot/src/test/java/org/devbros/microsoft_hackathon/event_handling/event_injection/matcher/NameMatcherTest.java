@@ -38,7 +38,7 @@ public class NameMatcherTest {
         NameMatcher<Trail> nameMatcher = new NameMatcher<>();
 
         String searchString = "New Hestigae Trails";
-        String targetString1 = "New Agis Camps";
+        String targetString1 = "New Agis Camp";
         String targetString2 = "Carantee Trails";
         String targetString3 = "Kapache Trail";
 
