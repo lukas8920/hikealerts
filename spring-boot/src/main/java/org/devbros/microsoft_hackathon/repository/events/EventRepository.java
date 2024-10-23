@@ -82,12 +82,12 @@ public class EventRepository implements IEventRepository {
     }
 
     private List<MapEvent> findAllByOffsetAndLimit(int offset, int limit) {
-        TypedQuery<MapEvent> query = entityManager.createQuery(
-                "SELECT e FROM MapEvent e JOIN Publisher p ON p.id = e.publisherId WHERE e.id >= :offset ORDER BY e.id", MapEvent.class);
+        TypedQuery<Object[]> query = entityManager.createQuery(
+                "SELECT e.id, e.title, e.description, p.name as publisher, p.status, e.createDate, e.lat, e.lng, e.event_id, e.country, e.publisherId FROM MapEvent e JOIN Publisher p ON p.id = e.publisherId WHERE e.id >= :offset ORDER BY e.id", Object[].class);
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
 
-        return query.getResultList();
+        return query.getResultList().stream().map(this.mapEventMapper::map).collect(Collectors.toList());
     }
 
     @Transactional

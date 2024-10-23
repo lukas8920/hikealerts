@@ -29,6 +29,22 @@ public class MapEventMapper {
         return mapEvent;
     }
 
+    public MapEvent map(Object[] object) {
+        MapEvent mapEvent = new MapEvent();
+        mapEvent.setId((Long) object[0]);
+        mapEvent.setTitle((String) object[1]);
+        mapEvent.setDescription((String) object[2]);
+        mapEvent.setPublisher((String) object[3]);
+        mapEvent.setStatus(mapStatus((Status) object[4]));
+        mapEvent.setCreateDate((String) object[5]);
+        mapEvent.setLat((double) object[6]);
+        mapEvent.setLng((double) object[7]);
+        mapEvent.setEvent_id((String) object[8]);
+        mapEvent.setCountry((String) object[9]);
+        mapEvent.setPublisherId((Long) object[10]);
+        return mapEvent;
+    }
+
     String mapStatus(Status status){
         if (Status.OFFICIAL.equals(status)){
             return "Official";
