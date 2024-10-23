@@ -1,13 +1,15 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.matcher;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
+/**
+ *
+ */
 public class NameMatcherTest {
     @Test
     public void testStringMatching(){
@@ -36,7 +38,7 @@ public class NameMatcherTest {
         NameMatcher<Trail> nameMatcher = new NameMatcher<>();
 
         String searchString = "New Hestigae Trails";
-        String targetString1 = "New Trails";
+        String targetString1 = "New Agis Camps";
         String targetString2 = "Carantee Trails";
         String targetString3 = "Kapache Trail";
 
