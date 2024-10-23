@@ -18,7 +18,7 @@ public class MapLayerController {
         this.mapLayerService = mapLayerService;
     }
 
-    @CrossOrigin("https://v220241074781291394.goodsrv.de")
+    @CrossOrigin
     @GetMapping("/layer")
     public ResponseEntity<Resource> getJsonLayer() {
         Resource resource = this.mapLayerService.loadJsonLayer();
