@@ -8,6 +8,8 @@ import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.M
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
 import org.devbros.microsoft_hackathon.publisher_management.entities.Publisher;
 import org.devbros.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class EventRepository implements IEventRepository {
+    private static final Logger logger = LoggerFactory.getLogger(EventRepository.class.getName());
     private static final String EVENTS_KEY = "events";
 
     private final IEventJpaRepository iEventJpaRepository;
@@ -52,6 +55,7 @@ public class EventRepository implements IEventRepository {
 
             MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
             // Add to Redis
+            logger.info("Persist event to redis db.");
             redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
         }
     }
