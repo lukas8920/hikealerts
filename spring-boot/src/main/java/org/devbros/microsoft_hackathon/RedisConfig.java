@@ -1,5 +1,6 @@
 package org.devbros.microsoft_hackathon;
 
+import org.devbros.microsoft_hackathon.event_handling.MapEventSerializer;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ public class RedisConfig {
         RedisTemplate<String, MapEvent> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericToStringSerializer<>(Object.class));
+        template.setValueSerializer(new MapEventSerializer());
         return template;
     }
 }
