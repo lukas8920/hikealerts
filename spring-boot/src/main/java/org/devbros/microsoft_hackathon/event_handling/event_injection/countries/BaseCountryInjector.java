@@ -101,10 +101,12 @@ public abstract class BaseCountryInjector {
             }
         }
         //set Display Mid Coordinate flag for one part of the trail
+        logger.info("Identify mid coordinates for trails " + event.getEvent_id());
         if (events.size() > 0){
             Map<String, Event> middleEvents = selectMiddleTrails(events);
             middleEvents.values().forEach(tmpEvent -> tmpEvent.setDisplayMidCoordinate(true));
         }
+        logger.info("Identified mid coordinates.");
         return events;
     }
 
