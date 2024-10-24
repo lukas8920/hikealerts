@@ -20,7 +20,10 @@ public interface IEventJpaRepository extends JpaRepository<Event, Long> {
     void deleteByIdAndCountry(@Param("id") String event_id, @Param("country") String country);
 
     @Query(value = "SELECT id, title, description, create_date_time, mid_latitude_coordinate, mid_longitude_coordinate, url, event_id, country FROM events WHERE event_id IN (:ids) AND country = :country", nativeQuery = true)
-    List<MapEvent> findIdByEventIdAndCountry(@Param("ids") String ids, @Param("country") String country);
+    List<MapEvent> findByEventIdsAndCountry(@Param("ids") String ids, @Param("country") String country);
+
+    @Query(value = "SELECT * FROM events WHERE event_id = :id AND country = :country", nativeQuery = true)
+    Event findFirstByEventIdAndCountry(@Param("id") String id, @Param("country") String country);
 
     @Modifying
     @Transactional

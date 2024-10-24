@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin
 @RestController("/v1/map")
 public class MapLayerController {
     private final MapLayerService mapLayerService;
@@ -19,6 +18,7 @@ public class MapLayerController {
         this.mapLayerService = mapLayerService;
     }
 
+    @CrossOrigin
     @GetMapping("/layer")
     public ResponseEntity<Resource> getJsonLayer() {
         Resource resource = this.mapLayerService.loadJsonLayer();

@@ -49,14 +49,20 @@ public class EventRepository implements IEventRepository {
     @Override
     public void save(Event event) {
         Publisher publisher = this.iPublisherRepository.findUserById(event.getPublisherId());
+        Event oldEvent = this.iEventJpaRepository.findFirstByEventIdAndCountry(event.getEvent_id(), event.getCountry());
 
         if (publisher != null){
-            this.iEventJpaRepository.saveEvent(event.getEvent_id(), event.getRegion(), event.getCountry(), event.getCreateDatetime(), event.getFromDatetime(), event.getToDatetime(),
-                    event.getTrailId(), event.getHelperTrailName(), event.getMidLongitudeCoordinate(), event.getMidLatitudeCoordinate(), event.isDisplayMidCoordinate(), event.getTitle(),
-                    event.getDescription(), event.getPublisherId(), event.getUrl());
 
+            if (oldEvent != null){
+                MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
+                logger.info("Update db for " + event.getEvent_id());
+                redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
+                this.iEventJpaRepository.deleteById(event.getId());
+            }
             MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
             // Add to Redis
+            logger.info("Add dataset to db and redis.");
+            this.iEventJpaRepository.save(event);
             redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
         }
     }
@@ -96,7 +102,7 @@ public class EventRepository implements IEventRepository {
         String listedIds = idsToKeep.stream()
                 .map(id -> "'" + id + "'")  // Convert each Long to String
                 .collect(Collectors.joining(", ", "(", ")"));
-        List<MapEvent> events = this.iEventJpaRepository.findIdByEventIdAndCountry(listedIds, country);
+        List<MapEvent> events = this.iEventJpaRepository.findByEventIdsAndCountry(listedIds, country);
 
         // Convert List to Set for faster lookup
         Set<Long> idsToKeepSet = events.stream().map(MapEvent::getId).collect(Collectors.toSet());
@@ -122,15 +128,15 @@ public class EventRepository implements IEventRepository {
             }
         }
 
+        // Remove keys that are not in the provided list
+        if (!eventsToDelete.isEmpty()) {
+            redisTemplate.opsForZSet().remove(EVENTS_KEY, eventsToDelete.toArray());
+        }
+
         // delete ids in raw events and events
         eventsToDelete.forEach(event -> {
             this.iEventJpaRepository.deleteById(event.getId());
             this.iRawEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
         });
-
-        // Remove keys that are not in the provided list
-        if (!eventsToDelete.isEmpty()) {
-            redisTemplate.opsForZSet().remove(EVENTS_KEY, eventsToDelete.toArray());
-        }
     }
 }
