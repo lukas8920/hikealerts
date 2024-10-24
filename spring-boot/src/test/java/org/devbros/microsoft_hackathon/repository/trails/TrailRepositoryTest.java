@@ -1,9 +1,12 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
 import jakarta.persistence.EntityManager;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
+import org.devbros.microsoft_hackathon.repository.events.IEventJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -34,6 +37,8 @@ import static org.mockito.Mockito.*;
 public class TrailRepositoryTest {
     @Autowired
     private ITrailJpaRepository iTrailJpaRepository;
+    @Autowired
+    private IEventJpaRepository iEventJpaRepository;
     @Autowired
     private EntityManager entityManager;
 
@@ -160,11 +165,25 @@ public class TrailRepositoryTest {
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), trail1.getCoordinates());
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());
 
-        List<Trail> trails = this.trailRepository.fetchTrails(0, 1);
+        long id_1 = iTrailJpaRepository.findByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry()).getId();
 
-        assertThat(trails.size(), is(1));
+        Event event = new Event();
+        event.setTrailId(id_1);
+        event.setCountry("ZZ");
+        event.setEvent_id("88888");
+
+        iEventJpaRepository.save(event);
+        //System.out.println("saved all data");
+
+        List<Trail> trails = this.trailRepository.fetchTrails(0, 3);
+        //System.out.println("fetched data");
+
+        //trails.forEach(t -> System.out.println(t.getTrailname()));
+        assertThat(trails.size(), is(3));
 
         iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry());
         iTrailJpaRepository.deleteAllByTrailIdAndCountry(trail2.getTrailId(), trail2.getCountry());
+
+        this.iEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
     }
 }

@@ -26,6 +26,7 @@ public class MapEventMapper {
         mapEvent.setLng(event.getMidLongitudeCoordinate());
         mapEvent.setEvent_id(event.getEvent_id());
         mapEvent.setCountry(event.getCountry());
+        mapEvent.setUrl(event.getUrl());
         return mapEvent;
     }
 

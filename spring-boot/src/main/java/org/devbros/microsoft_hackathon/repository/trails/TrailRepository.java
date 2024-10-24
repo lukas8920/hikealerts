@@ -99,7 +99,7 @@ public class TrailRepository implements ITrailRepository {
     @Override
     public List<Trail> fetchTrails(int offset, int limit) {
         TypedQuery<Trail> query = entityManager.createQuery(
-                "SELECT g FROM Trail g WHERE g.id >= :offset ORDER BY g.id", Trail.class);
+                "SELECT g FROM Trail g INNER JOIN Event e ON e.trailId = g.id WHERE g.id >= :offset ORDER BY g.id", Trail.class);
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
 
