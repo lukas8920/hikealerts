@@ -63,7 +63,11 @@ public class EventRepository implements IEventRepository {
             // Add to Redis
             logger.info("Add dataset to db and redis.");
             this.iEventJpaRepository.save(event);
-            redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
+            try {
+                redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
