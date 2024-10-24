@@ -52,18 +52,18 @@ public class EventRepository implements IEventRepository {
         Event oldEvent = this.iEventJpaRepository.findFirstByEventIdAndCountry(event.getEvent_id(), event.getCountry());
 
         if (publisher != null){
-
-            if (oldEvent != null){
-                MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
-                logger.info("Update db for " + event.getEvent_id());
-                redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
-                this.iEventJpaRepository.deleteById(event.getId());
-            }
-            MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
-            // Add to Redis
-            logger.info("Add dataset to db and redis.");
-            this.iEventJpaRepository.save(event);
             try {
+                if (oldEvent != null){
+                    MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
+                    logger.info("Update db for " + event.getEvent_id());
+                    redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
+                    this.iEventJpaRepository.deleteById(event.getId());
+                }
+                MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
+                // Add to Redis
+                logger.info("Add dataset to db and redis.");
+                this.iEventJpaRepository.save(event);
+
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
             } catch (Exception e){
                 e.printStackTrace();
