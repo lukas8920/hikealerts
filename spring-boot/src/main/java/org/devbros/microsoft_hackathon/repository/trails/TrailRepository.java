@@ -39,10 +39,12 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
-        logger.info("Search trail by trail name, unit code and country");
+        logger.info("Search trail by trail name, unit code and country: " + searchName + ", " + unitCode + ", " + country);
+        logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
 
         List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
+        logger.info("Trails in region: " + slice.size());
 
         do {
             slice.forEach(trail -> {
@@ -53,7 +55,7 @@ public class TrailRepository implements ITrailRepository {
             slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
         } while (slice != null && !slice.isEmpty());
 
-        logger.info("Identified matching trail.");
+        logger.info("Identified matching trail: " + this.nameMatcher.getT());
         return this.nameMatcher.getT();
     }
 
