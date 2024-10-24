@@ -20,6 +20,11 @@ public class NameMatcher<T extends MatchProvider> {
     private T t;
     private double matchingScore = MATCHING_THRESHOLD;
 
+    public void resetNameMatcher(){
+        this.t = null;
+        this.matchingScore = MATCHING_THRESHOLD;
+    }
+
     public void match(String searchName, T t) {
         if (searchName == null || searchName.length() < 1){
             return;

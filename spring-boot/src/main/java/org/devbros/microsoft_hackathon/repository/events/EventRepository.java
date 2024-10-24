@@ -57,7 +57,7 @@ public class EventRepository implements IEventRepository {
                     MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
                     logger.info("Update db for " + event.getEvent_id());
                     redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
-                    this.iEventJpaRepository.deleteById(event.getId());
+                    this.iEventJpaRepository.deleteById(oldEvent.getId());
                 }
                 MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
                 // Add to Redis
