@@ -55,6 +55,7 @@ public class USInjectorTest {
         openAiEvent.setCountry("US");
         openAiEvent.setTrailName("dummy");
         Trail trail = new Trail();
+        trail.setTrailId(1L);
         trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);
@@ -147,8 +148,8 @@ public class USInjectorTest {
 
         List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
 
-        assertThat(events.get(0).getMidLatitudeCoordinate(), is(1));
-        assertThat(events.get(0).getMidLongitudeCoordinate(), is(1));
+        assertThat(events.get(0).getMidLatitudeCoordinate(), is(1.0));
+        assertThat(events.get(0).getMidLongitudeCoordinate(), is(1.0));
         assertThat(events.get(0).getTrailIds().size(), is(1));
     }
 }
