@@ -69,8 +69,7 @@ public abstract class BaseCountryInjector {
             //find best matching trail
             Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
             if (trail != null){
-                event.setTrailId(trail.getId());
-                event.setDisplayMidCoordinate(true);
+                event.setTrailIds(List.of(trail.getTrailId()));
                 event.calculateMidCoordinate(trail);
                 events.add(event);
             }
@@ -88,42 +87,19 @@ public abstract class BaseCountryInjector {
                 WKBReader wkbReader = new WKBReader();
                 Polygon polygon = (Polygon) wkbReader.read(region.getPolygon());
                 List<Trail> trails = this.findTrailsInDatabaseWithRegion(polygon, region);
-                for (Trail trail: trails){
+                if (!trails.isEmpty()){
                     Event tmpEvent = new Event(event);
-                    tmpEvent.setTrailId(trail.getId());
-                    tmpEvent.calculateMidCoordinate(trail);
-                    // then we assume that trails belong together
-                    tmpEvent.setHelperTrailName(trail.getTrailname() + " / " + trail.getMaplabel());
-                    logger.debug(tmpEvent.getHelperTrailName());
-                    tmpEvent.setDisplayMidCoordinate(false);
+                    if (trails.size() > 1) {
+                        tmpEvent.calculateMidCoordinate(trails.stream().map(Trail::getCoordinates).collect(Collectors.toList()));
+                    } else {
+                        tmpEvent.calculateMidCoordinate(trails.get(0));
+                    }
+                    tmpEvent.setTrailIds(trails.stream().map(Trail::getTrailId).collect(Collectors.toList()));
                     events.add(tmpEvent);
                 }
             }
         }
-        //set Display Mid Coordinate flag for one part of the trail
-        logger.info("Identify mid coordinates for trails " + event.getEvent_id());
-        if (events.size() > 0){
-            Map<String, Event> middleEvents = selectMiddleTrails(events);
-            middleEvents.values().forEach(tmpEvent -> tmpEvent.setDisplayMidCoordinate(true));
-        }
-        logger.info("Identified mid coordinates.");
         return events;
-    }
-
-    private Map<String, Event> selectMiddleTrails(List<Event> events){
-        Map<String, List<Event>> groupedByString = events.stream()
-                .collect(Collectors.groupingBy(Event::getHelperTrailName));
-
-        // For each group, get the middle object
-        return groupedByString.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,  // The string key
-                        entry -> {
-                            List<Event> objects = entry.getValue();
-                            int middleIndex = objects.size() / 2;  // Get middle index (rounds down for even size)
-                            return objects.get(middleIndex);       // Get the middle object
-                        }
-                ));
     }
 
     // Implemented are identification via code or search via country solely / which takes significant longer

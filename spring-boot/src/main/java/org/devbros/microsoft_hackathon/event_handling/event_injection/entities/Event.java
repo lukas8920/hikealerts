@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,13 +41,12 @@ public class Event implements Serializable {
     private LocalDateTime fromDatetime;
     @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
-    private Long trailId;
-    private String helperTrailName;
+    @ElementCollection
+    private List<Long> trailIds;
     @Column(name = "mid_longitude_coordinate")
     private double midLongitudeCoordinate;
     @Column(name = "mid_latitude_coordinate")
     private double midLatitudeCoordinate;
-    private boolean displayMidCoordinate;
     private String title;
     private String description;
     private Long publisherId;
@@ -59,11 +60,9 @@ public class Event implements Serializable {
         this.createDatetime = event.getCreateDatetime();
         this.fromDatetime = event.getFromDatetime();
         this.toDatetime = event.getToDatetime();
-        this.trailId = event.getTrailId();
+        this.trailIds = event.getTrailIds();
         this.midLatitudeCoordinate = event.getMidLatitudeCoordinate();
         this.midLongitudeCoordinate = event.getMidLongitudeCoordinate();
-        this.displayMidCoordinate = event.isDisplayMidCoordinate();
-        this.helperTrailName = event.getHelperTrailName();
         this.title = event.getTitle();
         this.description = event.getDescription();
         this.url = event.getUrl();
@@ -109,6 +108,37 @@ public class Event implements Serializable {
             this.midLongitudeCoordinate = ((Point) geometry).getY();
         }
     };
+
+    public void calculateMidCoordinate(List<byte[]> rawBytes) throws ParseException {
+        WKBReader wkbReader = new WKBReader();
+        List<LineString> lineStrings = new ArrayList<>();
+        for (byte[] tmpBytes : rawBytes){
+            LineString lineString = (LineString) wkbReader.read(tmpBytes);
+            lineStrings.add(lineString);
+        }
+
+        double totalX = 0.0;
+        double totalY = 0.0;
+        int totalCoordinates = 0;
+
+        for (LineString lineString : lineStrings) {
+            Coordinate[] coordinates = lineString.getCoordinates();
+            for (Coordinate coord : coordinates) {
+                totalX += coord.getX();
+                totalY += coord.getY();
+                totalCoordinates++;
+            }
+        }
+
+        // Avoid division by zero
+        if (totalCoordinates == 0) {
+            throw new IllegalArgumentException("No coordinates found in the provided LineStrings.");
+        }
+
+        // Calculate average X and Y values
+        this.midLatitudeCoordinate = totalY / totalCoordinates;
+        this.midLongitudeCoordinate = totalX / totalCoordinates;
+    }
 
     public void parseTimeInterval(String fromDatetime, String toDatetime) throws DateTimeParseException {
         fromDatetime = parseFromDateTimePlaceholders(fromDatetime);

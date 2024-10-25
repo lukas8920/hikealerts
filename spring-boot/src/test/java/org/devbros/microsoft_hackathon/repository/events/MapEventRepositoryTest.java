@@ -61,7 +61,6 @@ public class MapEventRepositoryTest {
         event1.setEvent_id("55555");
         event1.setCountry("US");
         event1.setRegion("region");
-        event1.setTrailId(1L);
         event1.setDescription("description");
         event1.setPublisherId(1L);
         event2 = new Event();
@@ -69,7 +68,6 @@ public class MapEventRepositoryTest {
         event2.setEvent_id("66666");
         event2.setCountry("US");
         event2.setRegion("region");
-        event2.setTrailId(1L);
         event2.setDescription("description");
         event2.setPublisherId(1L);
     }

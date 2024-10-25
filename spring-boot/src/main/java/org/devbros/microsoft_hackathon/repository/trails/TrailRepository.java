@@ -1,7 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
@@ -102,7 +101,7 @@ public class TrailRepository implements ITrailRepository {
     @Override
     public List<Trail> fetchTrails(int offset, int limit) {
         TypedQuery<Trail> query = entityManager.createQuery(
-                "SELECT g FROM Trail g INNER JOIN Event e ON e.trailId = g.id WHERE g.id >= :offset ORDER BY g.id", Trail.class);
+                "SELECT g FROM Trail g, Event e WHERE g.id MEMBER OF e.trailIds AND g.id >= :offset ORDER BY g.id", Trail.class);
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
 

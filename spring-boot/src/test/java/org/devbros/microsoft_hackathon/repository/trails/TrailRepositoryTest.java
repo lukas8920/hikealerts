@@ -168,7 +168,7 @@ public class TrailRepositoryTest {
         long id_1 = iTrailJpaRepository.findByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry()).getId();
 
         Event event = new Event();
-        event.setTrailId(id_1);
+        event.setTrailIds(List.of(id_1));
         event.setCountry("ZZ");
         event.setEvent_id("88888");
 

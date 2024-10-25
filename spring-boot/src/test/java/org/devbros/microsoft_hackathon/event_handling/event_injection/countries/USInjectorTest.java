@@ -1,6 +1,5 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.countries;
 
-import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.*;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
@@ -148,6 +147,8 @@ public class USInjectorTest {
 
         List<Event> events = this.usInjector.identifyTrailsViaRegion(event);
 
-        assertThat(events.get(0).isDisplayMidCoordinate(), is(true));
+        assertThat(events.get(0).getMidLatitudeCoordinate(), is(1));
+        assertThat(events.get(0).getMidLongitudeCoordinate(), is(1));
+        assertThat(events.get(0).getTrailIds().size(), is(1));
     }
 }
