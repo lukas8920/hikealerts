@@ -69,7 +69,7 @@ public abstract class BaseCountryInjector {
             //find best matching trail
             Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
             if (trail != null){
-                event.setTrailIds(List.of(trail.getTrailId()));
+                event.setTrailIds(List.of(trail.getId()));
                 event.calculateMidCoordinate(trail);
                 events.add(event);
             }
@@ -94,7 +94,7 @@ public abstract class BaseCountryInjector {
                     } else {
                         tmpEvent.calculateMidCoordinate(trails.get(0));
                     }
-                    tmpEvent.setTrailIds(trails.stream().map(Trail::getTrailId).collect(Collectors.toList()));
+                    tmpEvent.setTrailIds(trails.stream().map(Trail::getId).collect(Collectors.toList()));
                     events.add(tmpEvent);
                 }
             }

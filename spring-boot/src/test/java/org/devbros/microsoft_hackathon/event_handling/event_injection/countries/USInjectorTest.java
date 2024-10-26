@@ -55,7 +55,7 @@ public class USInjectorTest {
         openAiEvent.setCountry("US");
         openAiEvent.setTrailName("dummy");
         Trail trail = new Trail();
-        trail.setTrailId(1L);
+        trail.setTrailId("1L");
         trail.setCoordinates(wkbWriter.write(line));
 
         when(iRawEventRepository.findRawEvent("1", "US")).thenReturn(rawEvent);

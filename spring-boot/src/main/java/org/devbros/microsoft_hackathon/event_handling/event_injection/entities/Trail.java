@@ -13,7 +13,7 @@ import lombok.Setter;
 public class Trail extends MatchProvider {
     @Id
     private Long id;
-    private Long trailId;
+    private String trailId;
     private String trailname;
     private String country;
     private String maplabel;

@@ -32,7 +32,7 @@ public class MapLayerServiceTest {
         LineString line = new LineString(coordinateSequence, geometryFactory);
 
         Trail trail1 = new Trail();
-        trail1.setTrailId(55555L);
+        trail1.setTrailId("55555L");
         trail1.setCoordinates(wkbWriter.write(line));
         trail1.setUnitcode("abc");
         trail1.setCountry("ZZ");

@@ -65,12 +65,12 @@ public class TrailRepositoryTest {
         LineString line = new LineString(coordinateSequence, geometryFactory);
 
         Trail trail1 = new Trail();
-        trail1.setTrailId(55555L);
+        trail1.setTrailId("55555L");
         trail1.setCoordinates(wkbWriter.write(line));
         trail1.setUnitcode("abc");
         trail1.setCountry("CC");
         Trail trail2 = new Trail();
-        trail2.setTrailId(66666L);
+        trail2.setTrailId("66666L");
         trail2.setUnitcode("cba");
         trail2.setCountry("ZZ");
 
@@ -106,17 +106,17 @@ public class TrailRepositoryTest {
         LineString line = new LineString(coordinateSequence, geometryFactory);
 
         Trail trail1 = new Trail();
-        trail1.setTrailId(55555L);
+        trail1.setTrailId("55555L");
         trail1.setCoordinates(wkbWriter.write(line));
         trail1.setUnitcode("abc");
         trail1.setCountry("ZZ");
         Trail trail2 = new Trail();
-        trail2.setTrailId(66666L);
+        trail2.setTrailId("66666L");
         trail2.setUnitcode("cba");
         trail2.setCountry("ZZ");
         trail2.setCoordinates(wkbWriter.write(line));
         Trail trail3 = new Trail();
-        trail3.setTrailId(77777L);
+        trail3.setTrailId("77777L");
         trail3.setUnitcode("ccc");
         trail3.setCountry("ZZ");
         trail3.setCoordinates(wkbWriter.write(line));
@@ -152,12 +152,12 @@ public class TrailRepositoryTest {
         LineString line = new LineString(coordinateSequence, geometryFactory);
 
         Trail trail1 = new Trail();
-        trail1.setTrailId(55555L);
+        trail1.setTrailId("55555L");
         trail1.setCoordinates(wkbWriter.write(line));
         trail1.setUnitcode("abc");
         trail1.setCountry("ZZ");
         Trail trail2 = new Trail();
-        trail2.setTrailId(66666L);
+        trail2.setTrailId("66666L");
         trail2.setUnitcode("cba");
         trail2.setCountry("ZZ");
         trail2.setCoordinates(wkbWriter.write(line));
@@ -165,7 +165,7 @@ public class TrailRepositoryTest {
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), trail1.getCoordinates());
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), trail2.getCoordinates());
 
-        long id_1 = iTrailJpaRepository.findByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry()).getId();
+        Long id_1 = iTrailJpaRepository.findByTrailIdAndCountry(trail1.getTrailId(), trail1.getCountry()).getId();
 
         Event event = new Event();
         event.setTrailIds(List.of(id_1));
