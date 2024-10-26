@@ -131,7 +131,7 @@ public class MapLayerService extends BaseScheduler {
             // Write the end of the FeatureCollection
             writer.write("]}");
         } catch (IOException | ParseException e) {
-            logger.error("Cancelled writing geojson file");
+            logger.error("Cancelled writing geojson file", e);
             this.deleteFile(tmpFilePath);
         }
     }
