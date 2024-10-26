@@ -1,31 +1,17 @@
 # Microsoft Fabric and AI Hackathon: Hiking Alerts
 
-- [Concept](resources/doc/concept.md)
+## Use Case Description
+When viewing and planning tracks, popular hiking apps do not display current information by official institutions for hiking tracks in a standard format. Instead, those apps heavily rely on their respective communities updating the information manually.
 
-# System Setup
-![system_setup_v1](https://github.com/user-attachments/assets/c184d0b2-730c-4805-ba19-0eb6ca25ebd1)
+This relevant information for hikers from institutions might include dangers, weather impacts, closures etc (in the following called events).
 
-# Use Case Description
-**_Can be used as a prompt for spec generation_**
+Empowered by Microsoft's AI and Fabric services, we are able to standardize the events issued by different institutions in a global context. The purpose of our website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
 
-The purpose of the API is to provide information to hikers about dangers, weather impacts etc. (called events in the following)
-that affect the accessibility of certain hiking paths.
+## Video
 
-An openAiEvent is described by:
-- geospatial coordinates
-- optional: validity (from date, to date)
-- optional: publisher
-- optional: response limit
-- license
 
-The API enables official institutions to manage and publish events.
-The API provides a search for published events. The results are intended to be used by third party applications like hiking apps.
+## Project Structure
+### System Setup
+![system_setup_v1](https://github.com/user-attachments/assets/19f04a08-e16e-459c-b6bb-ca6f2edfe8b6)
 
-Events can be searched by:
-- geospatial coordinate
-- radius
-- country
-- name of region
-- name of hiking trail
-- issuing organization
-- issuer
+### Content Overview

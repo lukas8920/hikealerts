@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  gpg_agent:
+    image: gpg:latest  # Use your existing image
+    volumes:
+      - gpg_data:/root/.gnupg # Volume for GPG keys and config
+      - gpg_pass:/root/.password-store
+    networks:
+      - pass-network
+
+  spring-boot-app:
+    image: ghcr.io/lukas8920/hikealerts-springboot:latest # Replace with your G>
+    environment:
+      - SPRING_REDIS_HOST=redis # Set the Redis host environment variable
+      - SPRING_REDIS_PORT=6379   # Set the Redis port environment variable
+    networks:
+      - app-network
+      - pass-network
+
+  redis:
+    image: redis:latest
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:8080" # NGINX exposes port 8080 externally
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro # Mount your custom NGINX config >
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - app-network
+
+  angular:
+    image: ghcr.io/lukas8920/hikealerts-angular:latest
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+  pass-network:
+    driver: bridge
+
+volumes:
+  gpg_data:
+  gpg_pass:
