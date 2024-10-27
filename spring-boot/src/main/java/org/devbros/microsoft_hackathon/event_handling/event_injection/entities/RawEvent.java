@@ -28,4 +28,7 @@ public class RawEvent {
     private String description;
     private String url;
     private Long publisherId;
+    private String parkRegionName;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 }

@@ -4,15 +4,19 @@ CREATE PROCEDURE InsertRawEvents
 	@title NVARCHAR(MAX),
 	@park_code NVARCHAR(MAX),
 	@description NVARCHAR(MAX),
-    @url NVARCHAR(MAX)
+    @url NVARCHAR(MAX),
+    @publisher_id int,
+    @park_region_name varchar(100),
+    @start_date_time datetime,
+    @end_date_time datetime
 AS
 BEGIN
 MERGE INTO dbo.raw_events AS target
-    USING (SELECT @event_id as event_id, @country as country, @title as title, @park_code as park_code, @description as description, @url as url) AS source
+    USING (SELECT @event_id as event_id, @country as country, @title as title, @park_code as park_code, @description as description, @url as url, @publisher_id as publisher_id, @park_region_name as park_region_name, @start_date_time as start_date_time, @end_date_time as end_date_time) AS source
     ON target.event_id = source.event_id AND target.country = source.country
-    WHEN MATCHED AND (target.title <> source.title or target.park_code <> source.park_code or target.description <> source.description or target.url <> source.url)
+    WHEN MATCHED AND (target.title <> source.title or target.park_code <> source.park_code or target.description <> source.description or target.url <> source.url or target.publisher_id <> source.publisher_id or target.park_region_name <> source.park_region_name or target.start_date_time <> source.start_date_time or target.end_date_time <> source.end_date_time)
         THEN
-        UPDATE SET target.title = source.title, target.park_code = source.park_code, target.description = source.description, target.url = source.url
+        UPDATE SET target.title = source.title, target.park_code = source.park_code, target.description = source.description, target.url = source.url, target.publisher_id = source.publisher_id, target.park_region_name = source.park_region_name, target.start_date_time = source.start_date_time, target.end_date_time = source.end_date_time
     WHEN NOT MATCHED THEN
-        INSERT (event_id, country, title, create_date, park_code, description, url) VALUES (source.event_id, source.country, source.title, current_timestamp, source.park_code, source.description, source.url);
+        INSERT (event_id, country, title, create_date, park_code, description, url, publisher_id, park_region_name, start_date_time, end_date_time) VALUES (source.event_id, source.country, source.title, current_timestamp, source.park_code, source.description, source.url, source.publisher_id, source.park_region_name, source.start_date_time, source.end_date_time);
 END
