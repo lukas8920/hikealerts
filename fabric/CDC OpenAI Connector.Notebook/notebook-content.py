@@ -99,7 +99,7 @@ if len(resultlist) > 0:
             "messages": [
                 {
                     "role": "system",
-                    "content": "For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Do not output and ignore alerts where: \n - no trail name identification is possible and the problem does not seem to affect trails in the entire park or region. \n - no trail name, no park name or no region can be identified. \n - there seems to be no problem with trail conditions. \n For the remaining alerts, output the results as json list. Each json item consists of: Event id, country, park name, region, trail name, from_date and to_date \n Each item must have either a trail name and a park name and/or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n One alert can have zero, one or multiple json items - each trail should go in a separate json item.  \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments." 
+                    "content": "For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Do not output and ignore alerts where: \n - no trail name identification is possible and the problem does not seem to affect trails in the entire park or region. \n - no trail name, no park name or no region can be identified. \n - there seems to be no problem with trail conditions. \n For the remaining alerts, output the results as json list. Each json item consists of: Event id, country, park_name, region, trail_name, from_date and to_date \n Each item must have either a trail name and a park name and/or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n One alert can have zero, one or multiple json items - each trail should go in a separate json item.  \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments." 
                 },
                 {
                     "role": "user",
@@ -115,7 +115,7 @@ if len(resultlist) > 0:
         #conn = http.client.HTTPSConnection("eventopenai.openai.azure.com")
         #openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'openai-api-key')
         # gpt-3 model
-        conn = http.client.HTTPSConnection("https://hikingai.openai.azure.com")
+        conn = http.client.HTTPSConnection("hikingai.openai.azure.com")
         openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'hikingai-api-key')
 
         # Define headers
@@ -139,6 +139,8 @@ if len(resultlist) > 0:
             content = data['choices'][0]['message']['content']
 
             # send via azure queue to spring boot backend
+            print("Send to event queue")
+            print(content)
             connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
             queue_client = QueueClient.from_connection_string(connect_str, "openai-events")
             queue_client.send_message(content)

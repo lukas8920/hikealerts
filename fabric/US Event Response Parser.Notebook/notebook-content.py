@@ -44,7 +44,7 @@ totalCount = json.loads(data).get("total")
 
 offset = 0
 #todo replace 2 by 200
-batchSize = 50
+batchSize = 30
 id_list = []
 #todo remove totalCount
 totalCount = 1
@@ -76,7 +76,7 @@ while True:
 
             title = item['title'].replace("'", r"''")
             description = item['description'].replace("'", r"''")
-            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1"
+            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1, {None}, {None}, {None]"
 
             # Create callable statement and execute it
             exec_statement = con.prepareCall(statement)
@@ -88,15 +88,14 @@ while True:
     if offset > int(totalCount):
         break
 
-# Convert the list to a string with values separated by commas
-#id_string = ', '.join(f"'{id}'" for id in id_list)
-json_ids = json.dumps(id_list)
-
+id_list = list(map(str, id_list))
 # Convert to json
 content = {
     "country": "US",
-    "ids": json_ids
+    "ids": id_list
 }
+content = json.dumps(content)
+
 
 # Post to deleted-events queue
 connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
