@@ -21,16 +21,27 @@ import pandas as pd
 import json
 from shapely.geometry import LineString
 
+# Welcome to your new notebook
+# Type here in the cell editor to add code!
+
 jdbc_url = "jdbc:sqlserver://hiking-sql-server.database.windows.net:1433;database=hiking-sql-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
 sql_username = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-username')
 sql_password = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-password')
 
 # Define the API endpoint
-conn = http.client.HTTPSConnection("mapservices.nps.gov")
+conn = http.client.HTTPSConnection("api.doc.govt.nz")
+
+# Define headers
+nz_doc_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'nz-doc-api-key')
+headers = {
+    "x-api-key": nz_doc_api_key,
+    "accept": "application/json"
+}
 
 # Make the API call
-url = "/arcgis/rest/services/NationalDatasets/NPS_Public_Trails/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json&resultOffset=" + str(offset) + "&resultRecordCount=" + str(batchSize);
-conn.request("GET", url)  # Adjust the path as needed
+url = "/v1/tracks"
+# todo set header
+conn.request("GET", url, headers=headers)
 
 # Get the response
 response = conn.getresponse()
@@ -38,33 +49,20 @@ data = response.read()
 
 data = json.loads(data)
 
-# Extract the features from the ESRI JSON
-features = data.get('features', [])
-
-# Create a list to hold the attributes
 attributes_list = []
-
-for feature in features:
-    # Extract attributes and geometry
-    attributes = feature.get('attributes', {})
-    geometry = feature.get('geometry', {})
-
-    # Add geometry as a separate column if needed
-    attributes['geometry'] = geometry  # Add geometry to attributes if needed
-
-    attributes_list.append(attributes)
+for item in data:
+    row = [
+            item["assetId"],
+            item["name"],
+            item["region"][0] if item["region"] else None,
+            (lambda x: LineString(x[0]).wkt if len(x) > 0 else LineString(x).wkt)(item["line"])
+        ]
+    attributes_list.append(row)
 
 # Create a DataFrame from the list of attributes
 df = pd.DataFrame(attributes_list)
-
-df['geometry'] = df['geometry'].apply(lambda x: x['paths'])
-df['wkt'] = df['geometry'].apply(lambda x: LineString(x[0]).wkt if len(x) > 0 else LineString(x).wkt)
-
-# Display the DataFrame
-filtered_df = df[['OBJECTID', 'TRLNAME', 'MAPLABEL', 'UNITCODE', 'UNITNAME', 'REGIONCODE', 'MAINTAINER', 'wkt']]
-filtered_df = filtered_df.rename(columns={'OBJECTID': 'id', 'TRLNAME': 'trailname', 'MAPLABEL': 'maplabel', 'UNITCODE': 'unitcode', 'UNITNAME': 'unitname', 'REGIONCODE': 'regioncode', 'MAINTAINER': 'maintainer', 'wkt': 'coordinates'})
-
-df = spark.createDataFrame(filtered_df)
+df = df.rename(columns= {0: "id", 1: "trailname", 2: "unitname", 3: "coordinates"})
+df = spark.createDataFrame(df)
 
 # Fetch the driver manager from your Spark context
 driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
@@ -72,27 +70,26 @@ driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
 # Create a connection object using a JDBC URL, SQL username & password
 con = driver_manager.getConnection(jdbc_url, sql_username, sql_password)
 
-# Iterate over each row in the DataFrame and execute the statement
-for row in df.collect():  # collect() brings all rows to the driver
+for row in df.collect():
     if not row.trailname is None:
         trailname = row.trailname.replace("'", r"''")
-    if not row.maplabel is None:
-        maplabel = row.maplabel.replace("'", r"''")
-
+    if not row.unitname is None:
+        unitname = row.unitname.replace("'", r"''")
     try:
-        statement = f"EXEC dbo.InsertGeodataTrails '{row.id}', 'US', '{trailname}', '{maplabel}', '{row.unitcode}', '{row.unitname}', '{row.regioncode}', '{row.maintainer}', '{row.coordinates}'"
+        statement = f"EXEC dbo.InsertGeodataTrails '{row.id}', 'NZ', '{trailname}', {None}, {None}, '{unitname}', '{None}', 'Department of Conservation', '{row.coordinates}'"
         
         # Create callable statement and execute it
         exec_statement = con.prepareCall(statement)
         exec_statement.execute()
         exec_statement.close()  # Close the statement after execution
     except Exception as e:
+        print(row.id)
+        print(row.trailname)
+        print(row.unitname)
         print("Error while parsing row")
-    
+        print(e)
 
-# Close the connection
 con.close()
-
 
 # METADATA ********************
 
