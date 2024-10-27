@@ -5,7 +5,7 @@ When viewing and planning tracks, popular hiking apps do not display current inf
 
 This relevant information for hikers from institutions might include dangers, weather impacts, closures etc (in the following called events).
 
-Empowered by Microsoft's AI and Fabric services, we are able to standardize the events issued by different institutions in a global context. The purpose of our website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
+Microsoft's AI and Fabric services enable to standardize the events issued by different institutions in a global context. The purpose of the website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
 
 ## Video
 

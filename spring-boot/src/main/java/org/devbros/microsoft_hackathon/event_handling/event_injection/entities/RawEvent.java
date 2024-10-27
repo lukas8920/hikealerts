@@ -18,14 +18,22 @@ import java.time.LocalDateTime;
 public class RawEvent {
     @Id
     private Long id;
+    @OpenAiInput
     private String eventId;
     @Column(name = "create_date")
     private LocalDateTime createDateTime;
+    @OpenAiInput
     private String country;
+    @OpenAiInput
     private String title;
+    @OpenAiInput
     @Column(name = "park_code")
     private String unitCode;
+    @OpenAiInput
     private String description;
     private String url;
     private Long publisherId;
+    private String parkRegionName;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 }
