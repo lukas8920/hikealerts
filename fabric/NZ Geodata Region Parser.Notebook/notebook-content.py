@@ -95,7 +95,9 @@ driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
 # Create a connection object using a JDBC URL, SQL username & password
 con = driver_manager.getConnection(jdbc_url, sql_username, sql_password)
 
+id_list = []
 for row in df.collect():
+    id_list.append(row.polygon_id)
     if not row.unitname is None:
         unitname = row.unitname.replace("'", r"''")
     statement = f"EXEC dbo.InsertGeodataRegions '{row.polygon_id}', 'NZ', '{None}', '{unitname}', '{row.coordinates}'"
@@ -104,6 +106,17 @@ for row in df.collect():
     exec_statement = con.prepareCall(statement)
     exec_statement.execute()
     exec_statement.close()  # Close the statement after execution
+
+# remove not existent ids
+# Convert the list to a string with values separated by commas
+id_string = ', '.join(f"'{id}'" for id in id_list)
+
+# remove entries not in id list
+if len(id_string) != 0:
+    statement = f"DELETE FROM dbo.geodata_regions WHERE region_id not in ({id_string}) and country = 'NZ'"
+    exec_statement = con.prepareCall(statement)
+    exec_statement.execute()
+    exec_statement.close()
 
 # METADATA ********************
 

@@ -20,6 +20,7 @@ import json
 import pandas as pd
 from datetime import datetime
 import http.client
+from azure.storage.queue import QueueClient
 
 
 def convert_timedate(date_str):
@@ -57,8 +58,10 @@ raw_json = response.read()
 
 data = json.loads(raw_json)
 
+id_list = []
 attributes_list = []
 for item in data:
+    id_list.append(item['id'])
     row = [
             item["id"],
             item["summary"],
@@ -98,6 +101,22 @@ for row in df.collect():
     exec_statement = con.prepareCall(statement)
     exec_statement.execute()
     exec_statement.close()
+
+id_list = list(map(str, id_list))
+# Convert to json
+content = {
+    "country": "NZ",
+    "ids": id_list
+}
+content = json.dumps(content)
+
+
+# Post to deleted-events queue
+connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
+queue_client = QueueClient.from_connection_string(connect_str, "deleted-events")
+queue_client.send_message(content)
+
+con.close()
 
 # METADATA ********************
 
