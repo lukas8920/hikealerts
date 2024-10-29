@@ -44,6 +44,7 @@ public abstract class BaseCountryInjector {
         List<Event> events =  mapTrailsToEvents(openAiEvent, rawEvent, event);
 
         if (events.isEmpty()){
+            logger.info("Could not identify raw event for {} in country {}", openAiEvent.getEventId(), openAiEvent.getCountry());
             return false;
         }
 

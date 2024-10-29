@@ -46,14 +46,16 @@ public class TrailRepository implements ITrailRepository {
         List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
         logger.info("Trails in region: " + slice.size());
 
-        do {
-            slice.forEach(trail -> {
-                // Process each entity
-                this.nameMatcher.match(searchName, trail);
-            });
-            offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
-            slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
-        } while (slice != null && !slice.isEmpty());
+        if (slice.size() > 0){
+            do {
+                slice.forEach(trail -> {
+                    // Process each entity
+                    this.nameMatcher.match(searchName, trail);
+                });
+                offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
+                slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
+            } while (slice != null && !slice.isEmpty());
+        }
 
         logger.info("Identified matching trail: " + this.nameMatcher.getT());
         return this.nameMatcher.getT();
@@ -118,14 +120,16 @@ public class TrailRepository implements ITrailRepository {
         List<Trail> slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
         logger.info("Trails in region: " + slice.size());
 
-        do {
-            slice.forEach(trail -> {
-                // Process each entity
-                this.nameMatcher.match(name, trail);
-            });
-            offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
-            slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
-        } while (slice != null && !slice.isEmpty());
+        if (slice.size() > 0){
+            do {
+                slice.forEach(trail -> {
+                    // Process each entity
+                    this.nameMatcher.match(name, trail);
+                });
+                offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
+                slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
+            } while (slice != null && !slice.isEmpty());
+        }
 
         logger.info("Identified matching trail: " + this.nameMatcher.getT());
         return this.nameMatcher.getT();

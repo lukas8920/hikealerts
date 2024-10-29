@@ -48,7 +48,7 @@ public class EventListenerService extends ScheduledService {
                 getLogger().warn("Some events were not added to the database: " + responses.toString());
             }
         } catch (JsonProcessingException e) {
-            getLogger().error("Could not json parse: " + messageBody);
+            getLogger().error("Could not json parse: " + messageBody, e);
         } catch (Exception e){
             getLogger().error("Could not inject event: " + messageBody, e);
         }

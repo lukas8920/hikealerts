@@ -41,15 +41,23 @@ export class HikingMapComponent implements OnInit {
   // Initialize the map
   initializeMap(): void {
     if (!this.map){
-      this.map = this.leaflet.map('map').setView([51.505, -0.09], 5); // Set initial center and zoom
+      this.map = this.leaflet.map('map', {
+        worldCopyJump: true,  // Enable horizontal wrapping
+        maxBoundsViscosity: 1.0 // Prevents bouncing at the vertical edge
+      }).setView([51.505, -0.09], 5); // Set initial center and zoom
+
+      // Set vertical bounds (latitude limits only)
+      const southWest = L.latLng(-85, -Infinity);
+      const northEast = L.latLng(85, Infinity);
+      const bounds = L.latLngBounds(southWest, northEast);
+
+      this.map.setMaxBounds(bounds);
 
       // Add OpenStreetMap tile layer
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
-
-
 
       // Create the marker cluster group
       this.markerClusterGroup = this.leaflet.markerClusterGroup({
