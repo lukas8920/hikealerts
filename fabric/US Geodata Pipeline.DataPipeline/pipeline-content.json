@@ -173,7 +173,7 @@
       },
       "offset": {
         "type": "Integer",
-        "defaultValue": 14500
+        "defaultValue": 27500
       },
       "totalCount": {
         "type": "Integer"

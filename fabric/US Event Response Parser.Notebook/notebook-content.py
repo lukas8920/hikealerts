@@ -19,6 +19,7 @@
 import http.client
 import json
 from pyspark.sql import SparkSession
+from azure.storage.queue import QueueClient
 
 jdbc_url = "jdbc:sqlserver://hiking-sql-server.database.windows.net:1433;database=hiking-sql-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
 sql_username = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-username')
@@ -43,7 +44,7 @@ totalCount = json.loads(data).get("total")
 
 offset = 0
 #todo replace 2 by 200
-batchSize = 50
+batchSize = 30
 id_list = []
 #todo remove totalCount
 totalCount = 1
@@ -75,7 +76,7 @@ while True:
 
             title = item['title'].replace("'", r"''")
             description = item['description'].replace("'", r"''")
-            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1"
+            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1, {None}, {None}, {None]"
 
             # Create callable statement and execute it
             exec_statement = con.prepareCall(statement)
@@ -87,21 +88,20 @@ while True:
     if offset > int(totalCount):
         break
 
-# Convert the list to a string with values separated by commas
-id_string = ', '.join(f"'{id}'" for id in id_list)
+id_list = list(map(str, id_list))
+# Convert to json
+content = {
+    "country": "US",
+    "ids": id_list
+}
+content = json.dumps(content)
 
-# remove entries not in id list
-statement = f"DELETE FROM dbo.raw_events WHERE event_id not in ({id_string}) AND country = 'US'"
-exec_statement = con.prepareCall(statement)
-exec_statement.execute()
-exec_statement.close()
-# delete also from final event list
-statement = f"DELETE FROM dbo.events WHERE event_id not in ({id_string}) AND country = 'US'"
-exec_statement = con.prepareCall(statement)
-exec_statement.execute()
-exec_statement.close()
 
-# Close the connection
+# Post to deleted-events queue
+connect_str = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'queue-connection-string')
+queue_client = QueueClient.from_connection_string(connect_str, "deleted-events")
+queue_client.send_message(content)
+
 con.close()
 
 # METADATA ********************
