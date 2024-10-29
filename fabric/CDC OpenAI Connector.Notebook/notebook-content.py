@@ -63,7 +63,7 @@ driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
 # Create a connection object using a JDBC URL, SQL username & password
 con = driver_manager.getConnection(jdbc_url, sql_username, sql_password)
 
-query = f"EXEC dbo.FetchCDCChanges"
+query = f"EXEC dbo.FetchRawEventChanges"
 
 # Create callable statement and execute it
 statement = con.createStatement()
