@@ -10,4 +10,5 @@ public interface ITrailRepository {
     List<Trail> findTrailsInRegion(Polygon polygon, String country);
     List<Trail> findTrailsByNameCodeAndCountry(Polygon polygon, String country, String code);
     List<Trail> fetchTrails(int offset, int limit);
+    Trail searchTrailByNameAndCountry(String name, String country);
 }

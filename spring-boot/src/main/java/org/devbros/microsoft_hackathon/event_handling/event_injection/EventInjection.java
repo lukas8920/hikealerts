@@ -1,6 +1,7 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.BaseCountryInjector;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.NZInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
@@ -98,6 +99,8 @@ public class EventInjection implements IEventInjection {
         switch (openAiEvent.getCountry()){
             case "US":
                 return new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "NZ":
+                return new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
             default:
                 return null;
         }

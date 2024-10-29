@@ -14,7 +14,7 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     @Modifying
     @Transactional
     @Query(value = "EXEC TestOnlyInsertGeodataTrails @trail_id = :trail_id, @country = :country, @trailname = 'dummy', @unitcode = :unitcode, @unitname = 'dummy', @lineString = :coordinates", nativeQuery = true)
-    void saveTrail(@Param("trail_id") String trail_id, @Param("country") String country, @Param("unitcode") String unitcode, @Param("coordinates") byte[] geometry);
+    void saveTrail(@Param("trail_id") String trail_id, @Param("country") String country, @Param("unitcode") String unitcode, @Param("coordinates") String geometry);
 
     // for test purposes only
     @Modifying
@@ -30,14 +30,16 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
             "ORDER BY id", nativeQuery = true)
     List<Trail> findAllByUnitcodeAndCountry(@Param("unitcode") String unitCode, @Param("country") String country, @Param("offset") Long offset);
 
-    @Query(value = "SELECT TOP 1000 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
+    @Query(value = "SELECT TOP 100 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
             "FROM geodata_trails " +
             "where country = :country AND id > :offset " +
             "ORDER BY id", nativeQuery = true)
     List<Trail> findAllByCountry(@Param("country") String country, @Param("offset") Long offset);
 
-    @Query(value = "SELECT TOP 100 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
+    @Query(value = "SELECT id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +
             "FROM geodata_trails " +
             "WHERE unitcode = :unitcode AND country = :country", nativeQuery = true)
     List<Trail> findAllByCountryAndUnitcode(String country, String unitcode);
+
+    List<Trail> findAllByCountry(String country);
 }

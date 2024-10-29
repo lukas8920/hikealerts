@@ -81,6 +81,8 @@ public class Event implements Serializable {
         this.description = rawEvent.getDescription();
         this.url = rawEvent.getUrl();
         this.publisherId = rawEvent.getPublisherId();
+        this.toDatetime = rawEvent.getEndDateTime();
+        this.fromDatetime = rawEvent.getStartDateTime();
     }
 
     public void calculateMidCoordinate(Trail trail) throws ParseException {
@@ -140,12 +142,23 @@ public class Event implements Serializable {
         this.midLongitudeCoordinate = totalX / totalCoordinates;
     }
 
-    public void parseTimeInterval(String fromDatetime, String toDatetime) throws DateTimeParseException {
-        fromDatetime = parseFromDateTimePlaceholders(fromDatetime);
-        toDatetime = parseToDateTimePlaceholders(fromDatetime, toDatetime);
+    public void parseTimeInterval(String fromDatetime, String toDatetime) {
+        fromDatetime = fromDatetime != null ? parseFromDateTimePlaceholders(fromDatetime) : null;
+        toDatetime = toDatetime != null ? parseToDateTimePlaceholders(fromDatetime, toDatetime) : null;
 
-        this.fromDatetime = fromDatetime != null ? parseTimeString(fromDatetime) : null;
-        this.toDatetime = toDatetime != null ? parseTimeString(toDatetime) : null;
+        LocalDateTime parsedFromDatetime = null;
+        LocalDateTime parsedToDatetime = null;
+
+        try {
+            parsedFromDatetime = fromDatetime != null ? parseTimeString(fromDatetime): null;
+        } catch (DateTimeParseException ignored){ }
+        try {
+            parsedToDatetime = toDatetime != null ? parseTimeString(toDatetime) : null;
+        } catch (DateTimeParseException ignored){ }
+
+
+        this.fromDatetime = fromDatetime != null && parsedFromDatetime != null ? parsedFromDatetime : this.fromDatetime;
+        this.toDatetime = toDatetime != null && parsedToDatetime != null ? parsedToDatetime : this.toDatetime;
     }
 
     private String parseFromDateTimePlaceholders(String fromDatetime){
@@ -166,17 +179,29 @@ public class Event implements Serializable {
         if (toDatetime == null || toDatetime.length() <= 4 ){
             return null;
         }
+        if (fromDatetime == null && this.fromDatetime == null && !this.isValidDatetime(toDatetime)){
+            return null;
+        }
 
         int year = LocalDate.now().getYear();
 
-        int fromMonth = Integer.parseInt(fromDatetime.substring(3, 5));
-        int fromYear = Integer.parseInt(fromDatetime.substring(6, 10));
+        int fromMonth = fromDatetime == null ? this.fromDatetime.getMonthValue() : Integer.parseInt(fromDatetime.substring(3, 5));
+        int fromYear = fromDatetime == null ? this.fromDatetime.getYear() : Integer.parseInt(fromDatetime.substring(6, 10));
         int toMonth = Integer.parseInt(toDatetime.substring(3, 5));
 
         String toDatetimePlusOne = toDatetime.replace("YYYY", String.valueOf(year + 1));
         return toMonth < fromMonth ? toDatetimePlusOne
                 : (fromYear == (year + 1) ? toDatetimePlusOne
                 : toDatetime.replace("YYYY", String.valueOf(year)));
+    }
+
+    private boolean isValidDatetime(String toDatetime){
+        try {
+            parseTimeString(toDatetime);
+        } catch (DateTimeParseException e){
+            return false;
+        }
+        return true;
     }
 
     private LocalDateTime parseTimeString(String dateTime) throws DateTimeParseException {

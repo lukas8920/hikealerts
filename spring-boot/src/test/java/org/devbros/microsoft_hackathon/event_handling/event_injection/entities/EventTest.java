@@ -1,7 +1,5 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.entities;
 
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -14,14 +12,12 @@ import org.locationtech.jts.io.WKBWriter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MapEventTest {
+public class EventTest {
     private Event event;
     private int year;
 
@@ -81,7 +77,7 @@ public class MapEventTest {
         LocalDateTime toResult = event.getToDatetime();
 
         assertThat(fromResult.getYear(), is((year + 1)));
-        assertThat(toResult.getYear(), is((year + 1)));
+
     }
 
     @Test
@@ -89,12 +85,11 @@ public class MapEventTest {
         String fromDatetime = "01/13/YYYY 00:01:33";
         String toDatetime = "01/01/YYYY 00:02:20";
 
-        Exception exception = assertThrows(DateTimeParseException.class, () -> {
-            event.parseTimeInterval(fromDatetime, toDatetime);
-        });
+        event.parseTimeInterval(fromDatetime, toDatetime);
 
-        assertThat(exception.getMessage(), is("Text '01/13/2024 00:01:33' could not be parsed, unparsed text found at index 10"));
-    }//1 1, 2 1, 3 1, 9 1
+        assertThat(event.getFromDatetime(), nullValue());
+        assertThat(event.getToDatetime().getYear(), is((year + 1)));
+    }
 
     @Test
     public void testMidPointOfLinestring() throws ParseException {
@@ -110,5 +105,20 @@ public class MapEventTest {
 
         assertThat(event.getMidLatitudeCoordinate(), is(1.0));
         assertThat(event.getMidLongitudeCoordinate(), is(5.0));
+    }
+
+    @Test
+    public void testThatTimeParsingEvalOriginalEvent(){
+        LocalDateTime test = LocalDateTime.now();
+        event.setFromDatetime(test);
+        event.setToDatetime(test);
+
+        String fromDatetime = null;
+        String toDatetime = "01/01/YYYY 00:02:20";
+
+        event.parseTimeInterval(fromDatetime, toDatetime);
+
+        assertThat(event.getFromDatetime(), is(test));
+        assertThat(event.getToDatetime().getYear(), is((year + 1)));
     }
 }

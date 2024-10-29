@@ -107,4 +107,27 @@ public class TrailRepository implements ITrailRepository {
 
         return query.getResultList();
     }
+
+    @Override
+    public Trail searchTrailByNameAndCountry(String name, String country) {
+        this.nameMatcher.resetNameMatcher();
+        logger.info("Search trail by trail name, unit code and country: " + name + ", " + country);
+        logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
+        long offset = 0;  // start from page 0
+
+        List<Trail> slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
+        logger.info("Trails in region: " + slice.size());
+
+        do {
+            slice.forEach(trail -> {
+                // Process each entity
+                this.nameMatcher.match(name, trail);
+            });
+            offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
+            slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
+        } while (slice != null && !slice.isEmpty());
+
+        logger.info("Identified matching trail: " + this.nameMatcher.getT());
+        return this.nameMatcher.getT();
+    }
 }
