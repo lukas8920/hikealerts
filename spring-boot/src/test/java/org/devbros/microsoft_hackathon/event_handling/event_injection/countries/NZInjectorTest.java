@@ -12,38 +12,38 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class USInjectorTest extends BaseInjectorTest {
-    private static final String country = "US";
+public class NZInjectorTest extends BaseInjectorTest {
+    private static final String country = "NZ";
 
     @BeforeEach
     public void setup(){
         super.setup();
-        this.injector = new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+        this.injector = new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
         super.country = country;
     }
 
     @Override
-    protected void mockTestThatMatchTrailsWorksForTrailname(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail){
+    protected void mockTestThatMatchTrailsWorksForTrailname(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail) {
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), "abc", country)).thenReturn(trail);
+        when(iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName(), country)).thenReturn(trail);
     }
 
     @Override
     protected void mockTestThatMatchTrailsWorksForTrailFoundViaRegion(RawEvent rawEvent, Region region, Trail trail) {
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
         when(iRegionRepository.findUniqueRegionName("region", country)).thenReturn(List.of(region));
-        when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq(country), any())).thenReturn(List.of(trail));
+        when(iTrailRepository.findTrailsInRegion(any(), eq(country))).thenReturn(List.of(trail));
     }
 
     @Override
-    protected void mockTestThatMatchTrailsQuitsForEmptyEvents(OpenAiEvent openAiEvent, RawEvent rawEvent){
+    protected void mockTestThatMatchTrailsQuitsForEmptyEvents(OpenAiEvent openAiEvent, RawEvent rawEvent) {
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName() , "abc", country)).thenReturn(null);
+        when(iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName() , country)).thenReturn(null);
     }
 
     @Override
     protected void mockTestThatDisplayMidCoordinateWorks(Region region, Trail trail) {
         when(iRegionRepository.findUniqueRegionName("region", country)).thenReturn(List.of(region));
-        when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq(country), any())).thenReturn(List.of(trail));
+        when(iTrailRepository.findTrailsInRegion(any(), eq(country))).thenReturn(List.of(trail));
     }
 }
