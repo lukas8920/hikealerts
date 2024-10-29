@@ -91,6 +91,7 @@ export class HikingMapComponent implements OnInit {
 
       events.forEach(event => {
         const markerKey = `${event.lat}-${event.lng}`;
+        event.create_date = event.create_date.split(" ")[0];
 
         // Check if this marker has already been loaded
         if (!this.loadedMarkers.has(markerKey)) {

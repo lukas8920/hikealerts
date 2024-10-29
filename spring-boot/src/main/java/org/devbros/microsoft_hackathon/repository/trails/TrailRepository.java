@@ -113,7 +113,7 @@ public class TrailRepository implements ITrailRepository {
     @Override
     public Trail searchTrailByNameAndCountry(String name, String country) {
         this.nameMatcher.resetNameMatcher();
-        logger.info("Search trail by trail name, unit code and country: " + name + ", " + country);
+        logger.info("Search trail by trail name and country: " + name + ", " + country);
         logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
 
