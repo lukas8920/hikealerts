@@ -68,6 +68,8 @@ public class EventRepository implements IEventRepository {
             } catch (Exception e){
                 e.printStackTrace();
             }
+        } else {
+            logger.error("Error saving event {} as publisher {} does not exist.", event.getEvent_id(), event.getPublisherId());
         }
     }
 
@@ -85,7 +87,10 @@ public class EventRepository implements IEventRepository {
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId()); // Assuming event.getId() returns a unique score
             }
 
+            logger.info("Fetched events from {} to {} via MS SQL.", offset, limit);
             return fetchedMapEvents;
+        } else {
+            logger.info("Fetched events from {} to {} via Redis.", offset, limit);
         }
 
         return List.copyOf(mapEvents);

@@ -42,6 +42,7 @@ public class Event implements Serializable {
     @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
     @ElementCollection
+    @CollectionTable(name = "events_trail_ids")
     private List<Long> trailIds;
     @Column(name = "mid_longitude_coordinate")
     private double midLongitudeCoordinate;

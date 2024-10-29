@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @ActiveProfiles("test")
 @Import({EmbeddedRedisConfig.class, RedisConfig.class})
-public class MapEventRepositoryTest {
+public class EventRepositoryTest {
     @Autowired
     private EntityManager entityManager;
     @Autowired
@@ -63,6 +63,7 @@ public class MapEventRepositoryTest {
         event1.setRegion("region");
         event1.setDescription("description");
         event1.setPublisherId(1L);
+        event1.setTrailIds(Arrays.asList(1L, 2L));
         event2 = new Event();
         event2.setId(4L);
         event2.setEvent_id("66666");
@@ -70,6 +71,7 @@ public class MapEventRepositoryTest {
         event2.setRegion("region");
         event2.setDescription("description");
         event2.setPublisherId(1L);
+        event2.setTrailIds(Arrays.asList(3L, 4L));
     }
 
     @Test
