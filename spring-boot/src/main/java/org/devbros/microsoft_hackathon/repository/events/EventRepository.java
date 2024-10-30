@@ -5,9 +5,11 @@ import jakarta.persistence.TypedQuery;
 import org.devbros.microsoft_hackathon.event_handling.MapEventMapper;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
 import org.devbros.microsoft_hackathon.publisher_management.entities.Publisher;
 import org.devbros.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
+import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +33,17 @@ public class EventRepository implements IEventRepository {
     private final IEventJpaRepository iEventJpaRepository;
     private final IRawEventJpaRepository iRawEventJpaRepository;
     private final IPublisherRepository iPublisherRepository;
+    private final ITrailRepository iTrailRepository;
     private final RedisTemplate<String, MapEvent> redisTemplate;
     private final EntityManager entityManager;
     private final MapEventMapper mapEventMapper;
 
     @Autowired
     public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, MapEvent> redisTemplate, MapEventMapper mapEventMapper,
-                           EntityManager entityManager, IRawEventJpaRepository iRawEventJpaRepository, IPublisherRepository iPublisherRepository){
+                           EntityManager entityManager, IRawEventJpaRepository iRawEventJpaRepository, IPublisherRepository iPublisherRepository,
+                           ITrailRepository iTrailRepository){
         this.mapEventMapper = mapEventMapper;
+        this.iTrailRepository = iTrailRepository;
         this.iPublisherRepository = iPublisherRepository;
         this.iEventJpaRepository = iEventJpaRepository;
         this.redisTemplate = redisTemplate;
@@ -54,10 +59,7 @@ public class EventRepository implements IEventRepository {
         if (publisher != null){
             try {
                 if (oldEvent != null){
-                    MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
-                    logger.info("Update db for " + event.getEvent_id());
-                    redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
-                    this.iEventJpaRepository.deleteById(oldEvent.getId());
+                    updateEvent(event, publisher, oldEvent);
                 }
                 MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
                 // Add to Redis
@@ -71,6 +73,26 @@ public class EventRepository implements IEventRepository {
         } else {
             logger.error("Error saving event {} as publisher {} does not exist.", event.getEvent_id(), event.getPublisherId());
         }
+    }
+
+    private void updateEvent(Event event, Publisher publisher, Event oldEvent) {
+        List<Trail> oldTrails = this.iTrailRepository.findAllTrailsByIds(oldEvent.getTrailIds());
+        List<Trail> newTrails = this.iTrailRepository.findAllTrailsByIds(event.getTrailIds());
+        boolean trailIsNotPresent = oldTrails.stream().noneMatch(t -> t.getTrailname().equals(newTrails.get(0).getTrailname()));
+
+        if (oldTrails.isEmpty() || trailIsNotPresent){
+            logger.info("Add trail to existing trail ids of event");
+            List<Long> trailIds = oldEvent.getTrailIds();
+            trailIds.addAll(event.getTrailIds());
+            event.setTrailIds(trailIds);
+        } else {
+            logger.info("Work with existing trail ids in db, as trail id is already present");
+            event.setTrailIds(oldEvent.getTrailIds());
+        }
+
+        MapEvent oldMapEvent = this.mapEventMapper.map(oldEvent, publisher);
+        redisTemplate.opsForZSet().remove(EVENTS_KEY, oldMapEvent);
+        this.iEventJpaRepository.deleteById(oldEvent.getId());
     }
 
     @Override

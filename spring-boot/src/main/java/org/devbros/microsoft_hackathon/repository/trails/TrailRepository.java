@@ -1,7 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.trails;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
@@ -103,6 +102,11 @@ public class TrailRepository implements ITrailRepository {
     @Override
     public List<Trail> fetchTrails(int offset, int limit) {
         return this.iTrailJpaRepository.getTrailsAfterOffset(offset, limit);
+    }
+
+    @Override
+    public List<Trail> findAllTrailsByIds(List<Long> ids){
+        return this.iTrailJpaRepository.findAllById(ids);
     }
 
     @Override

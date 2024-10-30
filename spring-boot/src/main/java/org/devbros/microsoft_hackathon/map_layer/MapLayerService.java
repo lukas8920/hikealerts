@@ -10,13 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,7 +37,7 @@ public class MapLayerService {
     private final ITrailRepository iTrailRepository;
     private final ObjectMapper objectMapper;
 
-    private AtomicBoolean hasWaitingThread = new AtomicBoolean(false);
+    private final AtomicBoolean hasWaitingThread = new AtomicBoolean(false);
 
     @Autowired
     public MapLayerService(ITrailRepository iTrailRepository){
@@ -48,9 +46,9 @@ public class MapLayerService {
         this.iTrailRepository = iTrailRepository;
     }
 
-    public Resource loadJsonLayer(){
+    public Resource loadJsonLayer() {
         synchronized (FILE_LOCK){
-            return new ClassPathResource(dstFilePath);
+            return new FileSystemResource(dstFilePath);
         }
     }
 
