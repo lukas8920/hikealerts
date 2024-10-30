@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class BaseCountryInjector {
@@ -48,7 +47,10 @@ public abstract class BaseCountryInjector {
             return false;
         }
 
-        events.forEach(this.iEventRepository::save);
+        events.forEach(e -> {
+            overwriteUrl(e);
+            this.iEventRepository.save(e);
+        });
         logger.info("Saved event to db.");
         return true;
     }
@@ -102,6 +104,8 @@ public abstract class BaseCountryInjector {
         }
         return events;
     }
+
+    protected abstract void overwriteUrl(Event event);
 
     // Implemented are identification via code or search via country solely / which takes significant longer
     protected abstract List<Trail> findTrailsInDatabaseWithRegion(Polygon polygon, Region region);
