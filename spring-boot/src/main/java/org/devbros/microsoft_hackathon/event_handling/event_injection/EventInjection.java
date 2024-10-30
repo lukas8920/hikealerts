@@ -5,6 +5,7 @@ import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
+import org.devbros.microsoft_hackathon.map_layer.MapLayerService;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -28,13 +29,17 @@ public class EventInjection implements IEventInjection {
     private final Pattern datePattern;
     private final Pattern fourYYYYPattern;
 
+    private final MapLayerService mapLayerService;
+
     @Autowired
     public EventInjection(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository,
-                          ITrailRepository iTrailRepository, IRegionRepository iRegionRepository){
+                          ITrailRepository iTrailRepository, IRegionRepository iRegionRepository, MapLayerService mapLayerService){
         this.iRawEventRepository = iRawEventRepository;
         this.iEventRepository = iEventRepository;
         this.iTrailRepository = iTrailRepository;
         this.iRegionRepository = iRegionRepository;
+
+        this.mapLayerService = mapLayerService;
 
         // Regex pattern for the date-time formats and four occurrences of YYYY
         String DATE_TIME_PATTERN = "^(\\d{2}/\\d{2}/(?:\\d{4}|YYYY) \\d{2}:\\d{2}:\\d{2})$";
@@ -87,6 +92,11 @@ public class EventInjection implements IEventInjection {
                 errorMessages.add(message);
             }
         });
+
+        // request geojson layer update if there have been events added to the db
+        if (errorMessages.size() != openAiEvents.size()){
+            this.mapLayerService.requestGeoJsonFileUpdate();
+        }
 
         if (!errorMessages.isEmpty()){
             return errorMessages;

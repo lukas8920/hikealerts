@@ -3,7 +3,6 @@ package org.devbros.microsoft_hackathon.map_layer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
-import org.devbros.microsoft_hackathon.util.BaseScheduler;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
@@ -25,21 +24,22 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class MapLayerService extends BaseScheduler {
-    private static final String tmpFilePath = "src/main/resources/static/layer_tmp.geojson";
-    private static final String dstFilePath = "src/main/resources/static/layer.geojson";
+public class MapLayerService {
+    private static final String tmpFilePath = "layer_tmp.geojson";
+    private static final String dstFilePath = "layer.geojson";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
-    private static final Object LOCK = new Object();
+
+    private static final Object FILE_LOCK = new Object();
+    private static final Object UPDATE_LOCK = new Object();
 
     private final WKBReader wkbReader;
     private final ITrailRepository iTrailRepository;
     private final ObjectMapper objectMapper;
 
-    private boolean finishedProcessing = false;
-    private Thread currentThread;
+    private AtomicBoolean hasWaitingThread = new AtomicBoolean(false);
 
     @Autowired
     public MapLayerService(ITrailRepository iTrailRepository){
@@ -49,60 +49,49 @@ public class MapLayerService extends BaseScheduler {
     }
 
     public Resource loadJsonLayer(){
-        synchronized (LOCK){
-            return new ClassPathResource("static/layer.geojson");
+        synchronized (FILE_LOCK){
+            return new ClassPathResource(dstFilePath);
         }
     }
 
-    @Override
-    protected Logger getLogger() {
-        return logger;
-    }
+    public void requestGeoJsonFileUpdate(){
+        new Thread(() -> {
+            //ignore request, if there is currently a thread waiting
+            if (!hasWaitingThread.get()){
+                //inform future requests that there is currently a thread waiting
+                hasWaitingThread.set(true);
 
-    @Override
-    protected void runProcedure() {
-        while (running && !Thread.currentThread().isInterrupted()){
-            this.finishedProcessing = false;
-            this.fetchAndWriteGeoJsonToFile();
-
-            try {
-                synchronized (LOCK){
-                    Path source = Paths.get(tmpFilePath);
-                    Path destination = Paths.get(dstFilePath);
-                    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                synchronized (UPDATE_LOCK){
+                    //inform future requests that there is currently no thread waiting
+                    hasWaitingThread.set(false);
+                    this.updateGeoJsonFile();
                 }
-            } catch (IOException e){
-                logger.info("Could not replace existing geojson file.");
-            } finally {
-                logger.info("Delete tmp file.");
-                this.deleteFile(tmpFilePath);
             }
-
-            logger.info("Finished processing");
-            this.currentThread = Thread.currentThread();
-            this.finishedProcessing = true;
-
-            try {
-                getLogger().info("Go to sleep until tomorrow.");
-                TimeUnit.HOURS.sleep(24);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
+        }).start();
     }
 
-    protected void stopScheduledService(){
-        logger.info("Stop service.");
-        while (true){
-            if (this.finishedProcessing){
-                this.currentThread.interrupt();
-                break;
+    protected void updateGeoJsonFile() {
+        this.fetchAndWriteGeoJsonToFile();
+
+        try {
+            logger.info("copy tmp file path to dst file path");
+            synchronized (FILE_LOCK){
+                Path source = Paths.get(tmpFilePath);
+                Path destination = Paths.get(dstFilePath);
+                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
             }
+        } catch (IOException e){
+            logger.info("Could not replace existing geojson file.");
+        } finally {
+            logger.info("Delete tmp file.");
+            this.deleteFile(tmpFilePath);
         }
+
+        logger.info("Finished processing.");
     }
 
     private void fetchAndWriteGeoJsonToFile() {
+        logger.info("fetch and write geojson to file");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFilePath))) {
             // Write the start of the FeatureCollection
             writer.write("{\"type\": \"FeatureCollection\", \"features\": [");
@@ -110,7 +99,9 @@ public class MapLayerService extends BaseScheduler {
             // Example: Stream LineString data with titles
             int offset = 0;
             int limit = 1000;
+            logger.info("query trails from the database.");
             List<Trail> trails = this.iTrailRepository.fetchTrails(offset, limit);
+            logger.info("queried {} trails", trails.size());
             while (!trails.isEmpty()){
                 boolean firstFeature = true;
                 for (int i = 0; i < trails.size(); i++) {
@@ -130,7 +121,7 @@ public class MapLayerService extends BaseScheduler {
 
             // Write the end of the FeatureCollection
             writer.write("]}");
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             logger.error("Cancelled writing geojson file", e);
             this.deleteFile(tmpFilePath);
         }
@@ -144,6 +135,7 @@ public class MapLayerService extends BaseScheduler {
     // Convert a single LineString and its title to a GeoJSON feature string
     private String convertLineStringToFeature(byte[] rawLine, String trailName) throws IOException, ParseException {
         LineString line = (LineString) this.wkbReader.read(rawLine);
+
         Map<String, Object> feature = new HashMap<>();
         feature.put("type", "Feature");
 

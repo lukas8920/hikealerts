@@ -42,4 +42,7 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     List<Trail> findAllByCountryAndUnitcode(String country, String unitcode);
 
     List<Trail> findAllByCountry(String country);
+
+    @Query(value = "EXEC GetTrailsAfterOffset @offset = :offset, @limit = :limit", nativeQuery = true)
+    List<Trail> getTrailsAfterOffset(int offset, int limit);
 }

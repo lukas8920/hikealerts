@@ -3,6 +3,7 @@ package org.devbros.microsoft_hackathon.event_handling.event_injection;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
+import org.devbros.microsoft_hackathon.map_layer.MapLayerService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.io.ParseException;
@@ -14,17 +15,19 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
-public class MapEventInjectionTest {
+public class EventInjectionTest {
     private static EventInjection eventInjection;
+    private static MapLayerService mapLayerService;
 
     @BeforeAll
     public static void setup(){
-        eventInjection = new EventInjection(null, null, null, null);
+        mapLayerService = mock(MapLayerService.class);
+        eventInjection = new EventInjection(null, null, null, null, mapLayerService);
     }
 
     @Test
     public void testValidDateTimeFormats() throws ParseException {
-        EventInjection injection = spy(new EventInjection(null, null, null, null));
+        EventInjection injection = spy(new EventInjection(null, null, null, null, mapLayerService));
         USInjector usInjector = mock(USInjector.class);
 
         OpenAiEvent openAiEvent1 = new OpenAiEvent();

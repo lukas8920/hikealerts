@@ -102,12 +102,7 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public List<Trail> fetchTrails(int offset, int limit) {
-        TypedQuery<Trail> query = entityManager.createQuery(
-                "SELECT g FROM Trail g, Event e WHERE g.id MEMBER OF e.trailIds AND g.id >= :offset ORDER BY g.id", Trail.class);
-        query.setParameter("offset", offset);
-        query.setMaxResults(limit);
-
-        return query.getResultList();
+        return this.iTrailJpaRepository.getTrailsAfterOffset(offset, limit);
     }
 
     @Override

@@ -43,9 +43,8 @@ public class MapLayerServiceTest {
         when(trailRepository.fetchTrails(0, 1000)).thenReturn(new ArrayList<>());
         when(trailRepository.fetchTrails(1000, 1000)).thenReturn(null);
 
-        new Thread(mapLayerService::runProcedure).start();
+        new Thread(mapLayerService::updateGeoJsonFile).start();
 
-        mapLayerService.stopScheduledService();
         File file = new File("src/main/resources/static/layer.geojson");
 
         assertThat(file.exists(), is(true));
