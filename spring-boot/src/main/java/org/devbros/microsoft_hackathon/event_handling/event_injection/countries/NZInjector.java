@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NZInjector extends BaseCountryInjector {
+    private static final String URL = "https://www.doc.govt.nz/";
+
     public NZInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, ITrailRepository iTrailRepository, IRegionRepository iRegionRepository) {
         super(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
     }
@@ -27,6 +29,11 @@ public class NZInjector extends BaseCountryInjector {
             events.add(event);
         }
         return events;
+    }
+
+    @Override
+    protected void overwriteUrl(Event event) {
+        event.setUrl(URL);
     }
 
     @Override

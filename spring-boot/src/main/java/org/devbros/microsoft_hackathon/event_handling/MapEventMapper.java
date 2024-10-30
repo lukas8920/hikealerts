@@ -43,6 +43,7 @@ public class MapEventMapper {
         mapEvent.setEvent_id((String) object[8]);
         mapEvent.setCountry((String) object[9]);
         mapEvent.setPublisherId((Long) object[10]);
+        mapEvent.setUrl((String) object[11]);
         return mapEvent;
     }
 
