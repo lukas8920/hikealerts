@@ -24,6 +24,8 @@ export class HikingMapComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const self = this;
+
     this.initializeMap();
     this.fetchMarkers();
     this.updateVisibleMarkers();
@@ -34,8 +36,8 @@ export class HikingMapComponent implements OnInit {
     });
     // Fetch the GeoJSON data and add it to the map
     this.map.on('moveend', function() {
-      var bounds = this.map.getBounds();
-      var zoom = this.map.getZoom();
+      var bounds = self.map.getBounds();
+      var zoom = self.map.getZoom();
 
       // Calculate tile coordinates based on bounds and zoom level
       var minX = Math.floor((bounds.getWest() + 180) / 360 * Math.pow(2, zoom));
@@ -46,7 +48,7 @@ export class HikingMapComponent implements OnInit {
       // Loop through the tiles in the current view and add them
       for (var x = minX; x <= maxX; x++) {
         for (var y = minY; y <= maxY; y++) {
-          this.addGeoJsonTile(zoom, x, y);
+          self.addGeoJsonTile(zoom, x, y);
         }
       }
     });
