@@ -81,7 +81,27 @@ export class HikingMapComponent implements OnInit {
   }
 
   addGeoJsonLayer(geoJsonData: any): void {
-    L.geoJSON(geoJsonData).addTo(this.map);
+    const geoJsonLayer =  L.geoJSON(geoJsonData, {
+      style: {
+        color: 'red',
+        weight: 2,
+      },
+      onEachFeature: (feature, layer) => {
+        // Show the 'name' property on hover
+        layer.on('mouseover', (e) => {
+          const tooltip = L.tooltip()
+            .setContent(feature.properties.trail_name)
+            .setLatLng(e.latlng)
+            .addTo(this.map);
+
+          layer.on('mouseout', () => {
+            this.map.removeLayer(tooltip);
+          });
+        });
+      }
+    });
+
+    geoJsonLayer.addTo(this.map);
   }
 
   fetchMarkers(): void {

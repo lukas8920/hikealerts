@@ -9,7 +9,6 @@ import org.locationtech.jts.io.WKBReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -56,7 +55,7 @@ public class MapLayerService {
         new Thread(() -> {
             //ignore request, if there is currently a thread waiting
             if (!hasWaitingThread.get()){
-                logger.info("Disable geojson file update waiting queue.");
+                logger.info("Disable geojson updating waiting queue.");
                 //inform future requests that there is currently a thread waiting
                 hasWaitingThread.set(true);
 
