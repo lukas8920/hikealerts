@@ -1,5 +1,6 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection;
 
+import org.apache.qpid.proton.amqp.transport.Open;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.BaseCountryInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.NZInjector;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
@@ -11,6 +12,8 @@ import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
 import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.locationtech.jts.io.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ import java.util.regex.Pattern;
 
 @Service
 public class EventInjection implements IEventInjection {
+    private static final Logger logger = LoggerFactory.getLogger(EventInjection.class);
+
     private final IRawEventRepository iRawEventRepository;
     private final IEventRepository iEventRepository;
     private final ITrailRepository iTrailRepository;
@@ -55,26 +60,20 @@ public class EventInjection implements IEventInjection {
     @Override
     public List<Message> injectEvent(List<OpenAiEvent> openAiEvents) {
         List<Message> errorMessages = new ArrayList<>();
-        // check valid input parameters before injecting events
-        openAiEvents.forEach(openAiEvent -> {
-            if (!checkDateTimePattern(openAiEvent.getFromDate())){
-                Message message = new Message(openAiEvent.getEventId(), "Invalid fromDatetime format: " + openAiEvent.getFromDate());
-                errorMessages.add(message);
-                return;
-            }
-            if (!checkDateTimePattern(openAiEvent.getToDate())){
-                Message message = new Message(openAiEvent.getEventId(), "Invalid toDatetime format: " + openAiEvent.getToDate());
-                errorMessages.add(message);
-                return;
-            }
-            if ((openAiEvent.getParkName() == null || openAiEvent.getParkName().length() <= 1) && (openAiEvent.getRegion() == null || openAiEvent.getRegion().length() <= 1)){
-                Message message = new Message(openAiEvent.getEventId(), "Either provide a park name or a region - park name: " + openAiEvent.getParkName() + " - region: " + openAiEvent.getRegion());
-                errorMessages.add(message);
-                return;
-            }
 
+        // filter events with valid input
+        List<OpenAiEvent> processableEvents = validateOpenAiInputs(openAiEvents, errorMessages);
+
+        /*
+           Delete for each openaievent
+           Needs to be done before event injection!
+         */
+        processableEvents.forEach(this.iEventRepository::deleteByOpenAiEvent);
+
+        // trigger event injection
+        processableEvents.forEach(openAiEvent -> {
             BaseCountryInjector injector = openAiEvent.getCountry() != null ? assignCountryInjector(openAiEvent) : null;
-            if (openAiEvent.getCountry() == null || openAiEvent.getCountry().length() != 2 || injector == null){
+            if (injector == null){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
                 errorMessages.add(message);
                 return;
@@ -84,7 +83,7 @@ public class EventInjection implements IEventInjection {
             try {
                 flag = injector.matchTrails(openAiEvent);
             } catch (ParseException e) {
-                // not able to create the event, because mid point calculation failed
+                logger.error("Not able to create event because mid point calculation failed.", e);
             }
 
             if (!flag){
@@ -103,6 +102,36 @@ public class EventInjection implements IEventInjection {
         }
 
         return List.of(new Message("0", "All events processed."));
+    }
+
+    private List<OpenAiEvent> validateOpenAiInputs(List<OpenAiEvent> openAiEvents, List<Message> errorMessages) {
+        List<OpenAiEvent> processableEvents = new ArrayList<>();
+        // check valid input parameters before injecting events
+        openAiEvents.forEach(openAiEvent -> {
+            if (!checkDateTimePattern(openAiEvent.getFromDate())){
+                Message message = new Message(openAiEvent.getEventId(), "Invalid fromDatetime format: " + openAiEvent.getFromDate());
+                errorMessages.add(message);
+                return;
+            }
+            if (!checkDateTimePattern(openAiEvent.getToDate())){
+                Message message = new Message(openAiEvent.getEventId(), "Invalid toDatetime format: " + openAiEvent.getToDate());
+                errorMessages.add(message);
+                return;
+            }
+            if ((openAiEvent.getParkName() == null || openAiEvent.getParkName().length() <= 1) && (openAiEvent.getRegion() == null || openAiEvent.getRegion().length() <= 1)){
+                Message message = new Message(openAiEvent.getEventId(), "Either provide a park name or a region - park name: " + openAiEvent.getParkName() + " - region: " + openAiEvent.getRegion());
+                errorMessages.add(message);
+                return;
+            }
+
+            if (openAiEvent.getCountry() == null || openAiEvent.getCountry().length() != 2){
+                Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
+                errorMessages.add(message);
+                return;
+            }
+            processableEvents.add(openAiEvent);
+        });
+        return processableEvents;
     }
 
     protected BaseCountryInjector assignCountryInjector(OpenAiEvent openAiEvent) {

@@ -48,7 +48,6 @@ public class EventRepositoryTest {
     private IPublisherJpaRepository iPublisherJpaRepository;
 
     private IPublisherRepository iPublisherRepository;
-    private ITrailRepository iTrailRepository;
     private MapEventMapper mapEventMapper;
     private Event event1;
     private Event event2;
@@ -56,7 +55,6 @@ public class EventRepositoryTest {
     @BeforeEach
     public void setup(){
         iPublisherRepository = mock(IPublisherRepository.class);
-        iTrailRepository = mock(ITrailRepository.class);
         this.mapEventMapper = new MapEventMapper();
 
         event1 = new Event();
@@ -80,7 +78,7 @@ public class EventRepositoryTest {
     @Test
     @Disabled
     public void testThatSavingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, iTrailRepository);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
 
         when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
 
@@ -103,7 +101,7 @@ public class EventRepositoryTest {
     @Test
     @Disabled
     public void testThatFindingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, iTrailRepository);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
         Publisher publisher = new Publisher();
         publisher.setId(1L);
 
@@ -129,7 +127,7 @@ public class EventRepositoryTest {
     @Test
     @Disabled
     public void testThatDeletingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, iTrailRepository);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
         List<String> ids = Arrays.asList("79", "80");
 
         RawEvent rawEvent1 = new RawEvent();

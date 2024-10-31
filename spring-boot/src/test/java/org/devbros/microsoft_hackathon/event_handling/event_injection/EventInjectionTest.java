@@ -4,6 +4,8 @@ import org.devbros.microsoft_hackathon.event_handling.event_injection.countries.
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.devbros.microsoft_hackathon.map_layer.MapLayerService;
+import org.devbros.microsoft_hackathon.repository.events.EventRepository;
+import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.io.ParseException;
@@ -19,15 +21,18 @@ public class EventInjectionTest {
     private static EventInjection eventInjection;
     private static MapLayerService mapLayerService;
 
+    private static IEventRepository iEventRepository;
+
     @BeforeAll
     public static void setup(){
+        iEventRepository = mock(EventRepository.class);
         mapLayerService = mock(MapLayerService.class);
-        eventInjection = new EventInjection(null, null, null, null, mapLayerService);
+        eventInjection = new EventInjection(null, iEventRepository, null, null, mapLayerService);
     }
 
     @Test
     public void testValidDateTimeFormats() throws ParseException {
-        EventInjection injection = spy(new EventInjection(null, null, null, null, mapLayerService));
+        EventInjection injection = spy(new EventInjection(null, iEventRepository, null, null, mapLayerService));
         USInjector usInjector = mock(USInjector.class);
 
         OpenAiEvent openAiEvent1 = new OpenAiEvent();
