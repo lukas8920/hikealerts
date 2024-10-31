@@ -33,8 +33,22 @@ export class HikingMapComponent implements OnInit {
       this.updateVisibleMarkers();
     });
     // Fetch the GeoJSON data and add it to the map
-    this.apiService.getGeoJsonLayer().subscribe((geoJsonData) => {
-      this.addGeoJsonLayer(geoJsonData);
+    this.map.on('moveend', function() {
+      var bounds = this.map.getBounds();
+      var zoom = this.map.getZoom();
+
+      // Calculate tile coordinates based on bounds and zoom level
+      var minX = Math.floor((bounds.getWest() + 180) / 360 * Math.pow(2, zoom));
+      var maxX = Math.floor((bounds.getEast() + 180) / 360 * Math.pow(2, zoom));
+      var minY = Math.floor((1 - (Math.log(Math.tan(bounds.getNorth() * Math.PI / 180) + 1 / Math.cos(bounds.getNorth() * Math.PI / 180)) / Math.PI)) / 2 * Math.pow(2, zoom));
+      var maxY = Math.floor((1 - (Math.log(Math.tan(bounds.getSouth() * Math.PI / 180) + 1 / Math.cos(bounds.getSouth() * Math.PI / 180)) / Math.PI)) / 2 * Math.pow(2, zoom));
+
+      // Loop through the tiles in the current view and add them
+      for (var x = minX; x <= maxX; x++) {
+        for (var y = minY; y <= maxY; y++) {
+          this.addGeoJsonTile(zoom, x, y);
+        }
+      }
     });
   }
 
@@ -80,28 +94,21 @@ export class HikingMapComponent implements OnInit {
     }
   }
 
-  addGeoJsonLayer(geoJsonData: any): void {
-    const geoJsonLayer =  L.geoJSON(geoJsonData, {
-      style: {
-        color: 'red',
-        weight: 2,
-      },
-      onEachFeature: (feature, layer) => {
-        // Show the 'name' property on hover
-        layer.on('mouseover', (e) => {
-          const tooltip = L.tooltip()
-            .setContent(feature.properties.trail_name)
-            .setLatLng(e.latlng)
-            .addTo(this.map);
-
-          layer.on('mouseout', () => {
-            this.map.removeLayer(tooltip);
-          });
-        });
-      }
-    });
-
-    geoJsonLayer.addTo(this.map);
+  addGeoJsonTile(z, x, y): void {
+    fetch(`https://v220241074781291394.goodsrv.de:8080/v1/tiles/${z}/${x}/${y}.geojson`)
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: function (feature) {
+            return {
+              color: 'red',
+              weight: 2,
+              opacity: 0.6
+            };
+          }
+        }).addTo(this.map);
+      })
+      .catch(error => console.error('Error fetching GeoJSON tile:', error));
   }
 
   fetchMarkers(): void {

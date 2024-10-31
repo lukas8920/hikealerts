@@ -30,8 +30,6 @@ public class MapLayerService {
     private static final String dstFilePath = "layer.geojson";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
-    private static final double TOLERANCE = 0.3;
-
     private static final Object FILE_LOCK = new Object();
     private static final Object UPDATE_LOCK = new Object();
 
@@ -141,11 +139,7 @@ public class MapLayerService {
 
     // Convert a single LineString and its title to a GeoJSON feature string
     private String convertLineStringToFeature(byte[] rawLine, String trailName) throws IOException, ParseException {
-        LineString processedLine = (LineString) this.wkbReader.read(rawLine);
-
-        // Simplify the LineString with a tolerance
-        LineString simplifiedLineString = (LineString) TopologyPreservingSimplifier.simplify(processedLine, TOLERANCE);
-
+        LineString line = (LineString) this.wkbReader.read(rawLine);
 
         Map<String, Object> feature = new HashMap<>();
         feature.put("type", "Feature");
@@ -155,10 +149,10 @@ public class MapLayerService {
         geometry.put("type", "LineString");
 
         // Convert LineString coordinates to GeoJSON format
-        double[][] coordinates = new double[simplifiedLineString.getCoordinates().length][2];
-        for (int j = 0; j < simplifiedLineString.getCoordinates().length; j++) {
-            coordinates[j][0] = simplifiedLineString.getCoordinateN(j).x;
-            coordinates[j][1] = simplifiedLineString.getCoordinateN(j).y;
+        double[][] coordinates = new double[line.getCoordinates().length][2];
+        for (int j = 0; j < line.getCoordinates().length; j++) {
+            coordinates[j][0] = line.getCoordinateN(j).x;
+            coordinates[j][1] = line.getCoordinateN(j).y;
         }
         geometry.put("coordinates", coordinates);
         feature.put("geometry", geometry);

@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> {
                     authz.requestMatchers("/v1/events/pull").permitAll();
                     authz.requestMatchers("/v1/map/layer").permitAll();
+                    authz.requestMatchers("/v1/tiles").permitAll();
                     authz.anyRequest().authenticated();
                 });
 
