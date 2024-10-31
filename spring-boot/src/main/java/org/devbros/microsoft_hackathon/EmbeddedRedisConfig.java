@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import redis.embedded.RedisServer;
 
 @Configuration
-@Profile("test")
+@Profile("mock")
 public class EmbeddedRedisConfig {
 
     private RedisServer redisServer;

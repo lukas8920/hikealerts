@@ -13,6 +13,7 @@ import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -31,6 +32,7 @@ public class Event implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigserial")
     private Long id;
     private String event_id;
     private String region;

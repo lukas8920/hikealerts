@@ -19,9 +19,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -99,19 +97,29 @@ public class EventRepository implements IEventRepository {
         return query.getResultList().stream().map(this.mapEventMapper::map).collect(Collectors.toList());
     }
 
+    private List<MapEvent> findMapEventByIdAndCountry(String eventId, String country){
+        List<Object[]> objects = this.iEventJpaRepository.findByEventIdAndCountry(eventId, country);
+        return objects.stream().map(this.mapEventMapper::map).collect(Collectors.toList());
+    }
+
     @Override
     @Transactional
     public void deleteByOpenAiEvent(OpenAiEvent openAiEvent){
+        List<MapEvent> mapEvent = findMapEventByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
         this.iEventJpaRepository.deleteByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
+
+        // Remove keys that are not in the provided list
+        if (!mapEvent.isEmpty()) {
+            redisTemplate.opsForZSet().remove(EVENTS_KEY, mapEvent.toArray());
+        }
     }
 
     @Transactional
     public void deleteEventsNotInList(List<String> idsToKeep, String country) {
         // get list of ids from sql database
-        String listedIds = idsToKeep.stream()
-                .map(id -> "'" + id + "'")  // Convert each Long to String
-                .collect(Collectors.joining(", ", "(", ")"));
-        List<MapEvent> events = this.iEventJpaRepository.findByEventIdsAndCountry(listedIds, country);
+        List<Object[]> objEvents = this.iEventJpaRepository.findByEventIdsAndCountry(idsToKeep, country);
+        System.out.println(objEvents.size());
+        List<MapEvent> events = objEvents.stream().map(this.mapEventMapper::map).toList();
 
         // Convert List to Set for faster lookup
         Set<Long> idsToKeepSet = events.stream().map(MapEvent::getId).collect(Collectors.toSet());

@@ -1,7 +1,6 @@
 package org.devbros.microsoft_hackathon.repository.events;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
-import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -19,9 +17,9 @@ public interface IEventJpaRepository extends JpaRepository<Event, Long> {
     @Query(value = "DELETE FROM events WHERE event_id = :id AND country = :country", nativeQuery = true)
     void deleteByIdAndCountry(@Param("id") String event_id, @Param("country") String country);
 
-    @Query(value = "SELECT id, title, description, create_date_time, mid_latitude_coordinate, mid_longitude_coordinate, url, event_id, country FROM events WHERE event_id IN (:ids) AND country = :country", nativeQuery = true)
-    List<MapEvent> findByEventIdsAndCountry(@Param("ids") String ids, @Param("country") String country);
+    @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url FROM events e JOIN publisher p ON p.id = e.publisher_id WHERE e.event_id IN (:ids) AND e.country = :country", nativeQuery = true)
+    List<Object[]> findByEventIdsAndCountry(@Param("ids") List<String> ids, @Param("country") String country);
 
-    @Query(value = "SELECT * FROM events WHERE event_id = :id AND country = :country", nativeQuery = true)
-    Event findFirstByEventIdAndCountry(@Param("id") String id, @Param("country") String country);
+    @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url FROM events e JOIN publisher p ON p.id = e.publisher_id WHERE e.event_id = :id AND e.country = :country", nativeQuery = true)
+    List<Object[]> findByEventIdAndCountry(@Param("id") String id, @Param("country") String country);
 }
