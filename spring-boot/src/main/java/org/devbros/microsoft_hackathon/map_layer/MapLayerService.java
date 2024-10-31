@@ -93,33 +93,38 @@ public class MapLayerService {
     private void fetchAndWriteGeoJsonToFile() {
         logger.info("fetch and write geojson to file");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFilePath))) {
-            // Write the start of the FeatureCollection
+            // Start the FeatureCollection JSON structure
             writer.write("{\"type\": \"FeatureCollection\", \"features\": [");
 
-            // Example: Stream LineString data with titles
             int offset = 0;
             int limit = 1000;
-            logger.info("query trails from the database.");
+            boolean firstFeature = true;
+
+            logger.info("Query trails from the database.");
             List<Trail> trails = this.iTrailRepository.fetchTrails(offset, limit);
-            logger.info("queried {} trails", trails.size());
-            while (!trails.isEmpty()){
-                boolean firstFeature = true;
-                for (int i = 0; i < trails.size(); i++) {
-                    // Stream feature, adding a comma only between features
+            logger.info("Queried {} trails", trails.size());
+
+            while (!trails.isEmpty()) {
+                for (Trail trail : trails) {
+                    // Only add a comma if it's not the first feature
                     if (!firstFeature) {
                         writer.write(",");
                     }
-                    Trail trail = trails.get(i);
-                    writer.write(convertLineStringToFeature(trail.getCoordinates(), trail.getTrailname()));
 
-                    firstFeature = false;
+                    // Convert trail to feature JSON
+                    String featureJson = convertLineStringToFeature(trail.getCoordinates(), trail.getTrailname());
+
+                    // Debug output to ensure JSON is correct
+                    logger.debug("Generated feature JSON: " + featureJson);
+
+                    writer.write(featureJson);  // Write the JSON feature to file
+                    firstFeature = false;  // Set to false after the first feature
                 }
                 offset += limit;
-
                 trails = this.iTrailRepository.fetchTrails(offset, limit);
             }
 
-            // Write the end of the FeatureCollection
+            // Close the FeatureCollection
             writer.write("]}");
         } catch (Exception e) {
             logger.error("Cancelled writing geojson file", e);
