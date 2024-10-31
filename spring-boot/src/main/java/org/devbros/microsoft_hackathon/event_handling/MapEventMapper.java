@@ -4,6 +4,8 @@ import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.E
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.devbros.microsoft_hackathon.publisher_management.entities.Publisher;
 import org.devbros.microsoft_hackathon.publisher_management.entities.Status;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
@@ -11,6 +13,12 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class MapEventMapper {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private final Environment environment;
+    @Autowired
+    public MapEventMapper(Environment environment){
+        this.environment = environment;
+    }
 
     public MapEvent map (Event event, Publisher publisher){
         MapEvent mapEvent = new MapEvent();
@@ -36,7 +44,12 @@ public class MapEventMapper {
         mapEvent.setTitle((String) object[1]);
         mapEvent.setDescription((String) object[2]);
         mapEvent.setPublisher((String) object[3]);
-        mapEvent.setStatus((String) object[4]);
+        // handle jpa ms sql bug
+        if (this.environment.getActiveProfiles()[0].equals("prod")){
+            mapEvent.setStatus(mapStatus((Status) object[4]));
+        } else {
+            mapEvent.setStatus((String) object[4]);
+        }
         mapEvent.setCreateDate((String) object[5]);
         mapEvent.setLat((double) object[6]);
         mapEvent.setLng((double) object[7]);

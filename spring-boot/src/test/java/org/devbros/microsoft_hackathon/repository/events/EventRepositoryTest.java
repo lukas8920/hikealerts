@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -46,6 +47,8 @@ public class EventRepositoryTest {
     private IRawEventJpaRepository iRawEventJpaRepository;
     @Autowired
     private IPublisherJpaRepository iPublisherJpaRepository;
+    @Autowired
+    private Environment environment;
 
     private IPublisherRepository iPublisherRepository;
     private MapEventMapper mapEventMapper;
@@ -56,7 +59,7 @@ public class EventRepositoryTest {
     @BeforeEach
     public void setup(){
         iPublisherRepository = mock(IPublisherRepository.class);
-        this.mapEventMapper = new MapEventMapper();
+        this.mapEventMapper = new MapEventMapper(environment);
 
         event1 = new Event();
         event1.setId(1L);
