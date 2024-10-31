@@ -94,7 +94,10 @@ public class EventInjection implements IEventInjection {
 
         // request geojson layer update if there have been events added to the db
         if (errorMessages.size() != openAiEvents.size()){
+            logger.info("Updating geojson file due to event changes ...");
             this.mapLayerService.requestGeoJsonFileUpdate();
+        } else {
+            logger.info("There are not updates for the map layer, hence geojson file is not refreshed.");
         }
 
         if (!errorMessages.isEmpty()){

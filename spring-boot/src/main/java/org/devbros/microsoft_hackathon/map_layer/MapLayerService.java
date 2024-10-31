@@ -56,10 +56,12 @@ public class MapLayerService {
         new Thread(() -> {
             //ignore request, if there is currently a thread waiting
             if (!hasWaitingThread.get()){
+                logger.info("Disable geojson file update waiting queue.");
                 //inform future requests that there is currently a thread waiting
                 hasWaitingThread.set(true);
 
                 synchronized (UPDATE_LOCK){
+                    logger.info("Locked geojson file updating / enable wating queue.");
                     //inform future requests that there is currently no thread waiting
                     hasWaitingThread.set(false);
                     this.updateGeoJsonFile();
