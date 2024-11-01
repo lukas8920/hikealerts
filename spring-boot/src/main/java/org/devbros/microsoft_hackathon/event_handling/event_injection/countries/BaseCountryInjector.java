@@ -66,11 +66,15 @@ public abstract class BaseCountryInjector {
         return events;
     }
 
+    protected abstract double getMatcherThreshold();
+
+    protected abstract double getLevenshteinWeight();
+
     protected List<Event> identifyTrail(RawEvent rawEvent, Event event, OpenAiEvent openAiEvent) throws ParseException {
         List<Event> events = new ArrayList<>();
         if (rawEvent.getUnitCode() != null){
             //find best matching trail
-            Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry());
+            Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry(), getMatcherThreshold(), getLevenshteinWeight());
             if (trail != null){
                 event.setTrailIds(List.of(trail.getId()));
                 event.calculateMidCoordinate(trail);

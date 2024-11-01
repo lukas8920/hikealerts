@@ -11,9 +11,13 @@ import static org.hamcrest.Matchers.nullValue;
  *
  */
 public class NameMatcherTest {
+    private static final double US_MATCHER_THRESHOLD = 0.19;
+    private static final double US_LEVENSHTEIN_WEIGHT = 0.62;
+
     @Test
     public void testStringMatching(){
         NameMatcher<Trail> nameMatcher = new NameMatcher<>();
+        nameMatcher.resetNameMatcher(US_MATCHER_THRESHOLD);
         String searchString = "New Hestigae Trails";
         String targetString1 = "New Hampshire Hestige Trail";
         String targetString2 = "Old Hestigae Trail";
@@ -26,9 +30,9 @@ public class NameMatcherTest {
         Trail trail3 = new Trail();
         trail3.setTrailname(targetString3);
 
-        nameMatcher.match(searchString, trail1);
-        nameMatcher.match(searchString, trail2);
-        nameMatcher.match(searchString, trail3);
+        nameMatcher.match(searchString, trail1, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail2, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail3, US_LEVENSHTEIN_WEIGHT);
 
         assertThat(nameMatcher.getT(), is(trail1));
     }
@@ -36,6 +40,7 @@ public class NameMatcherTest {
     @Test
     public void testNonMatching(){
         NameMatcher<Trail> nameMatcher = new NameMatcher<>();
+        nameMatcher.resetNameMatcher(US_MATCHER_THRESHOLD);
 
         String searchString = "New Hestigae Trails";
         String targetString1 = "New Agis Camp";
@@ -49,9 +54,9 @@ public class NameMatcherTest {
         Trail trail3 = new Trail();
         trail3.setTrailname(targetString3);
 
-        nameMatcher.match(searchString, trail1);
-        nameMatcher.match(searchString, trail2);
-        nameMatcher.match(searchString, trail3);
+        nameMatcher.match(searchString, trail1, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail2, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail3, US_LEVENSHTEIN_WEIGHT);
 
         assertThat(nameMatcher.getT(), nullValue());
     }

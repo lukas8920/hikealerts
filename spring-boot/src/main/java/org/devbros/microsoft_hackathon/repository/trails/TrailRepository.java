@@ -36,8 +36,8 @@ public class TrailRepository implements ITrailRepository {
     }
 
     @Override
-    public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country) {
-        this.nameMatcher.resetNameMatcher();
+    public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country, double threshold, double levenshteinWeight) {
+        this.nameMatcher.resetNameMatcher(threshold);
         logger.info("Search trail by trail name, unit code and country: " + searchName + ", " + unitCode + ", " + country);
         logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
@@ -49,7 +49,7 @@ public class TrailRepository implements ITrailRepository {
             do {
                 slice.forEach(trail -> {
                     // Process each entity
-                    this.nameMatcher.match(searchName, trail);
+                    this.nameMatcher.match(searchName, trail, levenshteinWeight);
                 });
                 offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
                 slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
@@ -110,8 +110,8 @@ public class TrailRepository implements ITrailRepository {
     }
 
     @Override
-    public Trail searchTrailByNameAndCountry(String name, String country) {
-        this.nameMatcher.resetNameMatcher();
+    public Trail searchTrailByNameAndCountry(String name, String country, double threshold, double levenshteinWeight) {
+        this.nameMatcher.resetNameMatcher(threshold);
         logger.info("Search trail by trail name and country: " + name + ", " + country);
         logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
@@ -123,7 +123,7 @@ public class TrailRepository implements ITrailRepository {
             do {
                 slice.forEach(trail -> {
                     // Process each entity
-                    this.nameMatcher.match(name, trail);
+                    this.nameMatcher.match(name, trail, levenshteinWeight);
                 });
                 offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
                 slice = this.iTrailJpaRepository.findAllByCountry(country, offset);

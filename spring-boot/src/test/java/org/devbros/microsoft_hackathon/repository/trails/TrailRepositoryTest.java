@@ -86,13 +86,13 @@ public class TrailRepositoryTest {
         doAnswer(invocation -> {
             callsToMatcherCounter.addAndGet(1);
             return null; // return null for void methods
-        }).when(nameMatcher).match(any(), any());
+        }).when(nameMatcher).match(any(), any(), any());
         when(nameMatcher.getT()).thenReturn(trail1);
 
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), wktWriter.write(line));
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), wktWriter.write(line));
 
-        Trail trail = this.trailRepository.searchTrailByNameUnitCodeAndCountry("dummy", trail1.getUnitcode(), trail1.getCountry());
+        Trail trail = this.trailRepository.searchTrailByNameUnitCodeAndCountry("dummy", trail1.getUnitcode(), trail1.getCountry(), 1, 1);
 
         assertThat(trail.getTrailId(), is("55555L"));
         assertThat(wkbReader.read(trail.getCoordinates()).getCoordinates()[0].x, is(1.0));
@@ -197,13 +197,13 @@ public class TrailRepositoryTest {
         doAnswer(invocation -> {
             callsToMatcherCounter.addAndGet(1);
             return null; // return null for void methods
-        }).when(nameMatcher).match(any(), any());
+        }).when(nameMatcher).match(any(), any(), any());
         when(nameMatcher.getT()).thenReturn(trail2);
 
         iTrailJpaRepository.saveTrail(trail1.getTrailId(), trail1.getCountry(), trail1.getUnitcode(), wktWriter.write(line));
         iTrailJpaRepository.saveTrail(trail2.getTrailId(), trail2.getCountry(), trail2.getUnitcode(), wktWriter.write(line));
 
-        Trail trail = this.trailRepository.searchTrailByNameAndCountry("dummy", trail2.getCountry());
+        Trail trail = this.trailRepository.searchTrailByNameAndCountry("dummy", trail2.getCountry(), 1, 1);
 
         assertThat(trail.getTrailId(), is("66666L"));
         assertThat(wkbReader.read(trail.getCoordinates()).getCoordinates()[0].x, is(1.0));

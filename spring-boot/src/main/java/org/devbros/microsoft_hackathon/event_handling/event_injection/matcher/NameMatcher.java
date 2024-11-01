@@ -15,17 +15,16 @@ import java.util.Set;
 @Component
 public class NameMatcher<T extends MatchProvider> {
     private static final Logger logger = LoggerFactory.getLogger(NameMatcher.class.getName());
-    private static final double MATCHING_THRESHOLD = 0.19;
 
     private T t;
-    private double matchingScore = MATCHING_THRESHOLD;
+    private double matchingScore = 1;
 
-    public void resetNameMatcher(){
+    public void resetNameMatcher(double threshold){
         this.t = null;
-        this.matchingScore = MATCHING_THRESHOLD;
+        this.matchingScore = threshold;
     }
 
-    public void match(String searchName, T t) {
+    public void match(String searchName, T t, double levenshteinWeight) {
         if (searchName == null || searchName.length() < 1){
             return;
         }
@@ -66,7 +65,8 @@ public class NameMatcher<T extends MatchProvider> {
                     totalLevenshteinSimilarity / levenshteinComparisons : 1.0; // 1.0 if exact match
 
             // 3. Combine Jaccard and Levenshtein, giving 50% weight to each
-            double combinedScore = 0.38 * jaccardSimilarity + 0.62 * averageLevenshteinSimilarity;
+            double jaccard_weight = 1 - levenshteinWeight;
+            double combinedScore = jaccard_weight * jaccardSimilarity + levenshteinWeight * averageLevenshteinSimilarity;
 
             logger.debug("Score: " + combinedScore);
             // 4. Check whether optimum pick

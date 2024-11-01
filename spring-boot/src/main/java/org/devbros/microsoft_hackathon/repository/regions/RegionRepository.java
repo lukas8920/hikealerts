@@ -29,7 +29,7 @@ public class RegionRepository implements IRegionRepository {
     }
 
     @Override
-    public List<Region> findUniqueRegionName(String regionName, String country){
+    public List<Region> findUniqueRegionName(String regionName, String country, double threshold, double levenshteinWeight){
         Phaser phaser = new Phaser(1);
         logger.info("Try to identify region by name: " + regionName);
         long offset = 0;  // start from page 0
@@ -42,11 +42,12 @@ public class RegionRepository implements IRegionRepository {
             logger.debug(String.valueOf(offset));
 
             NameMatcher<Region> nameMatcher = new NameMatcher<>();
+            nameMatcher.resetNameMatcher(threshold);
             // Process each entity
             phaser.register();
             List<Region> finalSlice = slice;
             this.executorService.submit(new Worker(phaser, () -> {
-                finalSlice.forEach(region -> nameMatcher.match(regionName, region));
+                finalSlice.forEach(region -> nameMatcher.match(regionName, region, levenshteinWeight));
 
                 Region topMatching = nameMatcher.getT();
                 if (topMatching != null){
@@ -65,8 +66,8 @@ public class RegionRepository implements IRegionRepository {
     }
 
     @Override
-    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country) {
-        List<Region> regions = findUniqueRegionName(regionName, country);
+    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country, double threshold, double levenshteinWeight) {
+        List<Region> regions = findUniqueRegionName(regionName, country, threshold, levenshteinWeight);
 
         if (!regions.isEmpty()){
             logger.info("Identified top matching region");

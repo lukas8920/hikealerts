@@ -17,6 +17,16 @@ public class USInjector extends BaseCountryInjector {
     }
 
     @Override
+    protected double getMatcherThreshold() {
+        return 0.19;
+    }
+
+    @Override
+    protected double getLevenshteinWeight() {
+        return 0.62;
+    }
+
+    @Override
     protected void overwriteUrl(Event event) {
         event.setUrl(event.getUrl());
     }
@@ -28,6 +38,6 @@ public class USInjector extends BaseCountryInjector {
 
     @Override
     protected List<Region> findRegionsInDatabase(String regionName, String country) {
-        return this.iRegionRepository.findUniqueRegionName(regionName, country);
+        return this.iRegionRepository.findUniqueRegionName(regionName, country, getMatcherThreshold(), getLevenshteinWeight());
     }
 }

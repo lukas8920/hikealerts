@@ -5,6 +5,6 @@ import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.R
 import java.util.List;
 
 public interface IRegionRepository {
-    List<Region> findRegionByRegionNameAndCountry(String regionName, String country);
-    List<Region> findUniqueRegionName(String regionName, String country);
+    List<Region> findRegionByRegionNameAndCountry(String regionName, String country, double threshold, double levenshteinWeight);
+    List<Region> findUniqueRegionName(String regionName, String country, double threshold, double levenshteinWeight);
 }
