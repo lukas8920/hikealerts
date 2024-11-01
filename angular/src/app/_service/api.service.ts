@@ -19,6 +19,6 @@ export class ApiService {
   }
 
   getGeoJsonLayer(): Observable<any> {
-    return this.http.get<any>("https://v220241074781291394.goodsrv.de:8080/v1/map/layer", {headers});
+    return this.http.get<any>("https://v220241074781291394.goodsrv.de:8080/v1/map/layer", {responseType: 'arraybuffer' as 'json'});
   }
 }
