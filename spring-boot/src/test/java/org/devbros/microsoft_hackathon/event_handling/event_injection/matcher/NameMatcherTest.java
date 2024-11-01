@@ -11,13 +11,12 @@ import static org.hamcrest.Matchers.nullValue;
  *
  */
 public class NameMatcherTest {
-    private static final double US_MATCHER_THRESHOLD = 0.19;
+    private static final double US_MATCHER_THRESHOLD = 0.15;
     private static final double US_LEVENSHTEIN_WEIGHT = 0.62;
 
     @Test
-    public void testStringMatching(){
-        NameMatcher<Trail> nameMatcher = new NameMatcher<>();
-        nameMatcher.resetNameMatcher(US_MATCHER_THRESHOLD);
+    public void testUSStringMatching(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
         String searchString = "New Hestigae Trails";
         String targetString1 = "New Hampshire Hestige Trail";
         String targetString2 = "Old Hestigae Trail";
@@ -30,17 +29,16 @@ public class NameMatcherTest {
         Trail trail3 = new Trail();
         trail3.setTrailname(targetString3);
 
-        nameMatcher.match(searchString, trail1, US_LEVENSHTEIN_WEIGHT);
-        nameMatcher.match(searchString, trail2, US_LEVENSHTEIN_WEIGHT);
-        nameMatcher.match(searchString, trail3, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail1);
+        nameMatcher.match(searchString, trail2);
+        nameMatcher.match(searchString, trail3);
 
         assertThat(nameMatcher.getT(), is(trail1));
     }
 
     @Test
-    public void testNonMatching(){
-        NameMatcher<Trail> nameMatcher = new NameMatcher<>();
-        nameMatcher.resetNameMatcher(US_MATCHER_THRESHOLD);
+    public void testUSNonMatching(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
 
         String searchString = "New Hestigae Trails";
         String targetString1 = "New Agis Camp";
@@ -54,10 +52,70 @@ public class NameMatcherTest {
         Trail trail3 = new Trail();
         trail3.setTrailname(targetString3);
 
-        nameMatcher.match(searchString, trail1, US_LEVENSHTEIN_WEIGHT);
-        nameMatcher.match(searchString, trail2, US_LEVENSHTEIN_WEIGHT);
-        nameMatcher.match(searchString, trail3, US_LEVENSHTEIN_WEIGHT);
+        nameMatcher.match(searchString, trail1);
+        nameMatcher.match(searchString, trail2);
+        nameMatcher.match(searchString, trail3);
 
         assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testUsNonMatchingRoad(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Paradise Hope Road";
+        String targetString1 = "Paradise Hope Peak";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testUsNonMatchingRoad2(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Loop Road";
+        String targetString1 = "Loop Circuit";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testUsNonMatchingTrail(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "River Trail";
+        String targetString1 = "Trailer Village";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testUsMatchingTrail(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Boquillas Canyon Trail";
+        String targetString1 = "Boquillas Canyon";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), is(trail1));
     }
 }

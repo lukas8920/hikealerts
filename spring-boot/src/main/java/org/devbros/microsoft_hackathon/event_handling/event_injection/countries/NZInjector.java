@@ -1,6 +1,7 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.countries;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.*;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -19,20 +20,10 @@ public class NZInjector extends BaseCountryInjector {
     }
 
     @Override
-    protected double getMatcherThreshold() {
-        return 0.19;
-    }
-
-    @Override
-    protected double getLevenshteinWeight() {
-        return 0.62;
-    }
-
-    @Override
     protected List<Event> identifyTrail(RawEvent rawEvent, Event event, OpenAiEvent openAiEvent) throws ParseException {
         List<Event> events = new ArrayList<>();
         //find best matching trail
-        Trail trail = this.iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName(), event.getCountry(), getMatcherThreshold(), getLevenshteinWeight());
+        Trail trail = this.iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName(), event.getCountry(), super.provideNameMatcher());
         if (trail != null){
             event.setTrailIds(List.of(trail.getId()));
             event.calculateMidCoordinate(trail);
@@ -53,6 +44,6 @@ public class NZInjector extends BaseCountryInjector {
 
     @Override
     protected List<Region> findRegionsInDatabase(String regionName, String country) {
-        return this.iRegionRepository.findUniqueRegionName(regionName, country, getMatcherThreshold(), getLevenshteinWeight());
+        return this.iRegionRepository.findUniqueRegionName(regionName, country);
     }
 }

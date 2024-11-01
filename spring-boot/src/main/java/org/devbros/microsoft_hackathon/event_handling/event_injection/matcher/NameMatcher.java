@@ -1,30 +1,51 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.matcher;
 
 import lombok.Getter;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.MatchProvider;
+import org.devbros.microsoft_hackathon.util.Jaccard;
+import org.devbros.microsoft_hackathon.util.Levenshtein;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
-@Component
 public class NameMatcher<T extends MatchProvider> {
     private static final Logger logger = LoggerFactory.getLogger(NameMatcher.class.getName());
+
+    private Levenshtein levenshtein;
+    private Jaccard jaccard;
+
+    private final double matchingThreshold;
+    private final double levenshteinWeight;
 
     private T t;
     private double matchingScore = 1;
 
-    public void resetNameMatcher(double threshold){
-        this.t = null;
-        this.matchingScore = threshold;
+    public NameMatcher(double matchingThreshold, double levenshteinWeight){
+        this.matchingThreshold = matchingThreshold;
+        this.matchingScore = matchingThreshold;
+        this.levenshteinWeight = levenshteinWeight;
+
+        Set<String> emptySet = new HashSet<>();
+        this.levenshtein = new Levenshtein(emptySet, emptySet);
+        this.jaccard = new Jaccard(emptySet, emptySet);
     }
 
-    public void match(String searchName, T t, double levenshteinWeight) {
+    public NameMatcher(Set<String> lowerWeightDict, Set<String> penalizeDict, double matchingThreshold, double levenshteinWeight){
+        this(matchingThreshold, levenshteinWeight);
+
+        this.levenshtein = new Levenshtein(lowerWeightDict, penalizeDict);
+        this.jaccard = new Jaccard(lowerWeightDict, penalizeDict);
+    }
+
+    public void resetNameMatcher(){
+        this.t = null;
+        this.matchingScore = this.matchingThreshold;
+    }
+
+    public void match(String searchName, T t) {
         if (searchName == null || searchName.length() < 1){
             return;
         }
@@ -43,7 +64,7 @@ public class NameMatcher<T extends MatchProvider> {
             String[] words2 = str.split("\\s+");
 
             // 1. Calculate Jaccard Similarity for the overall word match
-            double jaccardSimilarity = calculateJaccardSimilarity(words1, words2);
+            double jaccardSimilarity = jaccard.calculateJaccardSimilarity(words1, words2);
             logger.debug("Jaccard: " + jaccardSimilarity);
 
             // 2. Calculate Levenshtein similarity for each word pair (where words don't exactly match)
@@ -54,7 +75,7 @@ public class NameMatcher<T extends MatchProvider> {
                 for (String word2 : words2) {
                     // Only compare if the words are different
                     if (!word1.equals(word2)) {
-                        totalLevenshteinSimilarity += calculateLevenshteinSimilarity(word1, word2);
+                        totalLevenshteinSimilarity += levenshtein.calculateLevenshteinSimilarity(word1, word2);
                         levenshteinComparisons++;
                     }
                 }
@@ -68,7 +89,7 @@ public class NameMatcher<T extends MatchProvider> {
             double jaccard_weight = 1 - levenshteinWeight;
             double combinedScore = jaccard_weight * jaccardSimilarity + levenshteinWeight * averageLevenshteinSimilarity;
 
-            logger.debug("Score: " + combinedScore);
+            logger.info("Score: " + combinedScore);
             // 4. Check whether optimum pick
             if (combinedScore > matchingScore){
                 this.matchingScore = combinedScore;
@@ -76,33 +97,5 @@ public class NameMatcher<T extends MatchProvider> {
                 return;
             }
         }
-    }
-
-    // Function to calculate the Jaccard Similarity between two sets of words
-    private double calculateJaccardSimilarity(String[] words1, String[] words2) {
-        if (words2.length < 3 && words1.length < 3){
-            return 0;
-        }
-
-        Set<String> set1 = new HashSet<>(Arrays.asList(words1));
-        Set<String> set2 = new HashSet<>(Arrays.asList(words2));
-
-        Set<String> intersection = new HashSet<>(set1);
-        intersection.retainAll(set2);
-
-        Set<String> union = new HashSet<>(set1);
-        union.addAll(set2);
-
-        return (double) intersection.size() / union.size();
-    }
-
-    // Function to calculate the Levenshtein Distance between two words and normalize it
-    private double calculateLevenshteinSimilarity(String word1, String word2) {
-        LevenshteinDistance levenshtein = new LevenshteinDistance();
-        int distance = levenshtein.apply(word1, word2);
-
-        // Normalize the distance to be a similarity score between 0 and 1
-        int maxLength = Math.max(word1.length(), word2.length());
-        return 1.0 - ((double) distance / maxLength);  // Similarity (1 is perfect match)
     }
 }

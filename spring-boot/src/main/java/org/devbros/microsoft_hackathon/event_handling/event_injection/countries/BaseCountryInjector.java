@@ -1,6 +1,9 @@
 package org.devbros.microsoft_hackathon.event_handling.event_injection.countries;
 
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.*;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GenericPenalizeDict;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.GenericWeightDict;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -17,6 +20,9 @@ import java.util.stream.Collectors;
 
 public abstract class BaseCountryInjector {
     private static final Logger logger = LoggerFactory.getLogger(BaseCountryInjector.class.getName());
+
+    private static final double GENERIC_MATCHER_THRESHOLD = 0.15;
+    private static final double GENERIC_LEVENSHTEIN_WEIGHT = 0.62;
 
     protected final IRawEventRepository iRawEventRepository;
     protected final IEventRepository iEventRepository;
@@ -66,15 +72,15 @@ public abstract class BaseCountryInjector {
         return events;
     }
 
-    protected abstract double getMatcherThreshold();
-
-    protected abstract double getLevenshteinWeight();
+    protected NameMatcher<Trail> provideNameMatcher(){
+        return new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, GENERIC_MATCHER_THRESHOLD, GENERIC_LEVENSHTEIN_WEIGHT);
+    }
 
     protected List<Event> identifyTrail(RawEvent rawEvent, Event event, OpenAiEvent openAiEvent) throws ParseException {
         List<Event> events = new ArrayList<>();
         if (rawEvent.getUnitCode() != null){
             //find best matching trail
-            Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry(), getMatcherThreshold(), getLevenshteinWeight());
+            Trail trail = this.iTrailRepository.searchTrailByNameUnitCodeAndCountry(openAiEvent.getTrailName(), rawEvent.getUnitCode(), event.getCountry(), provideNameMatcher());
             if (trail != null){
                 event.setTrailIds(List.of(trail.getId()));
                 event.calculateMidCoordinate(trail);

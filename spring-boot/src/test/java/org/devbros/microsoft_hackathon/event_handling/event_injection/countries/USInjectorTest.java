@@ -24,25 +24,25 @@ public class USInjectorTest extends BaseInjectorTest {
     @Override
     protected void mockTestThatMatchTrailsWorksForTrailname(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail){
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(eq(openAiEvent.getTrailName()), eq("abc"), eq(country), anyDouble(), anyDouble())).thenReturn(trail);
+        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(eq(openAiEvent.getTrailName()), eq("abc"), eq(country), any())).thenReturn(trail);
     }
 
     @Override
     protected void mockTestThatMatchTrailsWorksForTrailFoundViaRegion(RawEvent rawEvent, Region region, Trail trail) {
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iRegionRepository.findUniqueRegionName(eq("region"), eq(country), anyDouble(), anyDouble())).thenReturn(List.of(region));
+        when(iRegionRepository.findUniqueRegionName(eq("region"), eq(country))).thenReturn(List.of(region));
         when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq(country), any())).thenReturn(List.of(trail));
     }
 
     @Override
     protected void mockTestThatMatchTrailsQuitsForEmptyEvents(OpenAiEvent openAiEvent, RawEvent rawEvent){
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(eq(openAiEvent.getTrailName()) , eq("abc"), eq(country), anyDouble(), anyDouble())).thenReturn(null);
+        when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(eq(openAiEvent.getTrailName()) , eq("abc"), eq(country), any())).thenReturn(null);
     }
 
     @Override
     protected void mockTestThatDisplayMidCoordinateWorks(Region region, Trail trail) {
-        when(iRegionRepository.findUniqueRegionName(eq("region"), eq(country), anyDouble(), anyDouble())).thenReturn(List.of(region));
+        when(iRegionRepository.findUniqueRegionName(eq("region"), eq(country))).thenReturn(List.of(region));
         when(iTrailRepository.findTrailsByNameCodeAndCountry(any(), eq(country), any())).thenReturn(List.of(trail));
     }
 }

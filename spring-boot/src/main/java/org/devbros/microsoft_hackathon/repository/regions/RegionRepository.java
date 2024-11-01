@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,6 +19,9 @@ import java.util.concurrent.Phaser;
 @Component
 public class RegionRepository implements IRegionRepository {
     private static final Logger logger = LoggerFactory.getLogger(RegionRepository.class.getName());
+
+    private static final double GENERIC_MATCHER_THRESHOLD = 0.19;
+    private static final double GENERIC_LEVENSHTEIN_WEIGHT = 0.62;
 
     private final IRegionJpaRepository iRegionJpaRepository;
     private final ExecutorService executorService;
@@ -29,7 +33,7 @@ public class RegionRepository implements IRegionRepository {
     }
 
     @Override
-    public List<Region> findUniqueRegionName(String regionName, String country, double threshold, double levenshteinWeight){
+    public List<Region> findUniqueRegionName(String regionName, String country){
         Phaser phaser = new Phaser(1);
         logger.info("Try to identify region by name: " + regionName);
         long offset = 0;  // start from page 0
@@ -41,13 +45,13 @@ public class RegionRepository implements IRegionRepository {
             logger.debug("Next slice - size: " + slice.size());
             logger.debug(String.valueOf(offset));
 
-            NameMatcher<Region> nameMatcher = new NameMatcher<>();
-            nameMatcher.resetNameMatcher(threshold);
+            NameMatcher<Region> nameMatcher = new NameMatcher<>(GENERIC_MATCHER_THRESHOLD, GENERIC_LEVENSHTEIN_WEIGHT);
+            nameMatcher.resetNameMatcher();
             // Process each entity
             phaser.register();
             List<Region> finalSlice = slice;
             this.executorService.submit(new Worker(phaser, () -> {
-                finalSlice.forEach(region -> nameMatcher.match(regionName, region, levenshteinWeight));
+                finalSlice.forEach(region -> nameMatcher.match(regionName, region));
 
                 Region topMatching = nameMatcher.getT();
                 if (topMatching != null){
@@ -66,8 +70,8 @@ public class RegionRepository implements IRegionRepository {
     }
 
     @Override
-    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country, double threshold, double levenshteinWeight) {
-        List<Region> regions = findUniqueRegionName(regionName, country, threshold, levenshteinWeight);
+    public List<Region> findRegionByRegionNameAndCountry(String regionName, String country) {
+        List<Region> regions = findUniqueRegionName(regionName, country);
 
         if (!regions.isEmpty()){
             logger.info("Identified top matching region");

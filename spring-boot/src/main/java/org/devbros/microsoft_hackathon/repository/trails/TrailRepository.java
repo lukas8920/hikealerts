@@ -24,22 +24,19 @@ public class TrailRepository implements ITrailRepository {
     private final ITrailJpaRepository iTrailJpaRepository;
     private final EntityManager entityManager;
     private final GeoMatcher geoMatcher;
-    private final NameMatcher<Trail> nameMatcher;
 
     @Autowired
-    public TrailRepository(ITrailJpaRepository iTrailJpaRepository, GeoMatcher geoMatcher, NameMatcher<Trail> nameMatcher,
-                           EntityManager entityManager){
+    public TrailRepository(ITrailJpaRepository iTrailJpaRepository, GeoMatcher geoMatcher, EntityManager entityManager){
         this.entityManager = entityManager;
         this.iTrailJpaRepository = iTrailJpaRepository;
         this.geoMatcher = geoMatcher;
-        this.nameMatcher = nameMatcher;
     }
 
     @Override
-    public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country, double threshold, double levenshteinWeight) {
-        this.nameMatcher.resetNameMatcher(threshold);
+    public Trail searchTrailByNameUnitCodeAndCountry(String searchName, String unitCode, String country, NameMatcher<Trail> nameMatcher) {
+        nameMatcher.resetNameMatcher();
         logger.info("Search trail by trail name, unit code and country: " + searchName + ", " + unitCode + ", " + country);
-        logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
+        logger.info("Name Matcher intial status - " + nameMatcher.getT() + " - " + nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
 
         List<Trail> slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
@@ -49,15 +46,15 @@ public class TrailRepository implements ITrailRepository {
             do {
                 slice.forEach(trail -> {
                     // Process each entity
-                    this.nameMatcher.match(searchName, trail, levenshteinWeight);
+                    nameMatcher.match(searchName, trail);
                 });
                 offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
                 slice = this.iTrailJpaRepository.findAllByUnitcodeAndCountry(unitCode, country, offset);
             } while (slice != null && !slice.isEmpty());
         }
 
-        logger.info("Identified matching trail: " + this.nameMatcher.getT());
-        return this.nameMatcher.getT();
+        logger.info("Identified matching trail: " + nameMatcher.getT());
+        return nameMatcher.getT();
     }
 
     @Override
@@ -110,10 +107,10 @@ public class TrailRepository implements ITrailRepository {
     }
 
     @Override
-    public Trail searchTrailByNameAndCountry(String name, String country, double threshold, double levenshteinWeight) {
-        this.nameMatcher.resetNameMatcher(threshold);
+    public Trail searchTrailByNameAndCountry(String name, String country, NameMatcher<Trail> nameMatcher) {
+        nameMatcher.resetNameMatcher();
         logger.info("Search trail by trail name and country: " + name + ", " + country);
-        logger.info("Name Matcher intial status - " + this.nameMatcher.getT() + " - " + this.nameMatcher.getMatchingScore());
+        logger.info("Name Matcher intial status - " + nameMatcher.getT() + " - " + nameMatcher.getMatchingScore());
         long offset = 0;  // start from page 0
 
         List<Trail> slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
@@ -123,14 +120,14 @@ public class TrailRepository implements ITrailRepository {
             do {
                 slice.forEach(trail -> {
                     // Process each entity
-                    this.nameMatcher.match(name, trail, levenshteinWeight);
+                    nameMatcher.match(name, trail);
                 });
                 offset = slice.get((slice.size() - 1)).getId();  // Move to the next page
                 slice = this.iTrailJpaRepository.findAllByCountry(country, offset);
             } while (slice != null && !slice.isEmpty());
         }
 
-        logger.info("Identified matching trail: " + this.nameMatcher.getT());
-        return this.nameMatcher.getT();
+        logger.info("Identified matching trail: " + nameMatcher.getT());
+        return nameMatcher.getT();
     }
 }

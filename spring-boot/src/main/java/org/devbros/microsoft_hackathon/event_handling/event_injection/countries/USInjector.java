@@ -3,6 +3,7 @@ package org.devbros.microsoft_hackathon.event_handling.event_injection.countries
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Event;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Region;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.devbros.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.devbros.microsoft_hackathon.repository.events.IEventRepository;
 import org.devbros.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.devbros.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -17,16 +18,6 @@ public class USInjector extends BaseCountryInjector {
     }
 
     @Override
-    protected double getMatcherThreshold() {
-        return 0.19;
-    }
-
-    @Override
-    protected double getLevenshteinWeight() {
-        return 0.62;
-    }
-
-    @Override
     protected void overwriteUrl(Event event) {
         event.setUrl(event.getUrl());
     }
@@ -38,6 +29,6 @@ public class USInjector extends BaseCountryInjector {
 
     @Override
     protected List<Region> findRegionsInDatabase(String regionName, String country) {
-        return this.iRegionRepository.findUniqueRegionName(regionName, country, getMatcherThreshold(), getLevenshteinWeight());
+        return this.iRegionRepository.findUniqueRegionName(regionName, country);
     }
 }

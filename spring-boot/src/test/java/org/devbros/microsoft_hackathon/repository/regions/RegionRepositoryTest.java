@@ -59,7 +59,7 @@ public class RegionRepositoryTest {
         this.iRegionJpaRepository.saveRegion(region.getRegionId(), region.getCountry(), region.getCode(),
                 region.getName(), region.getPolygon());
 
-        List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region.getName(), region.getCountry(), 0.19, 0.62);
+        List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region.getName(), region.getCountry());
         //first identify top then all with same name
 
         assertThat(results.size(), is(1));
@@ -88,7 +88,7 @@ public class RegionRepositoryTest {
         this.iRegionJpaRepository.saveRegion(region2.getRegionId(), region2.getCountry(), region2.getCode(),
                 region2.getName(), region2.getPolygon());
 
-        List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region1.getName(), region1.getCountry(), 0.19, 0.62);
+        List<Region> results = this.regionRepository.findRegionByRegionNameAndCountry(region1.getName(), region1.getCountry());
 
         assertThat(results.size(), is(2));
 
