@@ -32,7 +32,7 @@ public class MapLayerService {
     private static final String dstFilePath = "layer.geojson.gz";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
-    private static final double TOLERANCE = 0.05;
+    private static final double TOLERANCE = 0.01;
     private static final int DECIMALS = 5;
 
     private static final Object FILE_LOCK = new Object();
@@ -148,8 +148,8 @@ public class MapLayerService {
         LineString preToleranceLine = (LineString) this.wkbReader.read(rawLine);
 
         // Size reduction algorithms
-        //LineString toleranceLine = simplifyLineString(preToleranceLine);
-        LineString precisionLine = preToleranceLine;
+        LineString toleranceLine = simplifyLineString(preToleranceLine);
+        LineString precisionLine = reducePrecision(toleranceLine);
 
         Map<String, Object> feature = new HashMap<>();
         feature.put("type", "Feature");
