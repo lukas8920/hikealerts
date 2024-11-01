@@ -3,10 +3,11 @@ package org.devbros.microsoft_hackathon.map_layer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.devbros.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.devbros.microsoft_hackathon.repository.trails.ITrailRepository;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.simplify.DouglasPeuckerSimplifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,8 @@ public class MapLayerService {
     private static final String dstFilePath = "layer.geojson.gz";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
-    private static final double TOLERANCE = 0.1;
+    private static final double TOLERANCE = 0.05;
+    private static final int DECIMALS = 5;
 
     private static final Object FILE_LOCK = new Object();
     private static final Object UPDATE_LOCK = new Object();
@@ -144,7 +146,10 @@ public class MapLayerService {
     // Convert a single LineString and its title to a GeoJSON feature string
     private String convertLineStringToFeature(byte[] rawLine, String trailName) throws IOException, ParseException {
         LineString preToleranceLine = (LineString) this.wkbReader.read(rawLine);
-        LineString toleranceLine = (LineString) TopologyPreservingSimplifier.simplify(preToleranceLine, TOLERANCE);
+
+        // Size reduction algorithms
+        LineString toleranceLine = simplifyLineString(preToleranceLine);
+        LineString precisionLine = reducePrecision(toleranceLine);
 
         Map<String, Object> feature = new HashMap<>();
         feature.put("type", "Feature");
@@ -154,10 +159,10 @@ public class MapLayerService {
         geometry.put("type", "LineString");
 
         // Convert LineString coordinates to GeoJSON format
-        double[][] coordinates = new double[toleranceLine.getCoordinates().length][2];
-        for (int j = 0; j < toleranceLine.getCoordinates().length; j++) {
-            coordinates[j][0] = toleranceLine.getCoordinateN(j).x;
-            coordinates[j][1] = toleranceLine.getCoordinateN(j).y;
+        double[][] coordinates = new double[precisionLine.getCoordinates().length][2];
+        for (int j = 0; j < precisionLine.getCoordinates().length; j++) {
+            coordinates[j][0] = precisionLine.getCoordinateN(j).x;
+            coordinates[j][1] = precisionLine.getCoordinateN(j).y;
         }
         geometry.put("coordinates", coordinates);
         feature.put("geometry", geometry);
@@ -169,5 +174,26 @@ public class MapLayerService {
 
         // Convert feature map to JSON string using Jackson
         return objectMapper.writeValueAsString(feature);
+    }
+
+    private LineString simplifyLineString(LineString line) {
+        // Simplify LineString using Douglas-Peucker
+        DouglasPeuckerSimplifier simplifier = new DouglasPeuckerSimplifier(line);
+        simplifier.setDistanceTolerance(TOLERANCE);
+        return (LineString) simplifier.getResultGeometry();
+    }
+
+    private LineString reducePrecision(LineString line) {
+        Coordinate[] originalCoordinates = line.getCoordinates();
+        Coordinate[] reducedCoordinates = new Coordinate[originalCoordinates.length];
+
+        double scale = Math.pow(10, DECIMALS);
+        for (int i = 0; i < originalCoordinates.length; i++) {
+            double x = Math.round(originalCoordinates[i].x * scale) / scale;
+            double y = Math.round(originalCoordinates[i].y * scale) / scale;
+            reducedCoordinates[i] = new Coordinate(x, y);
+        }
+
+        return line.getFactory().createLineString(reducedCoordinates);
     }
 }
