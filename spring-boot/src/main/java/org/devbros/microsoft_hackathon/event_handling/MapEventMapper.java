@@ -36,6 +36,7 @@ public class MapEventMapper {
         mapEvent.setEvent_id(event.getEvent_id());
         mapEvent.setCountry(event.getCountry());
         mapEvent.setUrl(event.getUrl());
+        mapEvent.setTrailIds(event.getTrailIds());
         return mapEvent;
     }
 
@@ -58,6 +59,7 @@ public class MapEventMapper {
         mapEvent.setCountry((String) object[9]);
         mapEvent.setPublisherId((Long) object[10]);
         mapEvent.setUrl((String) object[11]);
+        mapEvent.setTrailIds((List<Long>) object[12]);
         return mapEvent;
     }
 

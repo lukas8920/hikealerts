@@ -148,8 +148,8 @@ public class MapLayerService {
         LineString preToleranceLine = (LineString) this.wkbReader.read(rawLine);
 
         // Size reduction algorithms
-        LineString toleranceLine = simplifyLineString(preToleranceLine);
-        LineString precisionLine = reducePrecision(toleranceLine);
+        //LineString toleranceLine = simplifyLineString(preToleranceLine);
+        LineString precisionLine = preToleranceLine;
 
         Map<String, Object> feature = new HashMap<>();
         feature.put("type", "Feature");
