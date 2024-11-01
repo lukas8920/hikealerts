@@ -118,7 +118,7 @@ public class MapLayerService {
                     }
 
                     // Convert trail to feature JSON
-                    String featureJson = convertLineStringToFeature(trail.getCoordinates(), trail.getTrailname());
+                    String featureJson = convertLineStringToFeature(trail.getCoordinates(), trail.getTrailname(), trail.getId());
 
                     // Debug output to ensure JSON is correct
                     logger.debug("Generated feature JSON: " + featureJson);
@@ -144,7 +144,7 @@ public class MapLayerService {
     }
 
     // Convert a single LineString and its title to a GeoJSON feature string
-    private String convertLineStringToFeature(byte[] rawLine, String trailName) throws IOException, ParseException {
+    private String convertLineStringToFeature(byte[] rawLine, String trailName, Long id) throws IOException, ParseException {
         LineString preToleranceLine = (LineString) this.wkbReader.read(rawLine);
 
         // Size reduction algorithms
@@ -170,6 +170,7 @@ public class MapLayerService {
         // Add properties (e.g., title)
         Map<String, Object> properties = new HashMap<>();
         properties.put("trail_name", trailName);
+        properties.put("id", id);
         feature.put("properties", properties);
 
         // Convert feature map to JSON string using Jackson

@@ -13,7 +13,6 @@ import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Primary;
 
 import java.io.Serializable;
 import java.time.LocalDate;

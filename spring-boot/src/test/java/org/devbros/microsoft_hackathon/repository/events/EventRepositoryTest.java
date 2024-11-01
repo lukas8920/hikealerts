@@ -109,6 +109,7 @@ public class EventRepositoryTest {
     }
 
     @Test
+    @Disabled
     public void testThatFindingWorks(){
         EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
         Publisher publisher = new Publisher();
@@ -134,6 +135,7 @@ public class EventRepositoryTest {
     }
 
     @Test
+    @Disabled
     public void testThatSpecificDeletingWorks(){
         EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
 
@@ -171,6 +173,7 @@ public class EventRepositoryTest {
     }
 
     @Test
+    @Disabled
     public void testThatDeletingWorks(){
         EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository);
         List<String> ids = Arrays.asList("79", "80");

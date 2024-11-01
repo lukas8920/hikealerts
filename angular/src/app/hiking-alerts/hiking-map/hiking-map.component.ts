@@ -21,6 +21,8 @@ export class HikingMapComponent implements OnInit {
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
 
+  linestringLayers: Map<string, L.Layer> = new Map();
+
   constructor(private apiService: ApiService, private sharedListService: SharedListService) {
   }
 
@@ -34,7 +36,7 @@ export class HikingMapComponent implements OnInit {
       this.updateVisibleMarkers();
     });
     // Fetch the GeoJSON data and add it to the map
-    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonTile(geoJSON))
+    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON))
   }
 
   // Initialize the map
@@ -79,7 +81,7 @@ export class HikingMapComponent implements OnInit {
     }
   }
 
-  addGeoJsonTile(geoJsonData: any): void {
+  addGeoJsonData(geoJsonData: any): void {
     const decompressedString = pako.inflate(new Uint8Array(geoJsonData), { to: 'string' });
     const decompressedGeoJsonData = JSON.parse(decompressedString) as GeoJSON.FeatureCollection
     const geoJsonLayer =  L.geoJSON(decompressedGeoJsonData, {
@@ -88,6 +90,12 @@ export class HikingMapComponent implements OnInit {
         weight: 2,
       },
       onEachFeature: (feature, layer) => {
+        // add trail id to the reference map for the markers
+        const id = feature.properties.id;
+        if (id) {
+          this.linestringLayers.set(id, layer);
+        }
+
         // Show the 'name' property on hover
         layer.on('mouseover', (e) => {
           const tooltip = L.tooltip()
@@ -104,6 +112,7 @@ export class HikingMapComponent implements OnInit {
   }
 
   fetchMarkers(): void {
+    const self = this;
     // Determine the offset based on current loaded markers
     this.apiService.getEvents(this.offset, this.limit).subscribe(events => {
       if (events.length === 0) return; // No more markers to load
@@ -130,11 +139,23 @@ export class HikingMapComponent implements OnInit {
 
           // Open popup on hover
           markerInstance.on('mouseover', function (e) {
+            event.trail_ids.forEach(lineId => {
+              const lineLayer = self.linestringLayers.get(lineId);
+              if (lineLayer) {
+                lineLayer.setStyle({ color: 'blue' }); // Highlight color
+              }
+            });
             markerInstance.openPopup();
           });
 
           // Close popup when hover stops
           markerInstance.on('mouseout', function (e) {
+            event.trail_ids.forEach(lineId => {
+              const lineLayer = self.linestringLayers.get(lineId);
+              if (lineLayer) {
+                lineLayer.setStyle({ color: 'red' }); // Original color
+              }
+            });
             markerInstance.closePopup();
           });
         }
