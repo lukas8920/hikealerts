@@ -96,7 +96,7 @@ export class HikingMapComponent implements OnInit {
     }
   }
 
-  addGeoJsonTile(z, x, y): void {
+  addGeoJsonTile(z: number, x: number, y: number): void {
     fetch(`https://v220241074781291394.goodsrv.de:8080/v1/tiles/${z}/${x}/${y}.geojson`)
       .then(response => response.json())
       .then(data => {
