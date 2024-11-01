@@ -21,7 +21,7 @@ export class HikingMapComponent implements OnInit {
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
 
-  linestringLayers: Map<string, L.Layer> = new Map();
+  linestringLayers: Map<number, L.Polyline> = new Map();
 
   constructor(private apiService: ApiService, private sharedListService: SharedListService) {
   }
@@ -92,7 +92,7 @@ export class HikingMapComponent implements OnInit {
       onEachFeature: (feature, layer) => {
         // add trail id to the reference map for the markers
         const id = feature.properties.id;
-        if (id) {
+        if (layer instanceof L.Polyline) {
           this.linestringLayers.set(id, layer);
         }
 
