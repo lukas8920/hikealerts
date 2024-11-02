@@ -118,7 +118,6 @@ public class EventRepository implements IEventRepository {
     public void deleteEventsNotInList(List<String> idsToKeep, String country) {
         // get list of ids from sql database
         List<Object[]> objEvents = this.iEventJpaRepository.findByEventIdsAndCountry(idsToKeep, country);
-        System.out.println(objEvents.size());
         List<MapEvent> events = objEvents.stream().map(this.mapEventMapper::map).toList();
 
         // Convert List to Set for faster lookup
@@ -137,7 +136,7 @@ public class EventRepository implements IEventRepository {
             if (element != null){
                 long id = element.getId(); // Parse the ID
 
-                if (!idsToKeepSet.contains(id)) {
+                if (!idsToKeepSet.contains(id) && element.getCountry().equals(country)) {
                     eventsToDelete.add(element); // Collect IDs not in the list
                 } else {
                     eventsToDelete.remove(element);
