@@ -89,7 +89,7 @@ public class NameMatcher<T extends MatchProvider> {
             double jaccard_weight = 1 - levenshteinWeight;
             double combinedScore = jaccard_weight * jaccardSimilarity + levenshteinWeight * averageLevenshteinSimilarity;
 
-            logger.info("Score: " + combinedScore);
+            logger.debug("Score: " + combinedScore);
             // 4. Check whether optimum pick
             if (combinedScore > matchingScore){
                 this.matchingScore = combinedScore;

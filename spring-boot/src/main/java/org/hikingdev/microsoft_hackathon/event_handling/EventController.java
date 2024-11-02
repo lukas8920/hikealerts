@@ -17,20 +17,11 @@ import java.util.List;
 public class EventController {
     private static final Logger logger = LoggerFactory.getLogger(EventController.class.getName());
 
-    private final IEventInjection iEventInjection;
     private final EventProviderService eventProviderService;
 
     @Autowired
-    public EventController(IEventInjection iEventInjection, EventProviderService eventProviderService){
+    public EventController(EventProviderService eventProviderService){
         this.eventProviderService = eventProviderService;
-        this.iEventInjection = iEventInjection;
-    }
-
-    @PostMapping("/inject")
-    public ResponseEntity<List<Message>> injectOpenAiEvents(@RequestBody List<OpenAiEvent> openAiEvents) {
-        logger.debug("Received request");
-        List<Message> messages = this.iEventInjection.injectEvent(openAiEvents);
-        return ResponseEntity.ok(messages);
     }
 
     @CrossOrigin
