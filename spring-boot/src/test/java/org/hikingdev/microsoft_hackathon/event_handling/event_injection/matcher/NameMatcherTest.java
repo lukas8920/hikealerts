@@ -118,4 +118,19 @@ public class NameMatcherTest {
 
         assertThat(nameMatcher.getT(), is(trail1));
     }
+
+    @Test
+    public void testNoneTargetString(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Glacier Point Road";
+        String targetString1 = " ";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
 }

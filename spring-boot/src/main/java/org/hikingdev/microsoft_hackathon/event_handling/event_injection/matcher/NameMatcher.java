@@ -54,9 +54,9 @@ public class NameMatcher<T extends MatchProvider> {
         String[] words1 = searchName.split("\\s+");
 
         for (String str: candidateStrings){
-            logger.debug("Search string: " + str);
+            logger.debug("Search string: " + searchName);
             logger.debug("Candidate string: " + str);
-            if (str == null || str.length() < 1){
+            if (str == null || str.length() < 1 || str.trim().length() < 1){
                 break;
             }
 

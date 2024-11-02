@@ -32,8 +32,8 @@ public class MapLayerService {
     private static final String dstFilePath = "/home/layer.geojson.gz";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
-    private static final double TOLERANCE = 0.005;
-    private static final int DECIMALS = 8;
+    private static final double TOLERANCE = 0.002;
+    private static final int DECIMALS = 9;
 
     private static final Object FILE_LOCK = new Object();
     private static final Object UPDATE_LOCK = new Object();
