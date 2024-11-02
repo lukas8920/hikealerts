@@ -1,3 +1,27 @@
 #map {
   height: 100%;
 }
+
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.overlay-div {
+  position: absolute;
+  bottom: 2px;
+  left: 50px;
+  font-size: 12px;
+  background-color: rgba(232, 225, 225, 0.8);
+  z-index: 1000;
+  color: #4f4e4e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+}
+
+.info {
+  padding: 4px;
+}
