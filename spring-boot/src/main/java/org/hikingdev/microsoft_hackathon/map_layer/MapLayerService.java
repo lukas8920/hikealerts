@@ -28,8 +28,8 @@ import java.util.zip.GZIPOutputStream;
 
 @Service
 public class MapLayerService {
-    private static final String tmpFilePath = "/app/layer_tmp.geojson.gz";
-    private static final String dstFilePath = "/app/layer.geojson.gz";
+    private static final String tmpFilePath = "/home/layer_tmp.geojson.gz";
+    private static final String dstFilePath = "/home/layer.geojson.gz";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
     private static final double TOLERANCE = 0.005;

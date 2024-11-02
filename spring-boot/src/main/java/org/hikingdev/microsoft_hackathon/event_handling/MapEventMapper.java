@@ -60,7 +60,11 @@ public class MapEventMapper {
         mapEvent.setCountry((String) object[9]);
         mapEvent.setPublisherId((Long) object[10]);
         mapEvent.setUrl((String) object[11]);
-        mapEvent.setTrailIds((List<Long>) object[12]);
+        if (object[12] instanceof List<?>){
+            mapEvent.setTrailIds((List<Long>) object[12]);
+        } else if (object[12] instanceof Long){
+            mapEvent.setTrailIds(List.of((Long) object[12]));
+        }
         return mapEvent;
     }
 
