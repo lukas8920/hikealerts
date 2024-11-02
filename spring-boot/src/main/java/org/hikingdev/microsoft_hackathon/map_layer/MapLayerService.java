@@ -28,8 +28,8 @@ import java.util.zip.GZIPOutputStream;
 
 @Service
 public class MapLayerService {
-    private static final String tmpFilePath = "layer_tmp.geojson.gz";
-    private static final String dstFilePath = "layer.geojson.gz";
+    private static final String tmpFilePath = "/app/layer_tmp.geojson.gz";
+    private static final String dstFilePath = "/app/layer.geojson.gz";
     private static final Logger logger = LoggerFactory.getLogger(MapLayerService.class.getName());
 
     private static final double TOLERANCE = 0.005;
@@ -53,7 +53,17 @@ public class MapLayerService {
 
     public Resource loadJsonLayer() {
         synchronized (FILE_LOCK){
-            return new FileSystemResource(dstFilePath);
+            FileSystemResource fs = null;
+            try {
+                fs = new FileSystemResource(dstFilePath);
+            } catch (Exception e){
+                if (e instanceof FileNotFoundException){
+                    logger.error("Request for geojson trail file failed, as file does not exist.");
+                } else {
+                    logger.error("Other error while trying to load the geojson file.", e);
+                }
+            }
+            return fs;
         }
     }
 

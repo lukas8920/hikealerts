@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class MapEventMapper {
         } else {
             mapEvent.setStatus((String) object[4]);
         }
-        mapEvent.setCreateDate((String) object[5]);
+        mapEvent.setCreateDate(((LocalDateTime) object[5]).format(formatter));
         mapEvent.setLat((double) object[6]);
         mapEvent.setLng((double) object[7]);
         mapEvent.setEvent_id((String) object[8]);
