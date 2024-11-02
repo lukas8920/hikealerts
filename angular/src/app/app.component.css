@@ -11,3 +11,39 @@
   padding-left: 16px;
   font-size: 24px;
 }
+
+.site-title {
+  color: white;
+  text-decoration: none;
+}
+
+.footer {
+  width: 100%;
+  height: 62px;
+}
+
+.line {
+  width: 100%;
+  border-bottom: 1px solid #4B6DB8;
+}
+
+.copy {
+  float: left;
+}
+
+.body {
+  margin-left: 8px;
+}
+
+.privacy-en {
+  float: right;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+img {
+  float: right;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+}

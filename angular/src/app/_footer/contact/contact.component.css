@@ -1,0 +1,17 @@
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding-left: 8px;
+  padding-right: 8px;
+  height: calc(100vh - 146px);
+}
+
+h1 {
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+
+.mail {
+  padding-top: 10px;
+  padding-bottom: 14px;
+}

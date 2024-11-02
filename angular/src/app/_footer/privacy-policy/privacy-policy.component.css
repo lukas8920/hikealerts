@@ -1,0 +1,16 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-left: 8px;
+  padding-right: 8px;
+  height: calc(100vh - 126px);
+  overflow-y: scroll;
+}
+
+h1 {
+  padding-top: 20px;
+}
+
+p {
+  text-align: justify;
+}

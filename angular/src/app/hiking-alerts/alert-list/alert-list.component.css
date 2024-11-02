@@ -1,5 +1,5 @@
 .scrollable-list {
-  height: calc(100vh - 130px);
+  height: calc(100vh - 192px);
   overflow-y: scroll;
   padding-right: 8px;
 }

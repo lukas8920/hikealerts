@@ -1,8 +1,27 @@
 <div>
   <mat-toolbar class="toolbar">
-    <div class="title">Hiking Alerts</div>
+    <div class="title"><a class="site-title" href="#" routerLink="/hiking-alerts">Hiking Alerts</a></div>
   </mat-toolbar>
   <div class="container">
     <router-outlet></router-outlet>
+  </div>
+
+  <div class="footer">
+    <div class="line"></div>
+    <div class="body">
+      <div  style="display:block; text-align:left; float:left;">
+        <p class="copy">Ⓒ 2024 Hiking Alerts</p>
+      </div>
+
+      <div style="display:block; text-align:right;">
+        <img src="../assets/flag_nz.svg" width="30" height="20" alt="">
+        <div class="flex-layout-sm-md" style="float: right;">
+          <p class="privacy-en" routerLink="contact">Contact</p>
+          <p class="privacy-en" routerLink="privacy-policy">Privacy Policy</p>
+          <p class="privacy-en" routerLink="copyright-credits">Copyright Credits</p>
+          <p class="privacy-en" routerLink="terms-of-service">Terms of Service</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
