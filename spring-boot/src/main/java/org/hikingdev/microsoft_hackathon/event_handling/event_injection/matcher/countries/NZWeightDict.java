@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.country;
+package org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries;
 
 import java.util.Arrays;
 import java.util.HashSet;

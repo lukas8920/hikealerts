@@ -144,6 +144,7 @@ public class EventRepository implements IEventRepository {
             }
         }
 
+        logger.info("Delete {} events in {}.", eventsToDelete.size(), country);
         // Remove keys that are not in the provided list
         if (!eventsToDelete.isEmpty()) {
             redisTemplate.opsForZSet().remove(EVENTS_KEY, eventsToDelete.toArray());

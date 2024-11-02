@@ -3,7 +3,7 @@ package org.hikingdev.microsoft_hackathon.event_handling.event_injection.countri
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.*;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.GenericPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.country.NZWeightDict;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZWeightDict;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.regions.IRegionRepository;
@@ -30,7 +30,7 @@ public class NZInjector extends BaseCountryInjector {
     protected List<Event> identifyTrail(RawEvent rawEvent, Event event, OpenAiEvent openAiEvent) throws ParseException {
         List<Event> events = new ArrayList<>();
         //find best matching trail
-        Trail trail = this.iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName(), event.getCountry(), super.provideNameMatcher());
+        Trail trail = this.iTrailRepository.searchTrailByNameAndCountry(openAiEvent.getTrailName(), event.getCountry(), this.provideNameMatcher());
         if (trail != null){
             event.setTrailIds(List.of(trail.getId()));
             event.calculateMidCoordinate(trail);
