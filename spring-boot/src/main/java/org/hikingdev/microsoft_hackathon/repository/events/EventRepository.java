@@ -105,6 +105,7 @@ public class EventRepository implements IEventRepository {
     @Override
     @Transactional
     public void deleteByOpenAiEvent(OpenAiEvent openAiEvent){
+        logger.info("Delete openai event " + openAiEvent.getEventId());
         List<MapEvent> mapEvent = findMapEventByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
         this.iEventJpaRepository.deleteByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
 

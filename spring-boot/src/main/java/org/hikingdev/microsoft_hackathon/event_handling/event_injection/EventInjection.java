@@ -134,6 +134,7 @@ public class EventInjection implements IEventInjection {
                 errorMessages.add(message);
                 return;
             }
+            logger.info("Validated all openai events.");
             processableEvents.add(openAiEvent);
         });
         return processableEvents;
