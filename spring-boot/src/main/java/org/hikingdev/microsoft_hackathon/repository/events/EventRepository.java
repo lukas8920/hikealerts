@@ -58,7 +58,7 @@ public class EventRepository implements IEventRepository {
 
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
             } catch (Exception e){
-                e.printStackTrace();
+                logger.error("Error while saving map event: ", e);
             }
         } else {
             logger.error("Error saving event {} as publisher {} does not exist.", event.getEvent_id(), event.getPublisherId());
