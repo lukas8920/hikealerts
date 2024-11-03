@@ -287,4 +287,19 @@ public class NameMatcherTest {
 
         assertThat(nameMatcher.getT(), is(trail1));
     }
+
+    @Test
+    public void testNzMatchingTrail2(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Bain Bay Walk";
+        String targetString1 = "Karikari Bay Walk";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
 }
