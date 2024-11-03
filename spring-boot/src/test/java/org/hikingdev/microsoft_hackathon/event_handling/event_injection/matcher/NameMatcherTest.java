@@ -318,4 +318,49 @@ public class NameMatcherTest {
 
         assertThat(nameMatcher.getT(), nullValue());
     }
+
+    @Test
+    public void testNzNonMatchingTrail7(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Old Woman Hut";
+        String targetString1 = "Old Man Hut Circuit";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testNzNonMatchingTrail8(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Old Woman Hut";
+        String targetString1 = "Old Man Hut Circuit";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testNzMatchingTrail3(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Asbestos Cottage Track";
+        String targetString1 = "Asbestos Cottage tracks";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), is(trail1));
+    }
 }
