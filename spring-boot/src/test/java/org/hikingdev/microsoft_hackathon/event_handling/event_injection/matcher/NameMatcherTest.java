@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher;
 
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZWeightDict;
 import org.junit.jupiter.api.Test;
 
@@ -294,6 +295,21 @@ public class NameMatcherTest {
 
         String searchString = "Bain Bay Walk";
         String targetString1 = "Karikari Bay Walk";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
+    public void testNzNonMatchingTrail6(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "St James Cycle Trail";
+        String targetString1 = "St James Walkway";
 
         Trail trail1 = new Trail();
         trail1.setTrailname(targetString1);

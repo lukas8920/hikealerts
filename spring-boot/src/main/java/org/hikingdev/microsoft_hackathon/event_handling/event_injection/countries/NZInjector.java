@@ -3,6 +3,7 @@ package org.hikingdev.microsoft_hackathon.event_handling.event_injection.countri
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.*;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.GenericPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZWeightDict;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventRepository;
@@ -23,7 +24,7 @@ public class NZInjector extends BaseCountryInjector {
 
     @Override
     protected NameMatcher<Trail> provideNameMatcher(){
-        return new NameMatcher<>(NZWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, 0.15, 0.62);
+        return new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, 0.15, 0.62);
     }
 
     @Override
