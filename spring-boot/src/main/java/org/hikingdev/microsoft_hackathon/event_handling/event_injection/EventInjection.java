@@ -29,10 +29,6 @@ public class EventInjection implements IEventInjection {
     private final ITrailRepository iTrailRepository;
     private final IRegionRepository iRegionRepository;
 
-    private final Pattern dateTimePattern;
-    private final Pattern datePattern;
-    private final Pattern fourYYYYPattern;
-
     private final MapLayerService mapLayerService;
 
     @Autowired
@@ -44,16 +40,6 @@ public class EventInjection implements IEventInjection {
         this.iRegionRepository = iRegionRepository;
 
         this.mapLayerService = mapLayerService;
-
-        // Regex pattern for the date-time formats and four occurrences of YYYY
-        String DATE_TIME_PATTERN = "^(\\d{2}/\\d{2}/(?:\\d{4}|YYYY) \\d{2}:\\d{2}:\\d{2})$";
-        String DATE_PATTERN = "^(\\d{2}/\\d{2}/(?:\\d{4}|YYYY))$";
-        String FOUR_YYYY_PATTERN = "^(YYYY)$";
-
-        // Compile regex patterns
-        this.dateTimePattern = Pattern.compile(DATE_TIME_PATTERN);
-        this.datePattern = Pattern.compile(DATE_PATTERN);
-        this.fourYYYYPattern = Pattern.compile(FOUR_YYYY_PATTERN);
     }
 
     @Override
@@ -75,6 +61,7 @@ public class EventInjection implements IEventInjection {
             BaseCountryInjector injector = openAiEvent.getCountry() != null ? assignCountryInjector(openAiEvent) : null;
             if (injector == null){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
+                logger.error("No valid injector for event " + openAiEvent.getEventId());
                 errorMessages.add(message);
                 return;
             }
@@ -113,19 +100,6 @@ public class EventInjection implements IEventInjection {
         List<OpenAiEvent> processableEvents = new ArrayList<>();
         // check valid input parameters before injecting events
         openAiEvents.forEach(openAiEvent -> {
-            if (!checkDateTimePattern(openAiEvent.getFromDate())){
-                Message message = new Message(openAiEvent.getEventId(), "Invalid fromDatetime format: " + openAiEvent.getFromDate());
-                logger.error("Invalid fromDatetime format for " + openAiEvent.getEventId());
-                errorMessages.add(message);
-                return;
-            }
-            if (!checkDateTimePattern(openAiEvent.getToDate())){
-                Message message = new Message(openAiEvent.getEventId(), "Invalid toDatetime format: " + openAiEvent.getToDate());
-                logger.error("Invalid toDatetime format for " + openAiEvent.getEventId());
-                errorMessages.add(message);
-                return;
-            }
-
             if (openAiEvent.getCountry() == null || openAiEvent.getCountry().length() != 2){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
                 logger.error("Invalid country for " + openAiEvent.getEventId());
@@ -147,10 +121,5 @@ public class EventInjection implements IEventInjection {
             default:
                 return null;
         }
-    }
-
-    private boolean checkDateTimePattern(String datetime){
-        return datetime == null || dateTimePattern.matcher(datetime).matches() || datePattern.matcher(datetime).matches()
-                || fourYYYYPattern.matcher(datetime).matches() || datetime.isEmpty();
     }
 }

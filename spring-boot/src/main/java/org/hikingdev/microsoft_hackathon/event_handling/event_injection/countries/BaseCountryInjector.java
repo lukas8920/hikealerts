@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public abstract class BaseCountryInjector {
     private static final Logger logger = LoggerFactory.getLogger(BaseCountryInjector.class.getName());
 
-    private static final double GENERIC_MATCHER_THRESHOLD = 0.15;
+    private static final double GENERIC_MATCHER_THRESHOLD = 0.175;
     private static final double GENERIC_LEVENSHTEIN_WEIGHT = 0.62;
 
     protected final IRawEventRepository iRawEventRepository;
