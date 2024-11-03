@@ -115,22 +115,20 @@ public class EventInjection implements IEventInjection {
         openAiEvents.forEach(openAiEvent -> {
             if (!checkDateTimePattern(openAiEvent.getFromDate())){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid fromDatetime format: " + openAiEvent.getFromDate());
+                logger.error("Invalid fromDatetime format for " + openAiEvent.getEventId());
                 errorMessages.add(message);
                 return;
             }
             if (!checkDateTimePattern(openAiEvent.getToDate())){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid toDatetime format: " + openAiEvent.getToDate());
-                errorMessages.add(message);
-                return;
-            }
-            if ((openAiEvent.getParkName() == null || openAiEvent.getParkName().length() <= 1) && (openAiEvent.getRegion() == null || openAiEvent.getRegion().length() <= 1)){
-                Message message = new Message(openAiEvent.getEventId(), "Either provide a park name or a region - park name: " + openAiEvent.getParkName() + " - region: " + openAiEvent.getRegion());
+                logger.error("Invalid toDatetime format for " + openAiEvent.getEventId());
                 errorMessages.add(message);
                 return;
             }
 
             if (openAiEvent.getCountry() == null || openAiEvent.getCountry().length() != 2){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
+                logger.error("Invalid country for " + openAiEvent.getEventId());
                 errorMessages.add(message);
                 return;
             }
@@ -153,6 +151,6 @@ public class EventInjection implements IEventInjection {
 
     private boolean checkDateTimePattern(String datetime){
         return datetime == null || dateTimePattern.matcher(datetime).matches() || datePattern.matcher(datetime).matches()
-                || fourYYYYPattern.matcher(datetime).matches();
+                || fourYYYYPattern.matcher(datetime).matches() || datetime.isEmpty();
     }
 }
