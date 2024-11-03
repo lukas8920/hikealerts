@@ -121,4 +121,29 @@ public class EventTest {
         assertThat(event.getFromDatetime(), is(test));
         assertThat(event.getToDatetime().getYear(), is((year + 1)));
     }
+
+    @Test
+    public void testNullFromDatetime(){
+        LocalDateTime test = LocalDateTime.now();
+        event.setToDatetime(test);
+
+        String fromDatetime = null;
+        String toDatetime = "01/01/2024 00:02:20";
+
+        event.parseTimeInterval(fromDatetime, toDatetime);
+
+        assertThat(event.getFromDatetime(), nullValue());
+        assertThat(event.getToDatetime().getYear(), is((2024)));
+    }
+
+    @Test
+    public void testEmptyToDatetime(){
+        String fromDatetime = "04/11/2024";
+        String toDatetime = "";
+
+        event.parseTimeInterval(fromDatetime, toDatetime);
+
+        assertThat(event.getFromDatetime().getYear(), is(2024));
+        assertThat(event.getToDatetime(), nullValue());
+    }
 }

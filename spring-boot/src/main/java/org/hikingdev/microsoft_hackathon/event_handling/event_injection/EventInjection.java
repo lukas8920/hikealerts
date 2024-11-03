@@ -71,6 +71,7 @@ public class EventInjection implements IEventInjection {
 
         // trigger event injection
         processableEvents.forEach(openAiEvent -> {
+            logger.info("Try to inject: " + openAiEvent.getEventId());
             BaseCountryInjector injector = openAiEvent.getCountry() != null ? assignCountryInjector(openAiEvent) : null;
             if (injector == null){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
@@ -83,6 +84,8 @@ public class EventInjection implements IEventInjection {
                 flag = injector.matchTrails(openAiEvent);
             } catch (ParseException e) {
                 logger.error("Not able to create event because mid point calculation failed.", e);
+            } catch (Exception e){
+                logger.error("Other fatal error, " + e);
             }
 
             if (!flag){

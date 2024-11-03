@@ -76,7 +76,7 @@ public class Event implements Serializable {
         this.country = openAiEvent.getCountry();
         this.createDatetime = rawEvent.getCreateDateTime();
         this.region = openAiEvent.getParkName();
-        if (openAiEvent.getParkName() == null){
+        if (openAiEvent.getParkName() == null || openAiEvent.getParkName().isEmpty()){
             this.region = openAiEvent.getRegion();
         }
         this.event_id = openAiEvent.getEventId();
@@ -183,6 +183,9 @@ public class Event implements Serializable {
         }
         if (fromDatetime == null && this.fromDatetime == null && !this.isValidDatetime(toDatetime)){
             return null;
+        }
+        if (fromDatetime == null && this.fromDatetime == null){
+            return toDatetime;
         }
 
         int year = LocalDate.now().getYear();
