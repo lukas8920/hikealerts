@@ -45,7 +45,7 @@ export class HikingMapComponent implements OnInit {
       this.map = this.leaflet.map('map', {
         worldCopyJump: true,  // Enable horizontal wrapping
         maxBoundsViscosity: 1.0 // Prevents bouncing at the vertical edge
-      }).setView([51.505, -0.09], 5); // Set initial center and zoom
+      }).setView([51.505, -0.09], 2); // Set initial center and zoom
 
       // Set vertical bounds (latitude limits only)
       const southWest = L.latLng(-85, -Infinity);
