@@ -1,0 +1,36 @@
+.container {
+  width: 100%;
+  justify-content: center;
+}
+
+.body {
+  padding-top: 28px;
+  font-size: 18px;
+}
+
+.line {
+  padding-bottom: 16px;
+  padding-left: 5px;
+}
+
+.row {
+  display: flex;
+}
+
+.button {
+  margin-left: 32px;
+  margin-top: 14px;
+}
+
+.col1 {
+  width: 150px;
+}
+
+.info {
+  background-color: #faf9fd;
+  color: var(--mdc-protected-button-label-text-color);
+  max-width: 410px;
+  padding: 5px;
+  border: 1px solid grey;
+  margin-bottom: 16px;
+}

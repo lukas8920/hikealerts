@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="navigation">
+    <div class="top2-nav anchor">
+    </div>
+    <ul>
+      <li class="anchor">
+        <div>Profile</div>
+        <img class="submenu-arrow" src="../../../assets/chevron_right.svg" alt="" *ngIf="!isNavigation" (click)="onClickExpandNavigation()">
+        <img class="submenu-arrow" src="../../../assets/expand_more.svg" alt="" *ngIf="isNavigation" (click)="onClickExpandNavigation()">
+      </li>
+      <ul class="first-level" *ngIf="isNavigation">
+        <li><a class="link mat-button" [routerLink]="[{ outlets: { sub: ['overview'] } }]">Overview</a></li>
+        <li><a class="link mat-button" [routerLink]="[{ outlets: { sub: ['change-password']}}]">Profile Password</a> </li>
+      </ul>
+    </ul>
+  </div>
+</div>

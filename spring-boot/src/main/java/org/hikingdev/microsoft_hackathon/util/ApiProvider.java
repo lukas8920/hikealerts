@@ -1,7 +1,7 @@
 package org.hikingdev.microsoft_hackathon.util;
 
 import okhttp3.OkHttpClient;
-import org.hikingdev.microsoft_hackathon.security.GpgService;
+import org.hikingdev.microsoft_hackathon.security.gpg.GpgService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

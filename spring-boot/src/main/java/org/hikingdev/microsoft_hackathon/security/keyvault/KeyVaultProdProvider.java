@@ -1,9 +1,11 @@
-package org.hikingdev.microsoft_hackathon.security;
+package org.hikingdev.microsoft_hackathon.security.keyvault;
 
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import org.hikingdev.microsoft_hackathon.security.gpg.GpgSecret;
+import org.hikingdev.microsoft_hackathon.security.gpg.GpgService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +28,8 @@ public class KeyVaultProdProvider {
     private static final String sqlPassword = "sql-server-password";
     private static final String dbUsername = "sql-server-username";
     private static final String queueConnectionString= "queue-connection-string";
+    private static final String securityEncoderKey = "spring-security-encoder-key";
+    private static final String mailPassword = "google-mail-password";
 
     @Value("${db.driver}")
     private String dbDriver;
@@ -81,6 +85,16 @@ public class KeyVaultProdProvider {
     @Bean(name = "queueConnectionString")
     public String queueConnectionString(SecretClient secretClient) {
         return secretClient.getSecret(queueConnectionString).getValue();
+    }
+
+    @Bean(name = "encoderKey")
+    public String encoderkey(SecretClient secretClient){
+        return secretClient.getSecret(securityEncoderKey).getValue();
+    }
+
+    @Bean(name = "mailPassword")
+    public String mailPassword(SecretClient secretClient){
+        return secretClient.getSecret(mailPassword).getValue();
     }
 
     @Bean

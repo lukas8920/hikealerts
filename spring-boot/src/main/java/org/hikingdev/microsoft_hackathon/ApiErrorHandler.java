@@ -4,10 +4,13 @@ import org.hikingdev.microsoft_hackathon.util.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-public class ApiErrorHandler {
+@ControllerAdvice
+public class ApiErrorHandler extends ResponseEntityExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(ApiErrorHandler.class);
 
     @ExceptionHandler({BadRequestException.class})

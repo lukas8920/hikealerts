@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.security;
+package org.hikingdev.microsoft_hackathon.security.gpg;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

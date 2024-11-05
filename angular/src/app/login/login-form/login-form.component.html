@@ -1,0 +1,33 @@
+<div class="screen_wrapper">
+  <form class="register-form"
+        (ngSubmit)="onSubmit(form)"
+        [formGroup]="form">
+    <mat-form-field class="input inputTop">
+      <mat-label class="input-size">Enter Email</mat-label>
+      <input type="email"
+             formControlName="email"
+             matInput
+             [errorStateMatcher]="matcher"/>
+      <mat-error>{{getMailErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label class="input-size">Enter Password</mat-label>
+      <input type="password"
+             formControlName="password"
+             matInput
+             [errorStateMatcher]="matcher"/>
+    </mat-form-field>
+    <div *ngIf="isError" class="error">{{getPwErrorMessage()}}</div>
+
+    <div class="reset" (click)="resetPassword()">
+      Forgot your password?
+    </div>
+
+    <div>
+      <button mat-raised-button class="button">
+        Login
+      </button>
+    </div>
+  </form>
+</div>

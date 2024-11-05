@@ -1,7 +1,22 @@
 <div>
   <mat-toolbar class="toolbar">
     <div class="title"><a class="site-title" href="#" routerLink="/hiking-alerts">Hiking Alerts</a></div>
+
+    <span class="spacer"></span>
+
+    <a class="mat-button" href="/documentation" routerLink="documentation">API Specs</a>
+
+    <div *ngIf="!getLoginStatus()">
+      <a class="mat-button" href="/register" routerLink="register">SignUp</a>
+      <a mat-button class="login" href="/login" routerLink="login">Login</a>
+    </div>
+
+    <div *ngIf="getLoginStatus()">
+      <a class="mat-button" href="/profile" routerLink="profile">Profile</a>
+      <a class="mat-button" (click)="logout()">Logout</a>
+    </div>
   </mat-toolbar>
+
   <div class="container">
     <router-outlet></router-outlet>
   </div>

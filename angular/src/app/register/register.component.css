@@ -1,0 +1,23 @@
+.max-width {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.padder {
+  height: 24px;
+}
+
+h1 {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 42px 0;
+  line-height: 24px;
+}

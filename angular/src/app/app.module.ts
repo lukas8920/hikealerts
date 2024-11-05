@@ -15,29 +15,66 @@ import {CopyrightCreditsComponent} from './_footer/copyright-credits/copyright-c
 import {PrivacyPolicyComponent} from './_footer/privacy-policy/privacy-policy.component';
 import {TermsOfServiceComponent} from './_footer/terms-of-service/terms-of-service.component';
 import {ContactComponent} from './_footer/contact/contact.component';
+import {LoginFormComponent} from './login/login-form/login-form.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {MatButtonModule} from '@angular/material/button';
+import {LoginComponent} from './login/login.component';
+import {ResetPasswordComponent} from './login/reset-password/reset-password.component';
+import {RegisterComponent} from './register/register.component';
+import {RegisterFormComponent} from './register/register-form/register-form.component';
+import {UnauthComponent} from './_error/unauth/unauth.component';
+import {ChangePasswordComponent} from './login/change-password/change-password.component';
+import {ProfileComponent} from './profile/profile.component';
+import {ProfileNavComponent} from './profile/profile-nav/profile-nav.component';
+import {OverviewComponent} from './profile/overview/overview.component';
+import {authInterceptorProvider} from './auth.interceptor';
+import {ConfirmationComponent} from './profile/confirmation/confirmation.component';
+import {MatDialogModule} from '@angular/material/dialog';
+import {SavePwComponent} from './profile/save-pw/save-pw.component';
 
 @NgModule({
   declarations: [
     AlertListComponent,
     AppComponent,
+    ChangePasswordComponent,
+    ConfirmationComponent,
     ContactComponent,
     CopyrightCreditsComponent,
     HikingAlertsComponent,
     HikingMapComponent,
+    LoginComponent,
+    LoginFormComponent,
+    OverviewComponent,
     PrivacyPolicyComponent,
-    TermsOfServiceComponent
+    ProfileComponent,
+    ProfileNavComponent,
+    RegisterComponent,
+    RegisterFormComponent,
+    ResetPasswordComponent,
+    SavePwComponent,
+    TermsOfServiceComponent,
+    UnauthComponent
   ],
-    imports: [
-        BrowserModule.withServerTransition({appId: 'serverApp'}),
-        AppRoutingModule,
-        CommonModule,
-        HttpClientModule,
-        MatCardModule,
-        MatChipsModule,
-        MatToolbarModule
-    ],
+  imports: [
+    BrowserModule.withServerTransition({appId: 'serverApp'}),
+    AppRoutingModule,
+    CommonModule,
+    HttpClientModule,
+    MatCardModule,
+    MatChipsModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule
+  ],
   bootstrap: [AppComponent],
   providers: [
+    authInterceptorProvider,
     provideAnimationsAsync()
   ]
 })
