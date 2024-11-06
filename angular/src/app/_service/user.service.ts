@@ -14,8 +14,8 @@ const textOptions = {
   providedIn: 'root'
 })
 export class UserService {
-  test_url: string = "http:localhost:8080";
-  prod_url: string = "https:hiking-alerts.org:8080"
+  test_url: string = "http://localhost:8080";
+  prod_url: string = "https://hiking-alerts.org:8080"
 
   constructor(private http: HttpClient) { }
 
