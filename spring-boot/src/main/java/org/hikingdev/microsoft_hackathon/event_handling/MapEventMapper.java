@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -43,7 +44,7 @@ public class MapEventMapper {
 
     public MapEvent map(Object[] object) {
         MapEvent mapEvent = new MapEvent();
-        mapEvent.setId((Long) object[0]);
+        mapEvent.setId((long) ((int) object[0]));
         mapEvent.setTitle((String) object[1]);
         mapEvent.setDescription((String) object[2]);
         mapEvent.setPublisher((String) object[3]);
@@ -54,13 +55,13 @@ public class MapEventMapper {
             mapEvent.setStatus((String) object[4]);
         }
         if (object[5] != null){
-            mapEvent.setCreateDate(((LocalDateTime) object[5]).format(formatter));
+            mapEvent.setCreateDate(((Timestamp) object[5]).toLocalDateTime().format(formatter));
         }
         mapEvent.setLat((double) object[6]);
         mapEvent.setLng((double) object[7]);
         mapEvent.setEvent_id((String) object[8]);
         mapEvent.setCountry((String) object[9]);
-        mapEvent.setPublisherId((Long) object[10]);
+        mapEvent.setPublisherId((long) ((int) object[10]));
         mapEvent.setUrl((String) object[11]);
         if (object[12] instanceof List<?>){
             mapEvent.setTrailIds((List<Long>) object[12]);
