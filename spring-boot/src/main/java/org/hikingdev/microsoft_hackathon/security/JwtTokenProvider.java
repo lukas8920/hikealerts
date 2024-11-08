@@ -23,6 +23,8 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Component
 public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class.getName());
@@ -53,21 +55,34 @@ public class JwtTokenProvider {
         Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
 
         // Build the token directly using JwtBuilder
-        String token = Jwts.builder()
+
+        return Jwts.builder()
                 .subject(id.toString()) // Set the subject
                 .claim("auth", new SimpleGrantedAuthority(role.toString())) // Add custom claims
+                .claim("allowedEndpoints", "/v1/user")
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key) // Sign with the Key object
                 .compact();
-
-        return token;
     }
 
-    public Authentication getAuthentication(String token) throws InvalidationException {
+    public String generateApiToken(Long id){
+        // Create a Key instance from the encoderKey
+        Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
+
+        // Build the token directly using JwtBuilder
+        return Jwts.builder()
+                .subject(id.toString()) // Set the subject
+                .claim("allowedEndpoints", "/v1/events")
+                .issuedAt(new Date())
+                .signWith(key) // Sign with the Key object
+                .compact();
+    }
+
+    public Authentication getAuthentication(Claims claims) throws InvalidationException {
         UserDetails userDetails;
         try {
-            String profileId = validateToken(token);
+            String profileId = validateToken(claims);
             userDetails = this.userDetails.loadUserByUsername(profileId);
         } catch (UsernameNotFoundException e){
             throw new InvalidationException("Expired or invalid Jwt Token");
@@ -75,7 +90,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String validateToken(String token) throws InvalidationException{
+    public Claims getClaims(String token) throws InvalidationException {
         try {
             // Convert the encoderKey string into a Key object
             SecretKey key = Keys.hmacShaKeyFor(encoderKey.getBytes());
@@ -84,10 +99,19 @@ public class JwtTokenProvider {
                     .verifyWith(key)
                     .build()
                     .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
+                    .getPayload();
         } catch (JwtException | IllegalArgumentException e){
             logger.info("Validating token " + token + " failed.");
+            throw new InvalidationException("Expired or invalid Jwt Token");
+        }
+    }
+
+    public String validateToken(Claims claims) throws InvalidationException{
+        try {
+            //If validated return id in token
+            return claims.getSubject();
+        } catch (JwtException | IllegalArgumentException e){
+            logger.info("Error while parsing claims");
             throw new InvalidationException("Expired or invalid Jwt Token");
         }
     }

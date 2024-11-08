@@ -2,6 +2,7 @@ package org.hikingdev.microsoft_hackathon.user;
 
 import org.hikingdev.microsoft_hackathon.repository.tokens.ITokenRepository;
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
+import org.hikingdev.microsoft_hackathon.security.JwtTokenProvider;
 import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.user.entities.*;
 import org.hikingdev.microsoft_hackathon.util.BadRequestException;
@@ -28,6 +29,7 @@ public class UserService {
     private final IUserRepository iUserRepository;
     private final Publisher publisher;
     private final JavaMailSender javaMailSender;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${server.host}")
     private String host;
@@ -38,12 +40,13 @@ public class UserService {
 
     @Autowired
     public UserService(IUserRepository iUserRepository, Publisher publisher, JavaMailSender javaMailSender,
-                       ITokenRepository iTokenRepository, PasswordEncoder encoder){
+                       ITokenRepository iTokenRepository, PasswordEncoder encoder, JwtTokenProvider jwtTokenProvider){
         this.encoder = encoder;
         this.iTokenRepository = iTokenRepository;
         this.iUserRepository = iUserRepository;
         this.publisher = publisher;
         this.javaMailSender = javaMailSender;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public MessageResponse resetPassword(String userMail) throws BadRequestException {
@@ -121,7 +124,7 @@ public class UserService {
         User tmpUser = this.iUserRepository.findById(user);
         if (tmpUser == null) throw new BadRequestException("No permission to change api key.");
 
-        String rawKey= UUID.randomUUID().toString();
+        String rawKey= this.jwtTokenProvider.generateApiToken(user);
         String apiKey = encoder.encode(rawKey);
         tmpUser.setApiKey(apiKey);
         this.iUserRepository.save(tmpUser);

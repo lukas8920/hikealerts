@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.security;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,11 +11,13 @@ import org.hikingdev.microsoft_hackathon.security.failures.service.RegisterAttem
 import org.hikingdev.microsoft_hackathon.util.InvalidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class.getName());
@@ -44,9 +47,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         try {
             if (token != null){
-                Authentication auth = jwtTokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                this.publisher.publishAuthorizationSuccess();
+                Claims claims = jwtTokenProvider.getClaims(token);
+                Authentication auth = jwtTokenProvider.getAuthentication(claims);
+                String allowedEndpoints = claims.get("allowedEndpoints", String.class);
+
+                String requestPath = httpServletRequest.getRequestURI();
+                logger.info("Trying to access " + requestPath);
+                if (allowedEndpoints == null || !requestPath.startsWith(allowedEndpoints)){
+                    httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+                    httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");
+                    return;
+                } else {
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                    this.publisher.publishAuthorizationSuccess();
+                }
             }
         } catch (InvalidationException e){
             SecurityContextHolder.clearContext();
