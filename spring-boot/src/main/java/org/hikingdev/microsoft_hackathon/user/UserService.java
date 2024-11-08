@@ -123,11 +123,11 @@ public class UserService {
 
         String rawKey= UUID.randomUUID().toString();
         String apiKey = encoder.encode(rawKey);
-        tmpUser.setApiKey(rawKey);
+        tmpUser.setApiKey(apiKey);
         this.iUserRepository.save(tmpUser);
 
         logger.info("Refreshed api key for user " + user);
-        return new MessageResponse(apiKey);
+        return new MessageResponse(rawKey);
     }
 
     public Profile getProfile() throws BadRequestException{
