@@ -49,7 +49,7 @@ public class OpenAiService {
             messageDict.put("messages", messages);
 
             ObjectMapper mapper = new ObjectMapper();
-            String requestBody = mapper.writeValueAsString(messageDict).replace("\\", "");
+            String requestBody = mapper.writeValueAsString(messageDict);
             logger.info("Send {} to openai service.", requestBody);
 
             // Create HttpClient
