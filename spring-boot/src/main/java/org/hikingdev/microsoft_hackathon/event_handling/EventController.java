@@ -39,7 +39,7 @@ public class EventController {
     @GetMapping("/query")
     public ResponseEntity<List<EventResponse>> queryEvents(@RequestParam(name = "boundary", required = false) String boundary, @RequestParam(name = "country", required = false) String country,
                                                            @RequestParam(name = "fromDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate, @RequestParam(name = "toDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
-                                                           @RequestParam(name = "createDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createDate, @RequestParam(name = "nullDates", required = false) boolean nullDates,
+                                                           @RequestParam(name = "createDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createDate, @RequestParam(name = "nullDates", defaultValue = "true", required = false) boolean nullDates,
                                                            @RequestParam(name = "createdBy", required = false, defaultValue = "all") String createdBy,
                                                            @RequestParam(name = "offset", required = false, defaultValue = "0") int offset, @RequestParam(name = "limit", required = false, defaultValue = "50") int limit) throws BadRequestException {
         List<EventResponse> events = this.eventService.requestEvents(boundary, country, fromDate, toDate, createDate,
