@@ -67,14 +67,14 @@ public class OpenAiService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             logger.info("Received {} from openai service.", response.body());
 
-            return readValue(response.body());
+            return readValue(response.body()).get(0);
         } catch (Exception e) {
             logger.error("No valid response for event input from openai service ", e);
             throw new AiException("AI does not generate a valid response for user input.");
         }
     }
 
-    private OpenAiEvent readValue(String body) throws JsonProcessingException {
+    private List<OpenAiEvent> readValue(String body) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         // Parse the JSON string into a JsonNode
         JsonNode rootNode = mapper.readTree(body);
@@ -86,6 +86,6 @@ public class OpenAiService {
                 .path("content")
                 .asText();
 
-        return mapper.readValue(content, OpenAiEvent.class);
+        return mapper.readValue(content, mapper.getTypeFactory().constructCollectionType(List.class, OpenAiEvent.class));
     }
 }
