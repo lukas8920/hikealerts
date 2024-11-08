@@ -71,7 +71,7 @@ public class EventService {
 
         boolean isDeleted = this.iEventRepository.deleteByIdAndPublisher(Long.parseLong(eventId), tmpUser.getPublisherId());
 
-        return isDeleted ? new MessageResponse("Event deletion was not possible.") : new MessageResponse("Event was successfully deleted.");
+        return isDeleted ? new MessageResponse("Event was successfully deleted.") : new MessageResponse("Event deletion was not possible.");
     }
 
     public MessageResponse publishEvent(String country, String title, String description, LocalDate fromDate, LocalDate toDate) throws BadRequestException, AiException {
