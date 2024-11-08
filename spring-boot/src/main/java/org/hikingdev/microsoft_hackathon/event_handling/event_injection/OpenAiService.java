@@ -1,10 +1,10 @@
 package org.hikingdev.microsoft_hackathon.event_handling.event_injection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.hikingdev.microsoft_hackathon.util.AiException;
-import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class OpenAiService {
             messageDict.put("messages", messages);
 
             ObjectMapper mapper = new ObjectMapper();
-            String requestBody = mapper.writeValueAsString(messageDict);
+            String requestBody = mapper.writeValueAsString(messageDict).replace("\\", "");
             logger.info("Send {} to openai service.", requestBody);
 
             // Create HttpClient
@@ -67,10 +67,25 @@ public class OpenAiService {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             logger.info("Received {} from openai service.", response.body());
 
-            return mapper.readValue(response.body(), OpenAiEvent.class);
+            return readValue(response.body());
         } catch (Exception e) {
             logger.error("No valid response for event input from openai service ", e);
             throw new AiException("AI does not generate a valid response for user input.");
         }
+    }
+
+    private OpenAiEvent readValue(String body) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        // Parse the JSON string into a JsonNode
+        JsonNode rootNode = mapper.readTree(body);
+
+        // Navigate to "content" inside "message"
+        String content = rootNode.path("choices")
+                .get(0)
+                .path("message")
+                .path("content")
+                .asText();
+
+        return mapper.readValue(body, OpenAiEvent.class);
     }
 }

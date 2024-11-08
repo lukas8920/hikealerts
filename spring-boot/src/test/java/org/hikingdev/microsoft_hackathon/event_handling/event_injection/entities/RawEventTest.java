@@ -24,4 +24,9 @@ public class RawEventTest {
         assertThat(actualJsonNode.get("alerts").elements().next().get("description").asText(), is("dummyDescription"));
         assertThat(actualJsonNode.get("alerts").elements().next().get("event_id").asText(), is(rawEvent.getEventId()));
     }
+
+    @Test
+    public void test(){
+
+    }
 }
