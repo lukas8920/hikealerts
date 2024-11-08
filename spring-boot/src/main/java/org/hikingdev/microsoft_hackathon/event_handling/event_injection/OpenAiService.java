@@ -86,6 +86,6 @@ public class OpenAiService {
                 .path("content")
                 .asText();
 
-        return mapper.readValue(body, OpenAiEvent.class);
+        return mapper.readValue(content, OpenAiEvent.class);
     }
 }
