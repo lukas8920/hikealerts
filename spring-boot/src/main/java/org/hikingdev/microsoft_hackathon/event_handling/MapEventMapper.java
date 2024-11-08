@@ -48,12 +48,7 @@ public class MapEventMapper {
         mapEvent.setTitle((String) object[1]);
         mapEvent.setDescription((String) object[2]);
         mapEvent.setPublisher((String) object[3]);
-        // handle jpa ms sql bug
-        if (this.environment.getActiveProfiles()[0].equals("prod")){
-            mapEvent.setStatus(mapStatus((Status) object[4]));
-        } else {
-            mapEvent.setStatus((String) object[4]);
-        }
+        mapEvent.setStatus(mapStatus((String) object[4]));
         if (object[5] != null){
             mapEvent.setCreateDate(((Timestamp) object[5]).toLocalDateTime().format(formatter));
         }
@@ -69,6 +64,14 @@ public class MapEventMapper {
             mapEvent.setTrailIds(List.of((Long) object[12]));
         }
         return mapEvent;
+    }
+
+    String mapStatus(String status){
+        if (status.equals("Official")){
+            return "Official";
+        } else {
+            return "Community";
+        }
     }
 
     String mapStatus(Status status){
