@@ -63,13 +63,13 @@ public class EventService {
         return this.iEventRepository.queryEvents(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, limit, offset);
     }
 
-    public MessageResponse deleteEvent(Long eventId) throws BadRequestException{
+    public MessageResponse deleteEvent(int eventId) throws BadRequestException{
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long user = Long.valueOf(userDetails.getUsername());
         User tmpUser = this.iUserRepository.findById(user);
         if (tmpUser == null) throw new BadRequestException("No permission to delete event.");
 
-        boolean isDeleted = this.iEventRepository.deleteByIdAndPublisher(eventId, tmpUser.getPublisherId());
+        boolean isDeleted = this.iEventRepository.deleteByIdAndPublisher((long) eventId, tmpUser.getPublisherId());
 
         return isDeleted ? new MessageResponse("Event deletion was not possible.") : new MessageResponse("Event was successfully deleted.");
     }

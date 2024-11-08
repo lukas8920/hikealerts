@@ -57,7 +57,7 @@ public class EventController {
 
     @CrossOrigin
     @PostMapping("/delete")
-    public ResponseEntity<MessageResponse> deleteEvent(@RequestParam(name = "id", required = true) Long id) throws BadRequestException {
+    public ResponseEntity<MessageResponse> deleteEvent(@RequestParam(name = "id", required = true) int id) throws BadRequestException {
         MessageResponse messageResponse = this.eventService.deleteEvent(id);
         return ResponseEntity.ok(messageResponse);
     }
