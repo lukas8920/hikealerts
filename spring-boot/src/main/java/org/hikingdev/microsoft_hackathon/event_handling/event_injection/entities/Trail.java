@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "geodata_trails", schema = "dbo")
+@Table(name = "geodata_trails")
 public class Trail extends MatchProvider {
     @Id
     private Long id;

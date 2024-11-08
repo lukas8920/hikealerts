@@ -8,6 +8,7 @@ import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBWriter;

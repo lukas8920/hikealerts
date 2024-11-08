@@ -35,6 +35,8 @@ public class KeyVaultProdProvider {
     private String dbDriver;
     @Value("${azure.keyvault.url}")
     private String keyvaultUrl;
+    @Value("${azure.openai.endpoint}")
+    private String openaiEndpoint;
 
     @Bean
     public SecretClient createSecretClient(GpgService gpgService) throws IOException {
@@ -95,6 +97,16 @@ public class KeyVaultProdProvider {
     @Bean(name = "mailPassword")
     public String mailPassword(SecretClient secretClient){
         return secretClient.getSecret(mailPassword).getValue();
+    }
+
+    @Bean(name = "openai_key")
+    public String openaiKey(SecretClient secretClient){
+        return secretClient.getSecret("proxyai-api-key").getValue();
+    }
+
+    @Bean(name = "openai_endpoint")
+    public String openaiEndpoint(){
+        return this.openaiEndpoint;
     }
 
     @Bean

@@ -22,4 +22,7 @@ public interface IEventJpaRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url, i.trail_ids FROM events e JOIN publisher p ON p.id = e.publisher_id JOIN events_trail_ids i ON i.event_id = e.id WHERE e.event_id = :id AND e.country = :country", nativeQuery = true)
     List<Object[]> findByEventIdAndCountry(@Param("id") String id, @Param("country") String country);
+
+    @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url, i.trail_ids FROM events e JOIN publisher p ON p.id = e.publisher_id JOIN events_trail_ids i ON i.event_id = e.id WHERE e.id = :id AND p.id = :publisher", nativeQuery = true)
+    List<Object[]> findByIdAndPublisher(@Param("id") Long id, @Param("publisher") Long publisher);
 }

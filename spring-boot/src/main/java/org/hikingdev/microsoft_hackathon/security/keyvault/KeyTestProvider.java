@@ -16,6 +16,10 @@ public class KeyTestProvider {
     private String encoderKey;
     @Value("${contact.mail.address.password}")
     private String mailPassword;
+    @Value("${azure.openai.key}")
+    private String openaiKey;
+    @Value("${azure.openai.endpoint}")
+    private String openaiEndpoint;
 
     @Bean(name = "bearerToken")
     public String bearerToken(){
@@ -32,4 +36,10 @@ public class KeyTestProvider {
 
     @Bean(name = "mailPassword")
     public String mailPassword() { return this.mailPassword; }
+
+    @Bean(name = "openai_key")
+    public String openaiKey() { return this.openaiKey; }
+
+    @Bean(name = "openai_endpoint")
+    public String openaiEndpoint() { return this.openaiEndpoint; }
 }

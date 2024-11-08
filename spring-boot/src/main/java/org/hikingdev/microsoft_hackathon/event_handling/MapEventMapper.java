@@ -53,7 +53,9 @@ public class MapEventMapper {
         } else {
             mapEvent.setStatus((String) object[4]);
         }
-        mapEvent.setCreateDate(((LocalDateTime) object[5]).format(formatter));
+        if (object[5] != null){
+            mapEvent.setCreateDate(((LocalDateTime) object[5]).format(formatter));
+        }
         mapEvent.setLat((double) object[6]);
         mapEvent.setLng((double) object[7]);
         mapEvent.setEvent_id((String) object[8]);

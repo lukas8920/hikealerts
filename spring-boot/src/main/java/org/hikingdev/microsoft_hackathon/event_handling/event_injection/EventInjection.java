@@ -23,11 +23,10 @@ import java.util.List;
 public class EventInjection implements IEventInjection {
     private static final Logger logger = LoggerFactory.getLogger(EventInjection.class);
 
-    private final IRawEventRepository iRawEventRepository;
-    private final IEventRepository iEventRepository;
-    private final ITrailRepository iTrailRepository;
-    private final IRegionRepository iRegionRepository;
-
+    protected final IRawEventRepository iRawEventRepository;
+    protected final IEventRepository iEventRepository;
+    protected final ITrailRepository iTrailRepository;
+    protected final IRegionRepository iRegionRepository;
     private final MapLayerService mapLayerService;
 
     @Autowired
@@ -37,12 +36,10 @@ public class EventInjection implements IEventInjection {
         this.iEventRepository = iEventRepository;
         this.iTrailRepository = iTrailRepository;
         this.iRegionRepository = iRegionRepository;
-
         this.mapLayerService = mapLayerService;
     }
 
-    @Override
-    public List<Message> injectEvent(List<OpenAiEvent> openAiEvents) {
+    public List<Message> injectEvent(List<OpenAiEvent> openAiEvents){
         List<Message> errorMessages = new ArrayList<>();
 
         // filter events with valid input

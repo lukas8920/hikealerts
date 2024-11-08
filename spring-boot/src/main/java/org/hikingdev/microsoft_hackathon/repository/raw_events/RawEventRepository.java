@@ -17,4 +17,9 @@ public class RawEventRepository implements IRawEventRepository {
     public RawEvent findRawEvent(String eventId, String countryCode) {
         return this.IRawEventJpaRepository.findFirstByEventIdAndCountry(eventId, countryCode);
     }
+
+    @Override
+    public void save(RawEvent rawEvent) {
+        this.IRawEventJpaRepository.save(rawEvent);
+    }
 }

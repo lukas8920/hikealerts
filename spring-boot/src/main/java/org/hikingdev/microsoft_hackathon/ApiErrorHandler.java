@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon;
 
+import org.hikingdev.microsoft_hackathon.util.AiException;
 import org.hikingdev.microsoft_hackathon.util.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleCustomRequest(Exception e, WebRequest request){
         if (e instanceof BadRequestException){
             logger.error("Request failed with BadRequestException: " + e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } else if (e instanceof AiException){
+            logger.error("Request failed with AiException: " + e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return null;

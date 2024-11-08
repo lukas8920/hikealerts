@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -31,7 +34,6 @@ public class Event implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(Event.class.getName());
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", columnDefinition = "bigserial")
     private Long id;
     private String event_id;
     private String region;
@@ -43,7 +45,11 @@ public class Event implements Serializable {
     @Column(name = "to_date_time")
     private LocalDateTime toDatetime;
     @ElementCollection
-    @CollectionTable(name = "events_trail_ids")
+    @CollectionTable(name = "events_trail_ids", foreignKey = @ForeignKey(
+            name = "events_trail_ids_events_FK",
+            foreignKeyDefinition = "foreign key (event_id) references events (id) on delete cascade"
+    ))
+    @Column(name = "trail_ids")
     private List<Long> trailIds;
     @Column(name = "mid_longitude_coordinate")
     private double midLongitudeCoordinate;

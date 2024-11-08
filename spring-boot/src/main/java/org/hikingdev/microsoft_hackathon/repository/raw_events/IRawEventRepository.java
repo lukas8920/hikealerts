@@ -4,4 +4,5 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 
 public interface IRawEventRepository {
     RawEvent findRawEvent(String eventId, String countryCode);
+    void save(RawEvent rawEvent);
 }

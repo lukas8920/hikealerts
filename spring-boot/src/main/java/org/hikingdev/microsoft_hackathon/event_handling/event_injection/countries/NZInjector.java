@@ -1,7 +1,6 @@
 package org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries;
 
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.*;
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.GenericPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZPenalizeDict;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.countries.NZWeightDict;
