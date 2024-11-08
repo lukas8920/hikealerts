@@ -50,6 +50,7 @@ public class OpenAiService {
 
             ObjectMapper mapper = new ObjectMapper();
             String requestBody = mapper.writeValueAsString(messageDict);
+            logger.info("Send {} to openai service.", requestBody);
 
             // Create HttpClient
             HttpClient client = HttpClient.newHttpClient();
@@ -58,12 +59,13 @@ public class OpenAiService {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(new URI(endpoint))
                     .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + api_key)
+                    .header("api-key", api_key)
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
                     .build();
 
             // Send request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("Received {} from openai service.", response.body());
 
             return mapper.readValue(response.body(), OpenAiEvent.class);
         } catch (Exception e) {
