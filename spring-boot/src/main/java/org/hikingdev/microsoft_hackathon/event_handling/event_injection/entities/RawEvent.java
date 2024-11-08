@@ -56,6 +56,7 @@ public class RawEvent {
         }
         // set publisherId to community publisher by default
         this.publisherId = 3L;
+        this.createDateTime = LocalDateTime.now();
     }
 
     public String parseToJson() throws JsonProcessingException {

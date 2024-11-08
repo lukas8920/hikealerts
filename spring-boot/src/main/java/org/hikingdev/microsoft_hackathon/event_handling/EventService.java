@@ -78,8 +78,8 @@ public class EventService {
         validatePublish(country, title, description, fromDate, toDate);
 
         RawEvent rawEvent = new RawEvent(country, title, description, fromDate, toDate);
-        this.rawEventRepository.save(rawEvent);
         try {
+            this.rawEventRepository.save(rawEvent);
             String jsonString = rawEvent.parseToJson();
             OpenAiEvent openAiEvent = this.openAiService.sendOpenAiRequest(jsonString);
             logger.info("Received openai response for community request: " + title);
@@ -89,6 +89,9 @@ public class EventService {
         } catch (JsonProcessingException e){
             logger.error("Error while parsing the user input: " + e.getMessage());
             throw new BadRequestException("Invalid input for publishing event.");
+        } catch (Exception e){
+            logger.error("Fatal error ", e);
+            throw new BadRequestException("Internal error while parsing input.");
         }
     }
 

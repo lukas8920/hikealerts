@@ -111,12 +111,12 @@ public class EventRepository implements IEventRepository {
 
     @Override
     @Transactional
+    // raw event needs to stay in the database
     public void deleteByOpenAiEvent(OpenAiEvent openAiEvent){
         logger.info("Delete openai event " + openAiEvent.getEventId());
         List<MapEvent> mapEvent = findMapEventByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
 
         this.iEventJpaRepository.deleteByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
-        this.iRawEventJpaRepository.deleteByIdAndCountry(openAiEvent.getEventId(), openAiEvent.getCountry());
 
         // Remove keys that are not in the provided list
         if (!mapEvent.isEmpty()) {
