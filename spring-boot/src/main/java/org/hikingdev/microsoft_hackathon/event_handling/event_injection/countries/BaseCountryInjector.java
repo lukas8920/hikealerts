@@ -38,6 +38,7 @@ public abstract class BaseCountryInjector {
     }
 
     public boolean matchTrails(OpenAiEvent openAiEvent) throws ParseException {
+        logger.info("Identify raw event with {}, {}", openAiEvent.getEventId(), openAiEvent.getCountry());
         RawEvent rawEvent = this.iRawEventRepository.findRawEvent(openAiEvent.getEventId(), openAiEvent.getCountry());
         if (rawEvent == null){
             return false;
