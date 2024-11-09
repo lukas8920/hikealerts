@@ -31,4 +31,30 @@ public class MapEvent implements Serializable {
     private String country;
     @JsonIgnore
     private Long publisherId;
+
+    @Override
+    public String toString(){
+        String builder = id +
+                "," +
+                title +
+                "," +
+                description +
+                "," +
+                status +
+                "," +
+                createDate +
+                "," +
+                lat +
+                "," +
+                lng +
+                "," +
+                trailIds +
+                "," +
+                event_id +
+                "," +
+                country +
+                "," +
+                publisherId;
+        return builder;
+    }
 }

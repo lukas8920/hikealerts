@@ -63,6 +63,7 @@ public class EventRepository implements IEventRepository {
                 logger.info("Add dataset to db and redis.");
                 this.iEventJpaRepository.save(event);
 
+                logger.info("Save mapEvent: " + mapEvent);
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
             } catch (Exception e){
                 logger.error("Error while saving map event: ", e);
@@ -120,6 +121,7 @@ public class EventRepository implements IEventRepository {
 
         // Remove keys that are not in the provided list
         if (!mapEvent.isEmpty()) {
+            logger.info("Delete MapEvent: " + mapEvent);
             redisTemplate.opsForZSet().remove(EVENTS_KEY, mapEvent.toArray());
         }
     }
