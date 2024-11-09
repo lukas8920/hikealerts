@@ -12,6 +12,7 @@ import {ChangePasswordComponent} from './login/change-password/change-password.c
 import {ProfileComponent} from './profile/profile.component';
 import {OverviewComponent} from './profile/overview/overview.component';
 import {SavePwComponent} from './profile/save-pw/save-pw.component';
+import {DocumentationComponent} from './documentation/documentation.component';
 
 const routes: Routes = [
   { path: '',   redirectTo: '/hiking-alerts', pathMatch: 'full' },
@@ -28,7 +29,8 @@ const routes: Routes = [
       {path:'', redirectTo: '/profile/(sub:overview)', pathMatch: 'full'},
       {path: 'overview', component: OverviewComponent, outlet: 'sub'},
       {path: 'change-password', component: SavePwComponent, outlet: 'sub'},
-    ]}
+    ]},
+  {path: 'specs', component: DocumentationComponent}
 ]
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: "enabled",

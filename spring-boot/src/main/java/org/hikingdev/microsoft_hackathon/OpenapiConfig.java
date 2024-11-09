@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        servers = @Server(url = "https://www.hiking-alerts.org:8080", description = "Prod server"),
-        security = { @SecurityRequirement(name = "bearerAuth") },
+        servers = @Server(url = "https://www.hiking-alerts.org:8080"),
+        security = { @SecurityRequirement(name = "Authorization") },
         info = @Info(
                 title = "Hiking Alerts API",
                 description = "Hiking Alerts API",
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
         )
 )
 @SecurityScheme(
-        name = "bearerAuth",
+        name = "Authorization",
         type = SecuritySchemeType.HTTP,
         scheme = "bearer",
         paramName = "Authorization",

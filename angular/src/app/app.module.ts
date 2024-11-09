@@ -33,6 +33,7 @@ import {authInterceptorProvider} from './auth.interceptor';
 import {ConfirmationComponent} from './profile/confirmation/confirmation.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {SavePwComponent} from './profile/save-pw/save-pw.component';
+import {DocumentationComponent} from './documentation/documentation.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import {SavePwComponent} from './profile/save-pw/save-pw.component';
     ConfirmationComponent,
     ContactComponent,
     CopyrightCreditsComponent,
+    DocumentationComponent,
     HikingAlertsComponent,
     HikingMapComponent,
     LoginComponent,

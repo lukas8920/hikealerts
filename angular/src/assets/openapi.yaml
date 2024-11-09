@@ -13,9 +13,8 @@ info:
   version: 1.0.0
 servers:
 - url: https://www.hiking-alerts.org:8080
-  description: Prod server
 security:
-- bearerAuth: []
+- Authorization: []
 paths:
   /v1/events/publish:
     post:
@@ -75,9 +74,6 @@ paths:
           format: date
         example: toDate=2024-12-05
       responses:
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
         "200":
           description: Feedback whether event injection worked.
           content:
@@ -86,6 +82,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MessageResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
   /v1/events/delete:
     post:
       tags:
@@ -202,9 +201,6 @@ paths:
           default: 50
         example: limit=40
       responses:
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
         "200":
           description: The queried events.
           content:
@@ -213,6 +209,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
 components:
   schemas:
     MessageResponse:
@@ -288,7 +287,7 @@ components:
         trailMidPoint:
           $ref: '#/components/schemas/Coordinate'
   securitySchemes:
-    bearerAuth:
+    Authorization:
       type: http
       description: Create an account to access your personal bearer token. In the
         overview tab you can manage your token.
