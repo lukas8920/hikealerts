@@ -46,7 +46,7 @@ paths:
         required: true
         schema:
           type: string
-        example: Mount Elvis track closed due to lumbering operations.
+        example: Mount Herbert Walkway track closed due to lumbering operations.
       - name: country
         in: query
         description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
@@ -54,7 +54,7 @@ paths:
         required: true
         schema:
           type: string
-        example: country=NZ
+        example: NZ
       - name: fromDate
         in: query
         description: From date which specifies when the event becomes valid (might
@@ -63,7 +63,7 @@ paths:
         schema:
           type: string
           format: date
-        example: fromDate=2024-11-05
+        example: 2024-11-05
       - name: toDate
         in: query
         description: To date which specifies when the event becomes invalid (might
@@ -72,7 +72,7 @@ paths:
         schema:
           type: string
           format: date
-        example: toDate=2024-12-05
+        example: 2024-12-05
       responses:
         "200":
           description: Feedback whether event injection worked.
@@ -99,7 +99,7 @@ paths:
         required: true
         schema:
           type: string
-        example: id=1
+        example: 1
       responses:
         "200":
           description: Feedback whether event deletion worked.
@@ -126,7 +126,7 @@ paths:
         required: false
         schema:
           type: string
-        example: "boundary=1.14,1.14,4.8,4.8"
+        example: "1.14,1.14,4.8,4.8"
       - name: country
         in: query
         description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
@@ -134,7 +134,7 @@ paths:
         required: false
         schema:
           type: string
-        example: country=NZ
+        example: NZ
       - name: fromDate
         in: query
         description: From date which specifies when the event becomes valid (might
@@ -143,7 +143,7 @@ paths:
         schema:
           type: string
           format: date
-        example: fromDate=2024-11-05
+        example: 2024-11-05
       - name: toDate
         in: query
         description: To date which specifies when the event becomes invalid (might
@@ -152,7 +152,7 @@ paths:
         schema:
           type: string
           format: date
-        example: toDate=2024-12-05
+        example: 2024-12-05
       - name: createDate
         in: query
         description: Create date which specifies when the event was provided by data
@@ -162,7 +162,7 @@ paths:
         schema:
           type: string
           format: date
-        example: createDate=2024-11-09
+        example: 2024-11-09
       - name: nullDates
         in: query
         description: Boolean flag indicating whether events with null values for the
@@ -179,7 +179,7 @@ paths:
         schema:
           type: string
           default: All
-        example: createdBy=Official
+        example: Official
       - name: offset
         in: query
         description: The offset for the results in the event datasource. Enables paging
@@ -189,7 +189,7 @@ paths:
           type: integer
           format: int32
           default: 0
-        example: offset=50
+        example: 50
       - name: limit
         in: query
         description: The limit defining the maximum number of results to return. Default
@@ -199,7 +199,7 @@ paths:
           type: integer
           format: int32
           default: 50
-        example: limit=40
+        example: 40
       responses:
         "200":
           description: The queried events.
