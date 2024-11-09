@@ -46,7 +46,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authz -> {
-                    authz.requestMatchers("/**").permitAll();
                     authz.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                     if (!profile.equals("prod")) {
                         authz.requestMatchers("/v3/api-docs").permitAll();
