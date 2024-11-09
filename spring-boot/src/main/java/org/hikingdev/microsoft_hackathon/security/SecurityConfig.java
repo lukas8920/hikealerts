@@ -4,7 +4,7 @@ import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.security.failures.service.LoginAttemptService;
 import org.hikingdev.microsoft_hackathon.security.failures.service.RegisterAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,6 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Value("${spring.profiles.active}")
+    private String profile;
+
+
     private final JwtTokenProvider jwtTokenProvider;
     private final Publisher publisher;
     private final LoginAttemptService service;
@@ -36,13 +40,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain constantTokenSecurityFilterChain(HttpSecurity http, @Qualifier("bearerToken") String bearerToken) throws Exception {
+    public SecurityFilterChain constantTokenSecurityFilterChain(HttpSecurity http) throws Exception {
         JwtTokenFilter filter = new JwtTokenFilter(registerAttemptService, jwtTokenProvider, publisher, service);
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authz -> {
+                    authz.requestMatchers("/**").permitAll();
                     authz.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    if (!profile.equals("prod")) {
+                        authz.requestMatchers("/v3/api-docs").permitAll();
+                        authz.requestMatchers("/v3/api-docs.yaml").permitAll();
+                    }
                     authz.requestMatchers("/v1/events/pull").permitAll();
                     authz.requestMatchers("/v1/map/layer").permitAll();
                     authz.requestMatchers("/v1/auth/register").permitAll();

@@ -24,9 +24,9 @@
         <jts.version>1.20.0</jts.version>
         <lombok.version>1.18.28</lombok.version>
         <okhttp.version>4.10.0</okhttp.version>
-        <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
         <redis.version>3.3.4</redis.version>
         <retrofit.version>2.11.0</retrofit.version>
+        <springdoc.version>2.6.0</springdoc.version>
         <sqlserver.version>12.8.1.jre11</sqlserver.version>
     </properties>
 
@@ -178,6 +178,13 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${apache.commons}</version>
+        </dependency>
+
+        <!-- Swagger Libraries -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
     </dependencies>
 

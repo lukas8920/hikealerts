@@ -18,6 +18,9 @@ public class ApiErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleCustomRequest(Exception e, WebRequest request){
         if (e instanceof BadRequestException){
             logger.error("Request failed with BadRequestException: " + e.getMessage());
+            if (((BadRequestException) e).getCode() != null){
+                return ResponseEntity.status(((BadRequestException) e).getCode()).body(e.getMessage());
+            }
             return ResponseEntity.badRequest().body(e.getMessage());
         } else if (e instanceof AiException){
             logger.error("Request failed with AiException: " + e.getMessage());

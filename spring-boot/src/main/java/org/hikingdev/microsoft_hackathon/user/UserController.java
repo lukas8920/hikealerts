@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.user;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.PasswordChange;
 import org.hikingdev.microsoft_hackathon.user.entities.Profile;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/user")
+@Hidden
 public class UserController {
     private final UserService userService;
 

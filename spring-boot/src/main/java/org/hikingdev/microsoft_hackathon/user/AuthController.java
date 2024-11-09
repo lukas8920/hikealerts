@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.user;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.user.entities.JwtResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.LoginRequest;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequestMapping("/v1/auth")
 @CrossOrigin
+@Hidden
 public class AuthController {
     private final AuthService authService;
 

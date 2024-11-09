@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/map")
+@Hidden
 public class MapLayerController {
     private final MapLayerService mapLayerService;
 

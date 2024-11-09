@@ -137,35 +137,35 @@ public class EventService {
     private void validateQuery(String boundary, String country, LocalDate fromDate, LocalDate toDate, String createdBy, int limit) throws BadRequestException {
         // validate limit
         if (limit > 100){
-            throw new BadRequestException("Maximum 100 events can be returned per request.");
+            throw new BadRequestException("Maximum 100 events can be returned per request.", 400);
         }
 
         // validate country
         if (country != null && country.length() != 2){
-            throw new BadRequestException("Countries need to be provided in format ISO 3166-1 alpha-2.");
+            throw new BadRequestException("Countries need to be provided in format ISO 3166-1 alpha-2.", 400);
         }
         if (country != null  && !supportedCountries.contains(country)){
-            throw new BadRequestException("Country " + country + " is currently not supported.");
+            throw new BadRequestException("Country " + country + " is currently not supported.", 400);
         }
 
         // validate date
         if (fromDate != null && toDate != null && fromDate.isAfter(toDate)){
-            throw new BadRequestException("To date needs to be greater than the from date.");
+            throw new BadRequestException("To date needs to be greater than the from date.", 400);
         }
 
         // validate createdBy
         if (!supportedCreatedBys.contains(createdBy)){
-            throw new BadRequestException("Valid values for createdBy are [All, Community, Official]");
+            throw new BadRequestException("Valid values for createdBy are [All, Community, Official]", 400);
         }
 
         // validate boundaries
         if (boundary != null && isValidBoundary(boundary)){
-            throw new BadRequestException("Provided boundaries are not valid.");
+            throw new BadRequestException("Provided boundaries are not valid.", 400);
         }
 
         // validate that either boundary or country given
         if (boundary == null && country == null){
-            throw new BadRequestException("Either country or boundary needs to be provided.");
+            throw new BadRequestException("Either country or boundary needs to be provided.", 400);
         }
     }
 
