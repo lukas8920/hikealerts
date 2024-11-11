@@ -43,11 +43,8 @@ data = response.read()
 totalCount = json.loads(data).get("total")
 
 offset = 0
-#todo replace 2 by 200
-batchSize = 30
+batchSize = 200
 id_list = []
-#todo remove totalCount
-totalCount = 1
 
 # Fetch the driver manager from your Spark context
 driver_manager = spark._sc._gateway.jvm.java.sql.DriverManager
@@ -76,7 +73,7 @@ while True:
 
             title = item['title'].replace("'", r"''")
             description = item['description'].replace("'", r"''")
-            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1, {None}, {None}, {None]"
+            statement = f"EXEC dbo.InsertRawEvents '{item['id']}', 'US', '{title}', '{item['parkCode']}', '{description}', '{item['url']}', 1, {None}, {None}, {None}"
 
             # Create callable statement and execute it
             exec_statement = con.prepareCall(statement)

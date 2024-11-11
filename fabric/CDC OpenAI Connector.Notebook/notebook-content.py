@@ -75,7 +75,7 @@ notebook_failed = False
 if len(resultlist) > 0:
     for i in range(0, len(resultlist), 10):
         # buffer requests to open ai due to quota limit
-        time.sleep(5)
+        time.sleep(20)
 
         sublist = resultlist[i:i + 10]
         # Create the desired dictionary structure
@@ -95,11 +95,12 @@ if len(resultlist) > 0:
         json_string = json.dumps(output_dict)
 
         message_dict = {
-            "model": "gpt-35-turbo",
+            "model": "gpt-4",
+            #"model": "gpt-35-turbo",
             "messages": [
                 {
                     "role": "system",
-                    "content": "For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Do not output and ignore alerts where: \n - no trail name identification is possible and the problem does not seem to affect trails in the entire park or region. \n - no trail name, no park name or no region can be identified. \n - there seems to be no problem with trail conditions. \n For the remaining alerts, output the results as json list. Each json item consists of: Event id, country, park_name, region, trail_name, from_date and to_date \n Each item must have either a trail name and a park name and/or a region. Trail names might be in the alert description. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n One alert can have zero, one or multiple json items - each trail should go in a separate json item.  \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments." 
+                    "content": "For each alert identify most likely matching trails with problems based on country, area and trail information provided with the alert. \n Do not output and ignore alerts where: \n - no trail name identification is possible and the problem does not seem to affect trails in the entire park or region. \n - no trail name, no park name or no region can be identified. \n - there seems to be no problem with trail conditions. \n For the remaining alerts, output the results as json list. Each json item consists of: Event id, country as two-letter code, park_name, region, trail_name, from_date and to_date \n Each item must have either a trail name and a park name and/or a region. Trail names might be in the alert description, but extract solely the trail name. The description should not be in the response. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n One alert can have zero, one or multiple json items - each trail should go in a separate json item.  \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments." 
                 },
                 {
                     "role": "user",
@@ -111,12 +112,15 @@ if len(resultlist) > 0:
         # Convert the dictionary to a JSON string
         json_string = json.dumps(message_dict)
 
+        # gpt-4 proxy
+        conn = http.client.HTTPSConnection("mango-bush-0a9e12903.5.azurestaticapps.net")
+        openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'proxyai-api-key')
         # gpt-4 model
         #conn = http.client.HTTPSConnection("eventopenai.openai.azure.com")
         #openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'openai-api-key')
         # gpt-3 model
-        conn = http.client.HTTPSConnection("hikingai.openai.azure.com")
-        openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'hikingai-api-key')
+        # conn = http.client.HTTPSConnection("hikingai.openai.azure.com")
+        # openai_api_key = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'hikingai-api-key')
 
         # Define headers
         headers = {
@@ -124,9 +128,12 @@ if len(resultlist) > 0:
             "Content-Type": "application/json"
         }
         
-        #url = "/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
+        # gpt-4
+        # url = "/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
         # gpt-3 url
-        url = "/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-05-01-preview"
+        # url = "/openai/deployments/gpt-35-turbo/chat/completions?api-version=2024-05-01-preview"
+        # gpt-4 proxy
+        url = "/api/v1/openai/deployments/gpt-4-turbo-2024-04-09/chat/completions?api-version=2024-02-15-preview"
 
         conn.request("POST", url, headers=headers, body=json_string)
 
