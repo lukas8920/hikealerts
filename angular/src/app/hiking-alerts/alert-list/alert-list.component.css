@@ -1,9 +1,21 @@
 .scrollable-list {
-  height: 100%;
+  height: calc(100vh - 192px);
   overflow-y: scroll;
+  padding-right: 8px;
 }
 .card-footer {
   padding: 16px;
+}
+
+.title {
+  font-size: 14px;
+  font-family: Arial, serif;
+  font-weight: bold;
+}
+
+.content {
+  font-size: 13px;
+  text-align: justify;
 }
 
 .mat-card {
@@ -66,7 +78,6 @@
   color: var(--mdc-chip-label-text-color);
   font-family: var(--mdc-chip-label-text-font);
   line-height: var(--mdc-chip-label-text-line-height);
-  font-size: var(--mdc-chip-label-text-size);
   font-weight: var(--mdc-chip-label-text-weight);
   letter-spacing: var(--mdc-chip-label-text-tracking);
   flex-basis: 100%;

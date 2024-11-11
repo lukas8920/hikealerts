@@ -1,0 +1,24 @@
+.container {
+  height: calc(100vh - 126px);
+}
+
+.content {
+  width: 100%;
+  display: flex;
+}
+
+.outlet {
+  flex-grow: 0.35;
+}
+
+.subtitle {
+  max-height: 64px;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  padding-top: 16px;
+  padding-right: 10px;
+  min-width: 310px;
+}
+
+.subtitle-writing {
+  margin-left: 16px;
+}

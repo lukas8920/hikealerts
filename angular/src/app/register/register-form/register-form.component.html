@@ -1,0 +1,48 @@
+<div class="screen_wrapper">
+  <form class="register_form"
+        (ngSubmit)="onSubmit(form)"
+        [formGroup]="form"
+        *ngIf="!isSuccessful && !isSubmitted">
+    <mat-form-field class="input">
+      <mat-label class="input-size">Enter Email</mat-label>
+      <input type="email"
+             formControlName = "email"
+             matInput
+             [errorStateMatcher]="matcher"/>
+      <mat-error>{{getMailErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label class="input-size">Enter Password</mat-label>
+      <input type="password"
+             formControlName="password"
+             matInput
+             [errorStateMatcher]="matcher"/>
+      <mat-error>{{getPwErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="input">
+      <mat-label class="input-size">Confirm Password</mat-label>
+      <input type="password"
+             formControlName="password_check"
+             matInput
+             [errorStateMatcher]="matcher"/>
+      <mat-error>{{getPwConfirmErrorMessage()}}</mat-error>
+    </mat-form-field>
+
+    <div>
+      <button mat-raised-button color="primary" class="button">
+        Send
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="isError && isSubmitted" class="response">
+    <div>Your Sign Up failed!</div>
+    <div>{{errorMessage}}</div>
+  </div>
+  <div *ngIf="isSuccessful && isSubmitted" class="response">
+    <div>Your Sign Up was successful!</div>
+    <div>{{responseMessage}}</div>
+  </div>
+</div>

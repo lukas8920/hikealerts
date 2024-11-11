@@ -6,23 +6,23 @@
       <mat-card *ngFor="let obj of eventList" class="mat-card">
         <div (click)="this.onCardClick(obj)" class="card-item">
           <mat-card-header>
-            <mat-card-title>{{obj.title}}</mat-card-title>
+            <mat-card-title class="title">{{obj.title}}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <p>{{obj.description}}</p>
-            <a href="obj.url">Link to Alert</a>
+            <p class="content">{{obj.description}}</p>
+            <a href="{{obj.url}}" class="content">Link for more infos</a>
           </mat-card-content>
 
           <div class="footer">
             <div class="footer-wrapper">
               <div class="custom-chip">
-                <span class="span-chip">{{obj.publisher}}</span>
+                <span class="span-chip content">{{obj.publisher}}</span>
               </div>
               <div class="custom-chip">
-                <span class="span-chip">{{obj.status}}</span>
+                <span class="span-chip content">{{obj.status}}</span>
               </div>
               <div class="custom-chip">
-                <span class="span-chip">{{obj.create_date}}</span>
+                <span class="span-chip content">{{obj.create_date}}</span>
               </div>
             </div>
           </div>
@@ -31,4 +31,3 @@
     </div>
   </div>
 </div>
-

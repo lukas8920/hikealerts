@@ -14,6 +14,8 @@ services:
     environment:
       - SPRING_REDIS_HOST=redis # Set the Redis host environment variable
       - SPRING_REDIS_PORT=6379   # Set the Redis port environment variable
+    volumes:
+      - springboot-data:/home
     networks:
       - app-network
       - pass-network
@@ -29,6 +31,7 @@ services:
       - "8080:8080" # NGINX exposes port 8080 externally
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro # Mount your custom NGINX config >
+      - ./springboot-proxy-headers.conf:/etc/nginx/springboot-proxy-headers.conf
       - /etc/letsencrypt:/etc/letsencrypt
     networks:
       - app-network
@@ -47,3 +50,4 @@ networks:
 volumes:
   gpg_data:
   gpg_pass:
+  springboot-data:

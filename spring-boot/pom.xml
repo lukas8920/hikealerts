@@ -20,12 +20,13 @@
         <java.version>17</java.version>
         <jedis.client.version>4.4.8</jedis.client.version>
         <jetty.version>12.0.12</jetty.version>
+        <jjwt.version>0.12.6</jjwt.version>
         <jts.version>1.20.0</jts.version>
         <lombok.version>1.18.28</lombok.version>
         <okhttp.version>4.10.0</okhttp.version>
-        <openapi-generator-maven-plugin.version>7.8.0</openapi-generator-maven-plugin.version>
         <redis.version>3.3.4</redis.version>
         <retrofit.version>2.11.0</retrofit.version>
+        <springdoc.version>2.6.0</springdoc.version>
         <sqlserver.version>12.8.1.jre11</sqlserver.version>
     </properties>
 
@@ -42,6 +43,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- Jetty -->
@@ -130,6 +135,27 @@
             <version>${jts.version}</version>
         </dependency>
 
+        <!-- JWT libraries -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- Retrofit -->
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
@@ -154,21 +180,11 @@
             <version>${apache.commons}</version>
         </dependency>
 
-        <!-- OpenAPI Generator -->
+        <!-- Swagger Libraries -->
         <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>openapi-generator-maven-plugin</artifactId>
-            <version>${openapi-generator-maven-plugin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openapitools</groupId>
-            <artifactId>jackson-databind-nullable</artifactId>
-            <version>0.2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>2.2.22</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
     </dependencies>
 
@@ -178,32 +194,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- OpenAPI Generator Maven Plugin -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi-generator-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <output>${project.build.directory}/generated-sources/openapi</output>
-                            <modelPackage>org.devbros.microsoft_hackathon.model</modelPackage>
-                            <apiPackage>org.devbros.microsoft_hackathon.api</apiPackage>
-                            <configOptions>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useLombok>true</useLombok>
-                                <useSpringBoot3>true</useSpringBoot3>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="body">
+    <div class="row">
+      <div class="col1">
+        <div class="line">
+          <div>User:</div>
+        </div>
+        <div class="line">
+          <div>Organisation:</div>
+        </div>
+        <div class="line">
+          <div>Status:</div>
+        </div>
+      </div>
+      <div>
+        <div class="line">
+          <div>{{profile?.mail}}</div>
+        </div>
+        <div class="line">
+          <div>{{profile?.organisation}}</div>
+        </div>
+        <div class="line">
+          <div>{{profile?.status}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info">
+    Contact us via mail, if you would like to join / create an organisation.<br/>
+    Organisation alerts have the 'Official' tag in the API / Map.<br/>
+    Only members of the organisation can adjust + delete events from the respective organisation.
+  </div>
+  <div class="row">
+    <div class="line col1">
+      <div>API Key:</div>
+    </div>
+    <div class="line">
+      <div>{{profile?.api_key}}</div>
+    </div>
+  </div>
+  <div class="info" *ngIf="isApiKeyVisible">
+    Please copy the api-key. It will not be visible again!
+  </div>
+  <div>
+    <button mat-raised-button class="button" (click)="openConfirmationDialog()">
+      Delete Account
+    </button>
+    <button mat-raised-button class="button" (click)="refreshApiKey()">
+      Refresh API Key
+    </button>
+  </div>
+</div>

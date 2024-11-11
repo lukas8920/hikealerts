@@ -1,0 +1,296 @@
+openapi: 3.0.1
+info:
+  title: Hiking Alerts API
+  description: Hiking Alerts API
+  termsOfService: https://hiking-alerts.org/terms-of-service
+  contact:
+    name: Support
+    url: www.hiking-alerts.org
+    email: info.hikingalerts@gmail.com
+  license:
+    name: MIT
+    url: https://spdx.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: https://www.hiking-alerts.org:8080
+security:
+- Authorization: []
+paths:
+  /v1/events/publish:
+    post:
+      tags:
+      - event-controller
+      summary: Publish your own event.
+      description: Allows to publish an event and requests hiking-alerts.org to match
+        the event with geospatial data. By default events are published via the 'Community'
+        tag. Anybody who belongs to the community can adjust/delete community events.
+        On request via mail you can become member of an official institution. The
+        events are then published via this institution. And only members of the institution
+        can adjust or delete the event.
+      operationId: queryEvents
+      parameters:
+      - name: title
+        in: query
+        description: A brief title for the event which may not exceed 200 words. In
+          order to allow geospatial mapping either the description or the title should
+          mention the trail name.
+        required: true
+        schema:
+          type: string
+        example: Track closure
+      - name: description
+        in: query
+        description: A description of the event which may not exceed 2000 words. In
+          order to allow geospatial mapping either the description or the title should
+          mention the trail name.
+        required: true
+        schema:
+          type: string
+        example: Mount Herbert Walkway track closed due to lumbering operations.
+      - name: country
+        in: query
+        description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
+          or US.
+        required: true
+        schema:
+          type: string
+        example: NZ
+      - name: fromDate
+        in: query
+        description: From date which specifies when the event becomes valid (might
+          be not given by the event provider). The date should be in format yyyy-MM-dd.
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-11-05
+      - name: toDate
+        in: query
+        description: To date which specifies when the event becomes invalid (might
+          be not given by the event provider). The date should be in format yyyy-MM-dd
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-12-05
+      responses:
+        "200":
+          description: Feedback whether event injection worked.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
+  /v1/events/delete:
+    post:
+      tags:
+      - event-controller
+      summary: Delete published events
+      description: Delete an event from the hiking-alerts.org database
+      operationId: queryEvents_1
+      parameters:
+      - name: id
+        in: query
+        description: The event of the id. Id's can be retrieved via the query endpoint.
+        required: true
+        schema:
+          type: string
+        example: 1
+      responses:
+        "200":
+          description: Feedback whether event deletion worked.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageResponse'
+  /v1/events/query:
+    get:
+      tags:
+      - event-controller
+      summary: Get a list of events.
+      description: Retrieves a list of events which hiking-alerts.org was able to
+        map to geospatial data.
+      operationId: queryEvents_2
+      parameters:
+      - name: boundary
+        in: query
+        description: "Bounding box to query events where the mid point of the trail\
+          \ lies within the box. The boundary box is defined by the minimum longitude,\
+          \ the minimum latitude, the maximum longitude and the maximum latitude."
+        required: false
+        schema:
+          type: string
+        example: "1.14,1.14,4.8,4.8"
+      - name: country
+        in: query
+        description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
+          or US. Either a boundary box or a country is required for the query.
+        required: false
+        schema:
+          type: string
+        example: NZ
+      - name: fromDate
+        in: query
+        description: From date which specifies when the event becomes valid (might
+          be not given by the event provider). The date should be in format yyyy-MM-dd.
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-11-05
+      - name: toDate
+        in: query
+        description: To date which specifies when the event becomes invalid (might
+          be not given by the event provider). The date should be in format yyyy-MM-dd
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-12-05
+      - name: createDate
+        in: query
+        description: Create date which specifies when the event was provided by data
+          provider. Returns all events greater or equal to the create date. The date
+          should be in format yyyy-MM-dd
+        required: false
+        schema:
+          type: string
+          format: date
+        example: 2024-11-09
+      - name: nullDates
+        in: query
+        description: Boolean flag indicating whether events with null values for the
+          from or the to date should be returned. The default value is true.
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: createdBy
+        in: query
+        description: "Filters on who created the events. Valid values are: 'All',\
+          \ 'Community' or 'Official'. Default value is 'All'."
+        required: false
+        schema:
+          type: string
+          default: All
+        example: Official
+      - name: offset
+        in: query
+        description: The offset for the results in the event datasource. Enables paging
+          through the events. Default value is 0
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+        example: 50
+      - name: limit
+        in: query
+        description: The limit defining the maximum number of results to return. Default
+          value is 50. Maximum value is 100.
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 50
+        example: 40
+      responses:
+        "200":
+          description: The queried events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
+components:
+  schemas:
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    Coordinate:
+      type: object
+      properties:
+        x:
+          type: number
+          format: double
+        "y":
+          type: number
+          format: double
+      description: "Geographic coordinates for the mid point of the trail associated\
+        \ with the event, where x is the longitude coordinate and y is the latitude\
+        \ coordinate."
+    EventResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the event in the hiking-alerts.org database (required
+            for deletion).
+          format: int64
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: NZ
+        trailname:
+          type: string
+          description: Name of the trail affected by the event
+          example: Mount Elvis Track
+        trail_id:
+          type: integer
+          description: ID of the trail in the hiking-alerts.org database.
+          format: int64
+        title:
+          type: string
+          description: Title of the event
+        description:
+          type: string
+          description: Description for the event
+        fromDate:
+          type: string
+          description: From date which specifies when the event becomes valid. The
+            date is provided in format yyyy-MM-dd HH:MM:SS.
+          format: date-time
+          nullable: true
+        toDate:
+          type: string
+          description: To date which specifies when the event becomes invalid. The
+            date is provided in format yyyy-MM-dd HH:MM:SS.
+          format: date-time
+          nullable: true
+        crDate:
+          type: string
+          description: Creation timestamp for the event in format yyyy-MM-dd HH:MM:SS
+          format: date-time
+        publisher:
+          type: string
+          description: Name of the institution which published the event. Events published
+            by the community have the tag '-'.
+          example: US National Park Service
+        status:
+          type: string
+          description: Tag defining who published the event.
+          enum:
+          - Community
+          - Official
+        trailMidPoint:
+          $ref: '#/components/schemas/Coordinate'
+  securitySchemes:
+    Authorization:
+      type: http
+      description: Create an account to access your personal bearer token. In the
+        overview tab you can manage your token.
+      name: Authorization
+      scheme: bearer
+      bearerFormat: JWT

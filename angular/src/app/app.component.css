@@ -11,3 +11,73 @@
   padding-left: 16px;
   font-size: 24px;
 }
+
+.login {
+  padding-right: 24px;
+}
+
+.mat-button {
+  box-sizing: border-box;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0;
+  min-width: 64px;
+  line-height: 24px;
+  padding: 0 16px;
+  border-radius: 4px;
+  overflow: visible;
+  font-family: Roboto,Helvetica Neue,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.site-title {
+  color: white;
+  text-decoration: none;
+}
+
+.footer {
+  width: 100%;
+  height: 62px;
+}
+
+.line {
+  width: 100%;
+  border-bottom: 1px solid #4B6DB8;
+}
+
+.copy {
+  float: left;
+}
+
+.body {
+  margin-left: 8px;
+}
+
+.privacy-en {
+  float: right;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+img {
+  float: right;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 15px;
+}

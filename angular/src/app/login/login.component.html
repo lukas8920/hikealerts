@@ -1,0 +1,9 @@
+<div class="max-width">
+  <div class="center">
+    <h1>Login</h1>
+  </div>
+  <div class="flex-layout-sm-md">
+    <app-login-form class="flex-grow" (emitter)="resetPassword($event)" *ngIf="!showReset"></app-login-form>
+    <app-reset-password class="flex-grow" *ngIf="showReset"></app-reset-password>
+  </div>
+</div>

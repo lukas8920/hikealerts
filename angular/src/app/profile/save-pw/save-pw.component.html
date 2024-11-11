@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="body">
+    <div class="elements">
+      <h2>Change Account Password</h2>
+      <div class="screen_wrapper">
+        <form class="register-form"
+              (ngSubmit)="onSubmit(form)"
+              [formGroup]="form">
+          <mat-form-field class="input">
+            <mat-label class="input-size">Enter Password</mat-label>
+            <input type="password"
+                   formControlName="password"
+                   matInput
+                   [errorStateMatcher]="matcher"/>
+            <mat-error>{{getPwErrorMessage()}}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="input">
+            <mat-label class="input-size">Confirm Password</mat-label>
+            <input type="password"
+                   formControlName="password_check"
+                   matInput
+                   [errorStateMatcher]="matcher"/>
+            <mat-error>{{getPwConfirmErrorMessage()}}</mat-error>
+          </mat-form-field>
+
+          <p *ngIf="isEmpty()">
+            Enter and confirm to set a new password.
+          </p>
+          <p *ngIf="!isEmpty()" [ngStyle]="isValid && {'color': 'green'} || {'color': 'red'}">
+            {{message}}
+          </p>
+
+          <div>
+            <button mat-raised-button color="primary" class="button">
+              Change password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

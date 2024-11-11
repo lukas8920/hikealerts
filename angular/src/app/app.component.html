@@ -1,8 +1,42 @@
 <div>
   <mat-toolbar class="toolbar">
-    <div class="title">Hiking Alerts</div>
+    <div class="title"><a class="site-title" href="#" routerLink="/hiking-alerts">Hiking Alerts</a></div>
+
+    <span class="spacer"></span>
+
+    <a class="mat-button" href="/specs" routerLink="specs">API Specs</a>
+
+    <div *ngIf="!getLoginStatus()">
+      <a class="mat-button" href="/register" routerLink="register">SignUp</a>
+      <a mat-button class="login" href="/login" routerLink="login">Login</a>
+    </div>
+
+    <div *ngIf="getLoginStatus()">
+      <a class="mat-button" href="/profile" routerLink="profile">Profile</a>
+      <a class="mat-button" (click)="logout()">Logout</a>
+    </div>
   </mat-toolbar>
+
   <div class="container">
     <router-outlet></router-outlet>
+  </div>
+
+  <div class="footer">
+    <div class="line"></div>
+    <div class="body">
+      <div  style="display:block; text-align:left; float:left;">
+        <p class="copy">Ⓒ 2024 Hiking Alerts</p>
+      </div>
+
+      <div style="display:block; text-align:right;">
+        <img src="../assets/flag_nz.svg" width="30" height="20" alt="">
+        <div class="flex-layout-sm-md" style="float: right;">
+          <p class="privacy-en" routerLink="contact">Contact</p>
+          <p class="privacy-en" routerLink="privacy-policy">Privacy Policy</p>
+          <p class="privacy-en" routerLink="copyright-credits">Copyright Credits</p>
+          <p class="privacy-en" routerLink="terms-of-service">Terms of Service</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

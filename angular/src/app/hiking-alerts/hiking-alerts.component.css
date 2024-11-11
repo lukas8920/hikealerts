@@ -1,5 +1,5 @@
 .left {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 126px);
   width: 22%;
   min-width: 250px;
   float: left;
@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 .right {
-  height: calc(100vh - 64px);
+  height: calc(100vh - 126px);
   width: 78%;
   min-width: 300px;
   float: left;

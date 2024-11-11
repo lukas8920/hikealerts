@@ -5,6 +5,7 @@ import {ApiService} from '../../_service/api.service';
 import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
 import {Point} from 'leaflet';
+import * as pako from 'pako';
 
 @Component({
   selector: 'app-hiking-map',
@@ -20,6 +21,8 @@ export class HikingMapComponent implements OnInit {
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
 
+  linestringLayers: Map<number, L.Polyline> = new Map();
+
   constructor(private apiService: ApiService, private sharedListService: SharedListService) {
   }
 
@@ -33,23 +36,29 @@ export class HikingMapComponent implements OnInit {
       this.updateVisibleMarkers();
     });
     // Fetch the GeoJSON data and add it to the map
-    this.apiService.getGeoJsonLayer().subscribe((geoJsonData) => {
-      this.addGeoJsonLayer(geoJsonData);
-    });
+    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON))
   }
 
   // Initialize the map
   initializeMap(): void {
     if (!this.map){
-      this.map = this.leaflet.map('map').setView([51.505, -0.09], 5); // Set initial center and zoom
+      this.map = this.leaflet.map('map', {
+        worldCopyJump: true,  // Enable horizontal wrapping
+        maxBoundsViscosity: 1.0 // Prevents bouncing at the vertical edge
+      }).setView([51.505, -0.09], 2); // Set initial center and zoom
+
+      // Set vertical bounds (latitude limits only)
+      const southWest = L.latLng(-85, -Infinity);
+      const northEast = L.latLng(85, Infinity);
+      const bounds = L.latLngBounds(southWest, northEast);
+
+      this.map.setMaxBounds(bounds);
 
       // Add OpenStreetMap tile layer
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
-
-
 
       // Create the marker cluster group
       this.markerClusterGroup = this.leaflet.markerClusterGroup({
@@ -72,17 +81,45 @@ export class HikingMapComponent implements OnInit {
     }
   }
 
-  addGeoJsonLayer(geoJsonData: any): void {
-    L.geoJSON(geoJsonData).addTo(this.map);
+  addGeoJsonData(geoJsonData: any): void {
+    const decompressedString = pako.inflate(new Uint8Array(geoJsonData), { to: 'string' });
+    const decompressedGeoJsonData = JSON.parse(decompressedString) as GeoJSON.FeatureCollection
+    const geoJsonLayer =  L.geoJSON(decompressedGeoJsonData, {
+      style: {
+        color: 'red',
+        weight: 2,
+      },
+      onEachFeature: (feature, layer) => {
+        // add trail id to the reference map for the markers
+        const id = feature.properties.id;
+        if (layer instanceof L.Polyline) {
+          this.linestringLayers.set(id, layer);
+        }
+
+        // Show the 'name' property on hover
+        layer.on('mouseover', (e) => {
+          const tooltip = L.tooltip()
+            .setContent(feature.properties.trail_name)
+            .setLatLng(e.latlng)
+            .addTo(this.map);
+          layer.on('mouseout', () => {
+            this.map.removeLayer(tooltip);
+          });
+        });
+      }
+    });
+    geoJsonLayer.addTo(this.map);
   }
 
   fetchMarkers(): void {
+    const self = this;
     // Determine the offset based on current loaded markers
     this.apiService.getEvents(this.offset, this.limit).subscribe(events => {
       if (events.length === 0) return; // No more markers to load
 
       events.forEach(event => {
         const markerKey = `${event.lat}-${event.lng}`;
+        event.create_date = event.create_date.split(" ")[0];
 
         // Check if this marker has already been loaded
         if (!this.loadedMarkers.has(markerKey)) {
@@ -102,11 +139,23 @@ export class HikingMapComponent implements OnInit {
 
           // Open popup on hover
           markerInstance.on('mouseover', function (e) {
+            event.trail_ids.forEach(lineId => {
+              const lineLayer = self.linestringLayers.get(lineId);
+              if (lineLayer) {
+                lineLayer.setStyle({ color: 'blue' }); // Highlight color
+              }
+            });
             markerInstance.openPopup();
           });
 
           // Close popup when hover stops
           markerInstance.on('mouseout', function (e) {
+            event.trail_ids.forEach(lineId => {
+              const lineLayer = self.linestringLayers.get(lineId);
+              if (lineLayer) {
+                lineLayer.setStyle({ color: 'red' }); // Original color
+              }
+            });
             markerInstance.closePopup();
           });
         }
