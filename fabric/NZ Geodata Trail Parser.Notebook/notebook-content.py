@@ -39,7 +39,7 @@ headers = {
 }
 
 # Make the API call
-url = "/v1/tracks"
+url = "/v1/tracks?coordinates=wgs84"
 # todo set header
 conn.request("GET", url, headers=headers)
 
