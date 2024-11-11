@@ -18,7 +18,9 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory lettuceConnectionFactory() {
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
+        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
+        jedisConnectionFactory.setTimeout(5000);
+        return jedisConnectionFactory;
     }
 
     @Bean
