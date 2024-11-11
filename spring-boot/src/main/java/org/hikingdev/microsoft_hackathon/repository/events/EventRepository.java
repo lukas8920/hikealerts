@@ -58,13 +58,13 @@ public class EventRepository implements IEventRepository {
 
         if (publisher != null){
             try {
-                MapEvent mapEvent = this.mapEventMapper.map(event, publisher);
                 // Add to Redis
                 logger.info("Add dataset to db and redis.");
-                this.iEventJpaRepository.save(event);
+                Event tmpEvent = this.iEventJpaRepository.save(event);
+                MapEvent mapEvent = this.mapEventMapper.map(tmpEvent, publisher);
 
                 logger.info("Save mapEvent: " + mapEvent);
-                redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, event.getId());
+                redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, tmpEvent.getId());
             } catch (Exception e){
                 logger.error("Error while saving map event: ", e);
             }
