@@ -1,22 +1,22 @@
-# 1) Microsoft Fabric and AI Hackathon: Hiking Alerts
+# 1. Microsoft Fabric and AI Hackathon: Hiking Alerts
 
-## 1.1) Use Case Description
+## 1.1. Use Case Description
 When viewing and planning tracks, popular hiking apps do not display current information by official institutions for hiking tracks in a standard format. Instead, those apps heavily rely on their respective communities updating the information manually.
 
 This relevant information for hikers from institutions might include dangers, weather impacts, closures etc (in the following called events).
 
 Microsoft's AI and Fabric services enable to standardize the events issued by different institutions in a global context. The purpose of the website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
 
-## 1.2) Video
+## 1.2. Video
 
 
-## 1.3) Project Structure
-### 1.3.1) System Setup
+## 1.3. Project Structure
+### 1.3.1. System Setup
 ![system_setup_v1](https://github.com/user-attachments/assets/19f04a08-e16e-459c-b6bb-ca6f2edfe8b6)
 
-### 1.3.2) Content Overview
+### 1.3.2. Content Overview
 
-### 1.3.3) How to set up
+### 1.3.3. How to set up
 1) Set up Azure SQL database and tables, procedures & triggers with T-SQL statements<br>
    https://github.com/lukas8920/hikealerts/tree/main/database
 2) Set up MS Queues for deleted and created events
