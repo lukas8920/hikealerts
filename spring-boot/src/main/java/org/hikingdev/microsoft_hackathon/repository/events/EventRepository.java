@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,6 +40,10 @@ public class EventRepository implements IEventRepository {
     private final EntityManager entityManager;
     private final MapEventMapper mapEventMapper;
     private final EventResponseMapper eventResponseMapper;
+
+    private static final ReentrantLock lock = new ReentrantLock();
+    private static boolean isThreadRunning = false;
+    private static final Condition threadNotRunning = lock.newCondition();
 
     @Autowired
     public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, MapEvent> redisTemplate, MapEventMapper mapEventMapper,
@@ -71,6 +77,36 @@ public class EventRepository implements IEventRepository {
         } else {
             logger.error("Error saving event {} as publisher {} does not exist.", event.getEvent_id(), event.getPublisherId());
         }
+    }
+
+    @Override
+    public List<MapEvent> refreshCache(){
+        List<MapEvent> outputEvents = new ArrayList<>();
+        logger.info("Start cache refreshing.");
+        lock.lock();
+        try {
+            isThreadRunning = true;
+            redisTemplate.delete(EVENTS_KEY);
+
+            int offset = 0;
+            List<MapEvent> mapEvents = findAllByOffsetAndLimit(offset, 100);
+            while (!mapEvents.isEmpty()){
+                outputEvents.addAll(mapEvents);
+                for (MapEvent mapEvent : mapEvents) {
+                    redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId()); // Assuming event.getId() returns a unique score
+                }
+
+                offset += 100;
+                mapEvents = findAllByOffsetAndLimit(offset, 100);
+            }
+
+            isThreadRunning = false;
+            threadNotRunning.signalAll();
+        } finally {
+            logger.info("Finished cache refreshing");
+            lock.unlock();
+        }
+        return outputEvents;
     }
 
     @Override
