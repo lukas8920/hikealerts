@@ -91,6 +91,7 @@ public class EventRepository implements IEventRepository {
             int offset = 0;
             List<MapEvent> mapEvents = findAllByOffsetAndLimit(offset, 100);
             while (!mapEvents.isEmpty()){
+                logger.info("Fetched {} events.", mapEvents.size());
                 outputEvents.addAll(mapEvents);
                 for (MapEvent mapEvent : mapEvents) {
                     redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId());
@@ -102,6 +103,8 @@ public class EventRepository implements IEventRepository {
 
             isThreadRunning = false;
             threadNotRunning.signalAll();
+        } catch (Exception e){
+            logger.error("Error while persisting", e);
         } finally {
             logger.info("Finished cache refreshing");
             lock.unlock();
@@ -111,10 +114,8 @@ public class EventRepository implements IEventRepository {
 
     @Override
     public List<MapEvent> findEvents(int offset, int limit) {
-        logger.info("get events from redis");
         // Get events from Redis
         Set<MapEvent> mapEvents = redisTemplate.opsForZSet().range(EVENTS_KEY, offset, offset + limit - 1);
-        logger.info(String.valueOf(mapEvents.size()));
 
         if (mapEvents == null || mapEvents.isEmpty()) {
             // If not present in cache, fetch from the database
