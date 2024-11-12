@@ -257,9 +257,13 @@ public class EventRepository implements IEventRepository {
 
         // delete ids in raw events and events
         eventsToDelete.forEach(event -> {
-            logger.info("Delete {} / {}", event.getEvent_id(), event.getId());
-            this.iEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
-            this.iRawEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
+            try {
+                logger.info("Delete {} / {}", event.getEvent_id(), event.getId());
+                this.iEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
+                this.iRawEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
+            } catch (Exception e){
+                logger.error("Error during deletion, ", e);
+            }
         });
     }
 
