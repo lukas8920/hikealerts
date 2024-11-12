@@ -8,7 +8,7 @@ This relevant information for hikers from institutions might include dangers, we
 Microsoft's AI and Fabric services enable to standardize the events issued by different institutions in a global context. The purpose of the website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
 
 ## 1.2. Video
-[![Watch the video](https://img.youtube.com/vi/QYnjiuvA630/0.jpg)]([https://www.youtube.com/watch?v=YOUR_VIDEO_ID](https://youtu.be/QYnjiuvA630))
+[![Watch the video](https://img.youtube.com/vi/QYnjiuvA630/0.jpg)](https://www.youtube.com/watch?v=QYnjiuvA630)
 
 ## 1.3. Project Structure
 ### 1.3.1. System Setup
