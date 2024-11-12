@@ -91,13 +91,14 @@ public class EventRepository implements IEventRepository {
             int offset = 0;
             List<MapEvent> mapEvents = findAllByOffsetAndLimit(offset, 100);
             while (!mapEvents.isEmpty()){
-                logger.info("Fetched {} events with offset {}.", mapEvents.size(), offset);
                 outputEvents.addAll(mapEvents);
                 for (MapEvent mapEvent : mapEvents) {
+                    logger.info(mapEvent.getEvent_id());
                     redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId());
                 }
 
                 offset += 100;
+                logger.info("Fetch next events.");
                 mapEvents = findAllByOffsetAndLimit(offset, 100);
             }
 
@@ -140,6 +141,8 @@ public class EventRepository implements IEventRepository {
                 "SELECT e.id, e.title, e.description, p.name as publisher, p.status, e.createDatetime, e.midLatitudeCoordinate, e.midLongitudeCoordinate, e.event_id, e.country, e.publisherId, e.url, e.trailIds FROM Event e JOIN Publisher p ON p.id = e.publisherId ORDER BY e.id OFFSET :offset ROWS", Object[].class);
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
+
+        logger.info("Fetched {} events with offset {}.", query.getResultList().size(), offset);
 
         return query.getResultList().stream().map(this.mapEventMapper::map).collect(Collectors.toList());
     }
