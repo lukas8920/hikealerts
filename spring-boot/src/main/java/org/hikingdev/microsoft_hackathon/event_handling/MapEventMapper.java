@@ -52,7 +52,11 @@ public class MapEventMapper {
         mapEvent.setTitle((String) object[1]);
         mapEvent.setDescription((String) object[2]);
         mapEvent.setPublisher((String) object[3]);
-        mapEvent.setStatus(mapStatus((String) object[4]));
+        if (object[4] instanceof Status){
+            mapEvent.setStatus(mapStatus((Status) object[4]));
+        } else {
+            mapEvent.setStatus(mapStatus((String) object[4]));
+        }
         if (object[5] != null){
             mapEvent.setCreateDate(((Timestamp) object[5]).toLocalDateTime().format(formatter));
         }
