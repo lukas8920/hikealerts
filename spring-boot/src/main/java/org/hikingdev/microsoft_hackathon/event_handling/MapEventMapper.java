@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MapEventMapper {
@@ -76,6 +78,10 @@ public class MapEventMapper {
             mapEvent.setTrailIds((List<Long>) object[12]);
         } else if (object[12] instanceof Long){
             mapEvent.setTrailIds(List.of((Long) object[12]));
+        } else if(object[12] instanceof String){
+            String[] parts = ((String) object[12]).split(",");
+            List<Long> ids = Arrays.stream(parts).map(Long::parseLong).toList();
+            mapEvent.setTrailIds(ids);
         }
         return mapEvent;
     }

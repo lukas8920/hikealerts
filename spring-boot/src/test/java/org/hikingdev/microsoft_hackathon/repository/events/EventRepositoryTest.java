@@ -121,19 +121,20 @@ public class EventRepositoryTest {
 
         this.iPublisherJpaRepository.save(publisher);
 
-        event1.setTrailIds(List.of(1L, 2L));
+        //event1.setTrailIds(List.of(1L, 2L));
         this.iEventJpaRepository.save(event1);
         this.iEventJpaRepository.save(event2);
 
-        List<MapEvent> events = repository.findEvents(0, 1);
+        List<MapEvent> events = repository.findEvents(0, 100);
+        events.forEach(event -> System.out.println(event));
 
         Set<MapEvent> redisEvents = this.redisTemplate.opsForZSet().range("events", 0, -1);
 
-        assertThat(events.size(), is(1));
+        assertThat(events.size(), is(2));
         assertThat(events.get(0).getEvent_id(), is("55555"));
 
         assertThat(redisEvents == null, is(false));
-        assertThat(redisEvents.size(), is(1));
+        assertThat(redisEvents.size(), is(2));
 
         this.iEventJpaRepository.deleteAll();
         events.forEach(event -> this.redisTemplate.opsForZSet().remove("events", event));
