@@ -41,9 +41,8 @@ public class EventRepository implements IEventRepository {
     private final MapEventMapper mapEventMapper;
     private final EventResponseMapper eventResponseMapper;
 
-    private static final ReentrantLock lock = new ReentrantLock();
+    private static final Object lock = new Object();
     private static boolean isThreadRunning = false;
-    private static final Condition threadNotRunning = lock.newCondition();
 
     @Autowired
     public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, MapEvent> redisTemplate, MapEventMapper mapEventMapper,
@@ -69,6 +68,13 @@ public class EventRepository implements IEventRepository {
                 Event tmpEvent = this.iEventJpaRepository.save(event);
                 MapEvent mapEvent = this.mapEventMapper.map(tmpEvent, publisher);
 
+
+                synchronized (lock){
+                    if (isThreadRunning){
+                        logger.info("Return as cache refreshing service updates db ...");
+                        return;
+                    }
+                }
                 logger.info("Save mapEvent: " + mapEvent);
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, tmpEvent.getId());
             } catch (Exception e){
@@ -83,9 +89,10 @@ public class EventRepository implements IEventRepository {
     public List<MapEvent> refreshCache(){
         List<MapEvent> outputEvents = new ArrayList<>();
         logger.info("Start cache refreshing.");
-        lock.lock();
-        try {
+        synchronized (lock){
             isThreadRunning = true;
+        }
+        try {
             redisTemplate.delete(EVENTS_KEY);
 
             int offset = 0;
@@ -99,14 +106,14 @@ public class EventRepository implements IEventRepository {
                 offset += 100;
                 mapEvents = findAllByOffsetAndLimit(offset, 100);
             }
-
-            isThreadRunning = false;
-            threadNotRunning.signalAll();
         } catch (Exception e){
             logger.error("Error while persisting", e);
         } finally {
             logger.info("Finished cache refreshing");
-            lock.unlock();
+            synchronized (lock){
+                isThreadRunning = false;
+                lock.notifyAll();
+            }
         }
         return outputEvents;
     }
@@ -114,6 +121,17 @@ public class EventRepository implements IEventRepository {
     @Override
     public List<MapEvent> findEvents(int offset, int limit) {
         // Get events from Redis
+        synchronized (lock){
+            while (isThreadRunning){
+                try {
+                    logger.info("Entering lock.");
+                    lock.wait();
+                    logger.info("Lock released.");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
         Set<MapEvent> mapEvents = redisTemplate.opsForZSet().range(EVENTS_KEY, offset, offset + limit - 1);
 
         if (mapEvents == null || mapEvents.isEmpty()) {
@@ -198,6 +216,15 @@ public class EventRepository implements IEventRepository {
         Set<MapEvent> eventsToDelete = new HashSet<>(); // To collect keys to delete
 
         // Use RedisTemplate for scanning the sorted set
+        synchronized (lock){
+            try {
+                logger.info("Entering lock");
+                lock.wait();
+                logger.info("Lock released");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         Cursor<ZSetOperations.TypedTuple<MapEvent>> cursor = redisTemplate.opsForZSet().scan(
                 EVENTS_KEY,
                 ScanOptions.scanOptions().match("*").count(1000).build()
@@ -238,7 +265,6 @@ public class EventRepository implements IEventRepository {
 
     public List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset){
         String selectQuery = buildQuery(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, offset);
-        System.out.println(selectQuery);
 
         TypedQuery<Object[]> query = entityManager.createQuery(selectQuery, Object[].class);
 
