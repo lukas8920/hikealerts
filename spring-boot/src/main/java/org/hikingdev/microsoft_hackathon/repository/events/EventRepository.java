@@ -91,7 +91,7 @@ public class EventRepository implements IEventRepository {
             int offset = 0;
             List<MapEvent> mapEvents = findAllByOffsetAndLimit(offset, 100);
             while (!mapEvents.isEmpty()){
-                logger.info("Fetched {} events.", mapEvents.size());
+                logger.info("Fetched {} events with offset {}.", mapEvents.size(), offset);
                 outputEvents.addAll(mapEvents);
                 for (MapEvent mapEvent : mapEvents) {
                     redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId());
