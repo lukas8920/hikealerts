@@ -12,7 +12,7 @@ Microsoft's AI and Fabric services enable to standardize the events issued by di
 
 ## 1.3. Project Structure
 ### 1.3.1. System Setup
-![system_setup_v1](https://github.com/user-attachments/assets/19f04a08-e16e-459c-b6bb-ca6f2edfe8b6)
+![Screenshot from 2024-11-12 22-32-29](https://github.com/user-attachments/assets/a1874da7-7e10-441d-bf48-65413d9a95ee)
 
 ### 1.3.2. Content Overview
 
