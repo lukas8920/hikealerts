@@ -44,7 +44,11 @@ public class MapEventMapper {
 
     public MapEvent map(Object[] object) {
         MapEvent mapEvent = new MapEvent();
-        mapEvent.setId((long) ((int) object[0]));
+        if (object[0] instanceof Integer){
+            mapEvent.setId((long) ((int) object[0]));
+        } else {
+            mapEvent.setId((long) object[0]);
+        }
         mapEvent.setTitle((String) object[1]);
         mapEvent.setDescription((String) object[2]);
         mapEvent.setPublisher((String) object[3]);
