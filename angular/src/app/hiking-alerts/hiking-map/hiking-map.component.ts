@@ -113,57 +113,61 @@ export class HikingMapComponent implements OnInit {
 
   fetchMarkers(): void {
     const self = this;
-    // Determine the offset based on current loaded markers
-    this.apiService.getEvents(this.offset, this.limit).subscribe(events => {
-      if (events.length === 0) return; // No more markers to load
+    this.apiService.getEvents(this.offset, this.limit).subscribe(events =>
+      this.processResponse(events, self));
+  }
 
-      events.forEach(event => {
-        const markerKey = `${event.lat}-${event.lng}`;
-        event.create_date = event.create_date.split(" ")[0];
+  processResponse(events: Event[], self: HikingMapComponent): void {
+    if (events.length === 0) return; // No more markers to load
 
-        // Check if this marker has already been loaded
-        if (!this.loadedMarkers.has(markerKey)) {
-          this.loadedMarkers.set(markerKey, event); // Mark this marker as loaded
+    events.forEach(event => {
+      const markerKey = `${event.lat}-${event.lng}`;
+      event.create_date = event.create_date.split(" ")[0];
 
-          const iconSize = new Point(36,36); // Set the desired size for the icon
-          const customIcon = this.leaflet.divIcon({
-            className: 'custom-marker', // Add a custom class for styling if needed
-            html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-weight: bold; font-size: 36px; display: flex; justify-content: center; align-items: center;  color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
-            iconSize: iconSize,
-            iconAnchor: [18, 18], // Anchor the icon to the center
+      // Check if this marker has already been loaded
+      if (!this.loadedMarkers.has(markerKey)) {
+        this.loadedMarkers.set(markerKey, event); // Mark this marker as loaded
+
+        const iconSize = new Point(36,36); // Set the desired size for the icon
+        const customIcon = this.leaflet.divIcon({
+          className: 'custom-marker', // Add a custom class for styling if needed
+          html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-weight: bold; font-size: 36px; display: flex; justify-content: center; align-items: center;  color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
+          iconSize: iconSize,
+          iconAnchor: [18, 18], // Anchor the icon to the center
+        });
+
+        const markerInstance = this.leaflet.marker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon})
+          .addTo(this.markerClusterGroup);
+        markerInstance.bindPopup(`${event.title}`);
+
+        // Open popup on hover
+        markerInstance.on('mouseover', function (e) {
+          event.trail_ids.forEach(lineId => {
+            const lineLayer = self.linestringLayers.get(lineId);
+            if (lineLayer) {
+              lineLayer.setStyle({ color: 'blue' }); // Highlight color
+            }
           });
+          markerInstance.openPopup();
+        });
 
-          const markerInstance = this.leaflet.marker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon})
-            .addTo(this.markerClusterGroup);
-          markerInstance.bindPopup(`${event.title}`);
-
-          // Open popup on hover
-          markerInstance.on('mouseover', function (e) {
-            event.trail_ids.forEach(lineId => {
-              const lineLayer = self.linestringLayers.get(lineId);
-              if (lineLayer) {
-                lineLayer.setStyle({ color: 'blue' }); // Highlight color
-              }
-            });
-            markerInstance.openPopup();
+        // Close popup when hover stops
+        markerInstance.on('mouseout', function (e) {
+          event.trail_ids.forEach(lineId => {
+            const lineLayer = self.linestringLayers.get(lineId);
+            if (lineLayer) {
+              lineLayer.setStyle({ color: 'red' }); // Original color
+            }
           });
-
-          // Close popup when hover stops
-          markerInstance.on('mouseout', function (e) {
-            event.trail_ids.forEach(lineId => {
-              const lineLayer = self.linestringLayers.get(lineId);
-              if (lineLayer) {
-                lineLayer.setStyle({ color: 'red' }); // Original color
-              }
-            });
-            markerInstance.closePopup();
-          });
-        }
-      });
-
-      // Increment the offset for the next request
-      this.offset += this.limit;
+          markerInstance.closePopup();
+        });
+      }
     });
+
+    // Increment the offset for the next request
+    this.offset += this.limit;
+    this.apiService.getEvents(this.offset, this.limit).subscribe(events =>
+      this.processResponse(events, self));
   }
 
   updateVisibleMarkers(): void {
