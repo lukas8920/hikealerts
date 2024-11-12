@@ -126,7 +126,6 @@ public class EventRepositoryTest {
         this.iEventJpaRepository.save(event2);
 
         List<MapEvent> events = repository.findEvents(0, 100);
-        events.forEach(event -> System.out.println(event));
 
         Set<MapEvent> redisEvents = this.redisTemplate.opsForZSet().range("events", 0, -1);
 
