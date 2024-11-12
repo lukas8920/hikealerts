@@ -57,8 +57,10 @@ public class MapEventMapper {
         } else {
             mapEvent.setStatus(mapStatus((String) object[4]));
         }
-        if (object[5] != null){
+        if (object[5] != null && object[5] instanceof Timestamp){
             mapEvent.setCreateDate(((Timestamp) object[5]).toLocalDateTime().format(formatter));
+        } else if (object[5] != null){
+            mapEvent.setCreateDate(((LocalDateTime) object[5]).format(formatter));
         }
         mapEvent.setLat((double) object[6]);
         mapEvent.setLng((double) object[7]);
