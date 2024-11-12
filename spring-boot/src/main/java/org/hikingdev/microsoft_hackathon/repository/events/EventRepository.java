@@ -142,9 +142,10 @@ public class EventRepository implements IEventRepository {
         query.setParameter("offset", offset);
         query.setMaxResults(limit);
 
-        logger.info("Fetched {} events with offset {}.", query.getResultList().size(), offset);
+        List<Object[]> objects = query.getResultList();
+        logger.info("Fetched {} events with offset {}.", objects.size(), offset);
 
-        return query.getResultList().stream().map(this.mapEventMapper::map).collect(Collectors.toList());
+        return objects.stream().map(this.mapEventMapper::map).collect(Collectors.toList());
     }
 
     private List<MapEvent> findMapEventByIdAndCountry(String eventId, String country){
