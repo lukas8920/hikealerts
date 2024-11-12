@@ -121,6 +121,7 @@ public class EventRepositoryTest {
 
         this.iPublisherJpaRepository.save(publisher);
 
+        event1.setTrailIds(List.of(1L, 2L));
         this.iEventJpaRepository.save(event1);
         this.iEventJpaRepository.save(event2);
 

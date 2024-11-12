@@ -81,7 +81,7 @@ public class MapEventMapper {
     }
 
     String mapStatus(String status){
-        if (status.equals("OFFICIAL")){
+        if (status != null && status.equals("OFFICIAL")){
             return "Official";
         } else {
             return "Community";
