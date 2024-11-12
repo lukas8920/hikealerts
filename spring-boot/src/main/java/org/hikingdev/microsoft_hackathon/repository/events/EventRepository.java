@@ -93,7 +93,7 @@ public class EventRepository implements IEventRepository {
             while (!mapEvents.isEmpty()){
                 outputEvents.addAll(mapEvents);
                 for (MapEvent mapEvent : mapEvents) {
-                    logger.info(mapEvent.getEvent_id());
+                    logger.info(mapEvent.toString());
                     redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, mapEvent.getId());
                 }
 
