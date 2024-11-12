@@ -16,6 +16,24 @@ Microsoft's AI and Fabric services enable to standardize the events issued by di
 
 ### 1.3.2. Content Overview
 
+1) Fabric Raw Events Query
+   US Raw Events from US National Park Service - https://github.com/lukas8920/hikealerts/blob/main/fabric/US%20Event%20Response%20Parser.Notebook/notebook-content.py
+   NZ Raw Events from NZ Department of Conservation - https://github.com/lukas8920/hikealerts/blob/main/fabric/NZ%20Raw%20Event%20Parser.Notebook/notebook-content.py
+2) Fabric Geodata Trails
+   US Trail data - https://github.com/lukas8920/hikealerts/blob/main/fabric/US%20Geodata%20Trail%20Parser.Notebook/notebook-content.py
+   NZ Trail data - https://github.com/lukas8920/hikealerts/blob/main/fabric/NZ%20Geodata%20Trail%20Parser.Notebook/notebook-content.py
+4) Fabric Geodata Regions
+   US Region data - https://github.com/lukas8920/hikealerts/blob/main/fabric/US%20Geodata%20Region%20Parser.Notebook/notebook-content.py
+   NZ Region data - https://github.com/lukas8920/hikealerts/blob/main/fabric/NZ%20Geodata%20Region%20Parser.Notebook/notebook-content.py
+5) Azure SQL Stored Procedures
+   Fetch latest event changes / insertions & updates - https://github.com/lukas8920/hikealerts/blob/main/database/procedures/fetch_raw_event_changes.sql
+7) Fabric Openai Notebook 
+   Queries latest event changes via Stored Procedures - https://github.com/lukas8920/hikealerts/blob/main/fabric/CDC%20OpenAI%20Connector.Notebook/notebook-content.py
+8) Spring Boot Application
+   Event Listener for MS Event Queue - https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/event_handling/EventListenerService.java
+   Logic for mapping NZ events to trail geodata - https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/event_handling/event_injection/countries/NZInjector.java
+   Logic for mapping US events to trail geodata - https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/event_handling/event_injection/countries/USInjector.java
+
 ### 1.3.3. How to set up
 1) Set up Azure SQL database and tables, procedures & triggers with T-SQL statements<br>
    https://github.com/lukas8920/hikealerts/tree/main/database
