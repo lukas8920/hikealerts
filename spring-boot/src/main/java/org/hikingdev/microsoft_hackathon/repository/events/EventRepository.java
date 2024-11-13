@@ -217,12 +217,14 @@ public class EventRepository implements IEventRepository {
 
         // Use RedisTemplate for scanning the sorted set
         synchronized (lock){
-            try {
-                logger.info("Entering lock");
-                lock.wait();
-                logger.info("Lock released");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            while (isThreadRunning){
+                try {
+                    logger.info("Entering lock");
+                    lock.wait();
+                    logger.info("Lock released");
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         Cursor<ZSetOperations.TypedTuple<MapEvent>> cursor = redisTemplate.opsForZSet().scan(
