@@ -39,6 +39,7 @@ public class EventListenerService extends ScheduledService {
 
     @Override
     protected void processMessage(String messageBody) {
+        getLogger().info("message: " + messageBody);
         List<OpenAiEvent> openAiEvents;
         try {
             openAiEvents = this.objectMapper.readValue(messageBody, this.objectMapper.getTypeFactory().constructCollectionType(List.class, OpenAiEvent.class));

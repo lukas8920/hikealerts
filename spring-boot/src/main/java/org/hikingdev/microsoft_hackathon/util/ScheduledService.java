@@ -30,7 +30,6 @@ public abstract class ScheduledService extends BaseScheduler {
                 // Process the message
                 String messageBody = message.getBody().toString();
                 messageBody = messageBody.replace("None", "null");
-                getLogger().info(" - message: " + messageBody);
 
                 processMessage(messageBody);
 

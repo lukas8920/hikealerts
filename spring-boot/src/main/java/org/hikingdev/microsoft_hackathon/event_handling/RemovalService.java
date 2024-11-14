@@ -43,7 +43,7 @@ public class RemovalService extends ScheduledService {
         RemovalEntity removalEntity;
         try {
             removalEntity = this.objectMapper.readValue(messageBody, RemovalEntity.class);
-            getLogger().info("check event deletion from database.");
+            getLogger().info("check event deletion from database for {} elemenst", removalEntity.getIds().size());
             this.iEventRepository.deleteEventsNotInList(removalEntity.getIds(), removalEntity.getCountry());
         } catch (JsonProcessingException e) {
             getLogger().error("Could not json parse: " + messageBody);
