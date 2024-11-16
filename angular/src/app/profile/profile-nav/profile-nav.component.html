@@ -1,14 +1,17 @@
 <div class="container">
   <div class="navigation">
-    <div class="top2-nav anchor">
+    <div class="nav anchor">
+      <a>Navigation</a>
+      <img class="submenu-arrow" src="../../../assets/chevron_right.svg" alt="" *ngIf="!isNavigation" (click)="onClickExpandNavigation()">
+      <img class="submenu-arrow" src="../../../assets/expand_more.svg" alt="" *ngIf="isNavigation" (click)="onClickExpandNavigation()">
     </div>
-    <ul>
+    <ul *ngIf="isNavigation">
       <li class="anchor">
         <div>Profile</div>
-        <img class="submenu-arrow" src="../../../assets/chevron_right.svg" alt="" *ngIf="!isNavigation" (click)="onClickExpandNavigation()">
-        <img class="submenu-arrow" src="../../../assets/expand_more.svg" alt="" *ngIf="isNavigation" (click)="onClickExpandNavigation()">
+        <img class="submenu-arrow" src="../../../assets/chevron_right.svg" alt="" *ngIf="!isProfile" (click)="onClickExpandProfile()">
+        <img class="submenu-arrow" src="../../../assets/expand_more.svg" alt="" *ngIf="isProfile" (click)="onClickExpandProfile()">
       </li>
-      <ul class="first-level" *ngIf="isNavigation">
+      <ul class="first-level" *ngIf="isProfile">
         <li><a class="link mat-button" [routerLink]="[{ outlets: { sub: ['overview'] } }]">Overview</a></li>
         <li><a class="link mat-button" [routerLink]="[{ outlets: { sub: ['change-password']}}]">Profile Password</a> </li>
       </ul>

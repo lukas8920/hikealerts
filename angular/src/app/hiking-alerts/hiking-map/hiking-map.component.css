@@ -25,3 +25,19 @@
 .info {
   padding: 4px;
 }
+
+.info-break {
+  display: None;
+}
+
+@media screen and (max-width: 600px) {
+  .overlay-div {
+    left: 25px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .info-break {
+    display: flex;
+  }
+}

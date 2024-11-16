@@ -1,4 +1,4 @@
-<div>
+<div (click)="closeRequest()">
   <mat-toolbar class="toolbar">
     <div class="title"><a class="site-title" href="#" routerLink="/hiking-alerts">Hiking Alerts</a></div>
 
@@ -15,9 +15,11 @@
       <a class="mat-button" href="/profile" routerLink="profile">Profile</a>
       <a class="mat-button" (click)="logout()">Logout</a>
     </div>
+    <img src="assets/menu.svg" alt="menu" width="36" height="36" class="menu" (click)="toggleSidebar()">
   </mat-toolbar>
 
   <div class="container">
+    <app-sidebar class="sidebar" *ngIf="isOpenSidebar" (closeEvent)="closeRequest()" (click)="$event.stopPropagation()"></app-sidebar>
     <router-outlet></router-outlet>
   </div>
 
@@ -27,14 +29,15 @@
       <div  style="display:block; text-align:left; float:left;">
         <p class="copy">Ⓒ 2024 Hiking Alerts</p>
       </div>
-
-      <div style="display:block; text-align:right;">
-        <img src="../assets/flag_nz.svg" width="30" height="20" alt="">
-        <div class="flex-layout-sm-md" style="float: right;">
-          <p class="privacy-en" routerLink="contact">Contact</p>
-          <p class="privacy-en" routerLink="privacy-policy">Privacy Policy</p>
-          <p class="privacy-en" routerLink="copyright-credits">Copyright Credits</p>
-          <p class="privacy-en" routerLink="terms-of-service">Terms of Service</p>
+      <div class="wide-footer">
+        <div class="line-1">
+          <p class="copy-en" routerLink="copyright-credits">Copyright Credits</p>
+          <p class="footnote-en" routerLink="terms-of-service">Terms of Service</p>
+        </div>
+        <div class="line-2">
+          <img src="../assets/flag_nz.svg" width="30" height="20" alt="">
+          <p class="footnote-en" routerLink="contact">Contact</p>
+          <p class="footnote-en" routerLink="privacy-policy">Privacy Policy</p>
         </div>
       </div>
     </div>

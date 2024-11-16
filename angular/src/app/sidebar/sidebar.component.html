@@ -1,0 +1,15 @@
+<div class="sidebar">
+  <nav>
+    <ul>
+      <div *ngIf="!getLoginStatus()">
+        <li><a routerLink="/specs" (click)="closeSidebar()">Api Specs</a></li>
+        <li><a routerLink="/register" (click)="closeSidebar()">SignUp</a></li>
+        <li><a routerLink="/login" (click)="closeSidebar()">Login</a></li>
+      </div>
+      <div *ngIf="getLoginStatus()">
+        <li><a routerLink="/profile" (click)="closeSidebar()">Profile</a></li>
+        <li><a (click)="logout()">Logout</a></li>
+      </div>
+    </ul>
+  </nav>
+</div>

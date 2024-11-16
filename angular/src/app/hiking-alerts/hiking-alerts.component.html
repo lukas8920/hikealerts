@@ -1,4 +1,30 @@
-<div class="clearfix container">
-  <app-alert-list class="left" (cardClick)="this.onCardClick($event)"/>
-  <app-hiking-map class="right" #hikingMapComponent/>
+<div>
+  <div class="secondary-toolbar">
+    <button
+      matTooltip="Switch to list"
+      [matTooltipDisabled]="!showMap"
+      class="btn btn-toggle"
+      [class.active]="!showMap"
+      (click)="toggleView()">
+      <span *ngIf="!showMap">List</span>
+    </button>
+    <button
+      matTooltip="Switch to map"
+      [matTooltipDisabled]="showMap"
+      class="btn btn-toggle"
+      [class.active]="showMap"
+      (click)="toggleView()">
+      <span *ngIf="showMap">Map</span>
+    </button>
+  </div><div class="clearfix container">
+    <app-alert-list class="left" (cardClick)="this.onCardClick($event)" [hidden]="isMobile && showMap"/>
+    <app-hiking-map class="right" #hikingMapComponent
+                    (click)="hideOverlay()"
+                    [hidden]="isMobile && !showMap" [isMobile]="isMobile"/>
+  </div>
+  <div *ngIf="isOverlayVisible" (click)="$event.stopPropagation()" class="overlay" >
+    <img src="assets/close.svg" alt="close" height="36" width="36" class="close" (click)="hideOverlay()"/>
+    <app-overlay-event [event]="event" class="dialog"></app-overlay-event>
+  </div>
 </div>
+

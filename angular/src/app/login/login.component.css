@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
+  min-height: 500px;
 }
 
 .center {
@@ -15,6 +16,8 @@ h1 {
   text-align: center;
   font-weight: bold;
   text-transform: uppercase;
-  padding: 42px 0;
   line-height: 24px;
+  margin-top: 0;
+  padding-top: 66px;
+  padding-bottom: 42px;
 }

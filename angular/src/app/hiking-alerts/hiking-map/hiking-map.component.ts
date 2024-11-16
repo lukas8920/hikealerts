@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import {ApiService} from '../../_service/api.service';
@@ -6,6 +6,7 @@ import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
 import {Point} from 'leaflet';
 import * as pako from 'pako';
+import {SharedOverlayService} from '../shared-overlay.service';
 
 @Component({
   selector: 'app-hiking-map',
@@ -13,6 +14,8 @@ import * as pako from 'pako';
   styleUrl: './hiking-map.component.css'
 })
 export class HikingMapComponent implements OnInit {
+  @Input() isMobile = false;
+
   map: any;
   markerClusterGroup: any;
 
@@ -23,17 +26,17 @@ export class HikingMapComponent implements OnInit {
 
   linestringLayers: Map<number, L.Polyline> = new Map();
 
-  constructor(private apiService: ApiService, private sharedListService: SharedListService) {
+  constructor(private apiService: ApiService, private sharedListService: SharedListService,
+              private sharedOverlayService: SharedOverlayService) {
   }
 
   ngOnInit(): void {
     this.initializeMap();
     this.fetchMarkers();
-    this.updateVisibleMarkers();
 
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => {
-      this.updateVisibleMarkers();
+      this.updateVisibleMarkers(false);
     });
     // Fetch the GeoJSON data and add it to the map
     this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON))
@@ -114,11 +117,14 @@ export class HikingMapComponent implements OnInit {
   fetchMarkers(): void {
     const self = this;
     this.apiService.getEvents(this.offset, this.limit).subscribe(events =>
-      this.processResponse(events, self));
+      this.processResponse(events, self), error => this.updateVisibleMarkers(true), () => this.updateVisibleMarkers(true));
   }
 
   processResponse(events: Event[], self: HikingMapComponent): void {
-    if (events.length === 0) return; // No more markers to load
+    if (events.length === 0) {
+      // No more markers to load, so update map
+      return;
+    }
 
     events.forEach(event => {
       const markerKey = `${event.lat}-${event.lng}`;
@@ -161,6 +167,14 @@ export class HikingMapComponent implements OnInit {
           });
           markerInstance.closePopup();
         });
+
+        //on click if mobile open overlay event
+        markerInstance.on('click', function (e) {
+          if (self.isMobile){
+            self.sharedOverlayService.updateOverlayEvent(event);
+            self.sharedOverlayService.setOverlayVisibility(true);
+          }
+        });
       }
     });
 
@@ -170,22 +184,25 @@ export class HikingMapComponent implements OnInit {
       this.processResponse(events, self));
   }
 
-  updateVisibleMarkers(): void {
-    const bounds = this.map.getBounds();
-    const visibleMarkers: L.Marker[] = [];
+  //init and
+  updateVisibleMarkers(isInit: boolean): void {
+    if (isInit || !this.isMobile){
+      const bounds = this.map.getBounds();
+      const visibleMarkers: L.Marker[] = [];
 
-    this.markerClusterGroup.eachLayer((layer: L.Marker) => {
-      if (bounds.contains(layer.getLatLng())) {
-        visibleMarkers.push(layer);
-      }
-    });
+      this.markerClusterGroup.eachLayer((layer: L.Marker) => {
+        if (bounds.contains(layer.getLatLng())) {
+          visibleMarkers.push(layer);
+        }
+      });
 
-    const events = visibleMarkers
-      .map(marker => `${marker.getLatLng().lat}-${marker.getLatLng().lng}`)
-      .filter(markerKey => this.loadedMarkers.has(markerKey))
-      .map(markerKey => this.loadedMarkers.get(markerKey));
+      const events = visibleMarkers
+        .map(marker => `${marker.getLatLng().lat}-${marker.getLatLng().lng}`)
+        .filter(markerKey => this.loadedMarkers.has(markerKey))
+        .map(markerKey => this.loadedMarkers.get(markerKey));
 
-    this.sharedListService.updateObjectList(events);
+      this.sharedListService.updateObjectList(events);
+    }
   }
 
   zoomToMarker(lat: number, lng: number) {

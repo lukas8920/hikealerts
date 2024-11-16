@@ -1,5 +1,6 @@
 .max-width {
   max-width: 1200px;
+  min-height: 500px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -9,15 +10,13 @@
   margin-right: auto;
 }
 
-.padder {
-  height: 24px;
-}
-
 h1 {
   width: 100%;
   text-align: center;
   font-weight: bold;
   text-transform: uppercase;
-  padding: 42px 0;
   line-height: 24px;
+  margin-top: 0;
+  padding-top: 66px;
+  padding-bottom: 42px;
 }

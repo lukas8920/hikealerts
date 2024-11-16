@@ -61,3 +61,20 @@ h2 {
   padding-left: 8px;
   padding-top: 16px;
 }
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding-left: 22px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (max-height: 800px) {
+  .screen_wrapper {
+    padding-top: 0;
+  }
+  .input {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+}

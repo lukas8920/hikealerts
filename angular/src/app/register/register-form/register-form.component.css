@@ -45,7 +45,7 @@ form {
 .screen_wrapper {
   padding-left: 8px;
   padding-right: 8px;
-  height: calc(100vh - 278px);
+  height: calc(100vh - 280px);
 }
 
 .response {
@@ -53,4 +53,22 @@ form {
   padding-top: 72px;
   padding-left: 24px;
   padding-right: 24px;
+}
+
+@media screen and (max-width: 740px) {
+  .screen_wrapper {
+    height: calc(100vH - 330px);
+  }
+}
+
+@media screen and (max-width: 598px) {
+  .screen_wrapper {
+    height: calc(100vH - 322px);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .screen_wrapper {
+    height: calc(100vH - 310px);
+  }
 }

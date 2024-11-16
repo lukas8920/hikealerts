@@ -81,3 +81,26 @@ li {
   margin: 0;
   padding: 0;
 }
+
+.nav {
+  display: flex;
+}
+
+@media screen and (min-width: 769px) {
+  .nav {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    width: auto;
+    height: auto;
+    padding-bottom: 15px;
+    border-right: none;
+    border-bottom: 1px solid rgba(0,0,0,.1);
+  }
+  .submenu-arrow {
+    right: 10px;
+  }
+}

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {SharedListService} from '../shared.list.service';
 import {Event} from '../../_service/event';
 

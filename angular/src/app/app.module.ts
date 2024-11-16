@@ -34,6 +34,10 @@ import {ConfirmationComponent} from './profile/confirmation/confirmation.compone
 import {MatDialogModule} from '@angular/material/dialog';
 import {SavePwComponent} from './profile/save-pw/save-pw.component';
 import {DocumentationComponent} from './documentation/documentation.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {OverlayEventComponent} from './hiking-alerts/overlay-event/overlay-event.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {SidebarComponent} from './sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +52,7 @@ import {DocumentationComponent} from './documentation/documentation.component';
     HikingMapComponent,
     LoginComponent,
     LoginFormComponent,
+    OverlayEventComponent,
     OverviewComponent,
     PrivacyPolicyComponent,
     ProfileComponent,
@@ -56,6 +61,7 @@ import {DocumentationComponent} from './documentation/documentation.component';
     RegisterFormComponent,
     ResetPasswordComponent,
     SavePwComponent,
+    SidebarComponent,
     TermsOfServiceComponent,
     UnauthComponent
   ],
@@ -72,7 +78,9 @@ import {DocumentationComponent} from './documentation/documentation.component';
     MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSlideToggleModule,
+    MatTooltipModule
   ],
   bootstrap: [AppComponent],
   providers: [

@@ -1,0 +1,60 @@
+.title {
+  font-size: 14px;
+  font-family: Arial, serif;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-left: 4px;
+  padding: 2%;
+  width: 400px;
+}
+
+.body {
+  padding: 2%;
+  width: 400px;
+  margin-left: 4px;
+  line-height: 1.5;
+}
+
+.content {
+  font-size: 13px;
+  text-align: justify;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.footer-wrapper {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.custom-chip {
+  border-width: var(--mdc-chip-outline-width);
+  border-radius: var(--mdc-chip-container-shape-radius);
+  border-color: var(--mdc-chip-outline-color);
+  border-style: solid;
+  margin: 4px 0 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  z-index: 0;
+}
+
+.span-chip {
+  height: var(--mdc-chip-container-height);
+  padding-left: 11px;
+  padding-right: 11px;
+  color: var(--mdc-chip-label-text-color);
+  font-family: var(--mdc-chip-label-text-font);
+  line-height: var(--mdc-chip-label-text-line-height);
+  font-weight: var(--mdc-chip-label-text-weight);
+  letter-spacing: var(--mdc-chip-label-text-tracking);
+  flex-basis: 100%;
+  overflow-x: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 500px) {
+  .title {
+    width: 350px;
+  }
+}

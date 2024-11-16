@@ -24,3 +24,93 @@
   width: 99%; /* Set a width for the container */
   margin: 0 auto; /* Center the container */
 }
+
+/* Secondary toolbar is hidden by default */
+.secondary-toolbar {
+  display: none;
+  margin: 0;
+  padding: 0;
+}
+
+.btn-toggle {
+  background-color: #ddd;
+  text-align: center;
+  transition: background-color 0.3s;
+  width: 50%;
+  height: 42px;
+  cursor: pointer;
+}
+
+.btn-toggle.active {
+  border-color:  #7593D1;
+  background-color:  #7593D1;
+  color: white;
+}
+
+.close {
+  position: absolute;
+  cursor: pointer;
+  top: 10px;
+  right: 10px;
+}
+
+.overlay {
+  position: fixed;
+  left: 0;
+  z-index: 1500;
+  width: 100%;
+  background: white;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  border-top: #74777FFF 1px solid;
+}
+
+/* Media query for mobile screens */
+/*todo: remove clickable list item on 768px */
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .secondary-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Both list and map views take full width on mobile */
+  .left, .right {
+    height: calc(100vH - 168px);
+    width: 100%;
+  }
+
+  .overlay {
+    bottom: 62px;
+  }
+}
+
+@media screen and (max-width: 740px) {
+  .left, .right {
+    height: calc(100vH - 220px);
+  }
+
+  .overlay {
+    bottom: 114px;
+  }
+}
+
+@media screen and (max-width: 598px) {
+  .left, .right {
+    height: calc(100vH - 212px);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .left, .right {
+    height: calc(100vH - 200px);
+  }
+
+  .overlay {
+    bottom: 102px;
+  }
+}

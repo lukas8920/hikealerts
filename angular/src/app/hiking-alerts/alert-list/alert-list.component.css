@@ -1,5 +1,5 @@
 .scrollable-list {
-  height: calc(100vh - 192px);
+  height: calc(100vh - 194px);
   overflow-y: scroll;
   padding-right: 8px;
 }
@@ -88,4 +88,28 @@
 
 .card-item {
   cursor: default;
+}
+
+@media screen and (max-width: 1360px) {
+  .header {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .scrollable-list {
+    height: calc(100vH - 234px);
+  }
+}
+
+@media screen and (max-width: 740px){
+  .scrollable-list {
+    height: calc(100vH - 284px);
+  }
+}
+
+@media screen and (max-width: 500px){
+  .scrollable-list {
+    height: calc(100vH - 264px);
+  }
 }
