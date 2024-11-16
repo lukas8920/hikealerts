@@ -1,5 +1,5 @@
 .container {
-  height: calc(100vh - 126px);
+  height: calc(100svh - 126px);
   min-height: 600px;
 }
 
@@ -41,18 +41,18 @@
 
 @media screen and (max-width: 740px) {
   .container {
-    height: calc(100vH - 178px);
+    height: calc(100svh - 178px);
   }
 }
 
 @media screen and (max-width: 598px) {
   .container {
-    height: calc(100vH - 170px);
+    height: calc(100svh - 170px);
   }
 }
 
 @media screen and (max-width: 500px) {
   .container {
-    height: calc(100vH - 156px);
+    height: calc(100svh - 156px);
   }
 }

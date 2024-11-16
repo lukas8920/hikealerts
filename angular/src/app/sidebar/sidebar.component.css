@@ -2,7 +2,7 @@
   background-color: #e3e3e5;
   text-align: right;
   line-height: 2.5;
-  height: calc(100vH - 160px);
+  height: calc(100svh - 160px);
 }
 
 .sidebar nav ul {

@@ -9,7 +9,7 @@
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="Microsoft SQL Server - hiking-sql-db@hiking-sql-server.database.windows.net" uuid="0f02458e-56ab-4743-9a41-cee449273981">
-      <driver-ref>sqlserver.ms</driver-ref>
+      <driver-ref>azure.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
       <jdbc-url>jdbc:sqlserver://hiking-sql-server.database.windows.net:1433;database=hiking-sql-db</jdbc-url>

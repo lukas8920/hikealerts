@@ -65,6 +65,8 @@
   flex: 1 1 auto;
 }
 
+.copy {}
+
 .site-title {
   color: white;
   text-decoration: none;
@@ -151,5 +153,17 @@ img {
   }
   .login {
     display: none;
+  }
+  img {
+    padding-top: 12px;
+  }
+}
+
+@media screen and (max-width: 420px){
+  .body {
+    font-size: 12px;
+  }
+  img {
+    padding-top: 10px;
   }
 }

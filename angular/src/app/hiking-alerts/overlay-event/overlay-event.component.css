@@ -5,12 +5,12 @@
   margin-top: 20px;
   margin-left: 4px;
   padding: 2%;
-  width: 400px;
+  max-width: 400px;
 }
 
 .body {
   padding: 2%;
-  width: 400px;
+  max-width: 400px;
   margin-left: 4px;
   line-height: 1.5;
 }

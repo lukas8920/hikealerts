@@ -1,5 +1,5 @@
 .scrollable-list {
-  height: calc(100vh - 194px);
+  height: calc(100svh - 194px);
   overflow-y: scroll;
   padding-right: 8px;
 }
@@ -104,12 +104,12 @@
 
 @media screen and (max-width: 740px){
   .scrollable-list {
-    height: calc(100vH - 284px);
+    height: calc(100svh - 284px);
   }
 }
 
 @media screen and (max-width: 500px){
   .scrollable-list {
-    height: calc(100vH - 264px);
+    height: calc(100svh - 264px);
   }
 }

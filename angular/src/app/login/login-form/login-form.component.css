@@ -45,7 +45,7 @@
 
 .screen_wrapper {
   max-width: 500px;
-  height: calc(100vh - 328px);
+  height: calc(100svh - 328px);
   padding-top: 48px;
   padding-left: 8px;
   padding-right: 8px;
@@ -62,18 +62,18 @@
 
 @media screen and (max-width: 740px) {
   .screen_wrapper {
-    height: calc(100vH - 380px);
+    height: calc(100svh - 380px);
   }
 }
 
 @media screen and (max-width: 598px) {
   .screen_wrapper {
-    height: calc(100vH - 370px);
+    height: calc(100svh - 370px);
   }
 }
 
 @media screen and (max-width: 500px) {
   .screen_wrapper {
-    height: calc(100vH - 358px);
+    height: calc(100svh - 358px);
   }
 }

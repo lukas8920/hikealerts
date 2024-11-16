@@ -1,5 +1,5 @@
 .left {
-  height: calc(100vh - 126px);
+  height: calc(100svh - 126px);
   width: 22%;
   min-width: 250px;
   float: left;
@@ -7,7 +7,7 @@
   box-sizing: border-box;
 }
 .right {
-  height: calc(100vh - 126px);
+  height: calc(100svh - 126px);
   width: 78%;
   min-width: 300px;
   float: left;
@@ -67,7 +67,6 @@
 }
 
 /* Media query for mobile screens */
-/*todo: remove clickable list item on 768px */
 @media screen and (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -80,7 +79,7 @@
   }
   /* Both list and map views take full width on mobile */
   .left, .right {
-    height: calc(100vH - 168px);
+    height: calc(100svh - 168px);
     width: 100%;
   }
 
@@ -91,7 +90,7 @@
 
 @media screen and (max-width: 740px) {
   .left, .right {
-    height: calc(100vH - 220px);
+    height: calc(100svh - 220px);
   }
 
   .overlay {
@@ -101,13 +100,13 @@
 
 @media screen and (max-width: 598px) {
   .left, .right {
-    height: calc(100vH - 212px);
+    height: calc(100svh - 212px);
   }
 }
 
 @media screen and (max-width: 500px) {
   .left, .right {
-    height: calc(100vH - 200px);
+    height: calc(100svh - 200px);
   }
 
   .overlay {
