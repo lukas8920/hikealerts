@@ -11,7 +11,25 @@
 .line {
   padding-bottom: 16px;
   padding-left: 5px;
+  min-width: 200px;
   max-width: 400px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.scalable-line {
+  padding-bottom: 16px;
+  padding-left: 5px;
+  max-width: 50px;
+}
+
+.api-key {
+  padding-bottom: 16px;
+  padding-left: 5px;
+  max-width: 400px;
+  padding-right: 30px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .row {
@@ -21,6 +39,10 @@
 .button {
   margin-left: 32px;
   margin-top: 14px;
+}
+
+.api-col1 {
+  width: 150px;
 }
 
 .col1 {
@@ -46,15 +68,33 @@ h2 {
     width: calc(100% - 30px);
     padding-left: 30px;
   }
+
+  .api-key {
+    padding-left: 5px;
+  }
+
   .info {
     font-size: 14px;
     max-width: 390px;
   }
+
   h2 {
     display: flex;
   }
   .body {
     padding-top: 0;
     font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 900px){
+  .api-col1 {
+    width: 100px;
+    min-width: 50px;
+  }
+  .api-key {
+    padding-left: 0;
+    font-size: 14px;
+    width: 350px;
   }
 }

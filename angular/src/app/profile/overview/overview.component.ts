@@ -56,4 +56,8 @@ export class OverviewComponent {
       console.log(error);
     });
   }
+
+  isKeyVisible(): boolean {
+    return this.profile?.api_key.length > 35;
+  }
 }

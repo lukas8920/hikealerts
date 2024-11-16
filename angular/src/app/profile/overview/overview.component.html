@@ -32,10 +32,11 @@
     Only members of the organisation can adjust + delete events from the respective organisation.
   </div>
   <div class="row">
-    <div class="line col1">
-      <div>API Key:</div>
+    <div [ngClass]="{'col1': !isKeyVisible(), 'api-col1': isKeyVisible()}">
+      <div *ngIf="!isKeyVisible()" class="line">API Key:</div>
+      <div *ngIf="isKeyVisible()" class="scalable-line">API Key:</div>
     </div>
-    <div class="line">
+    <div class="api-key">
       <div>{{profile?.api_key}}</div>
     </div>
   </div>
