@@ -35,4 +35,8 @@ public class EventResponse {
     private String status;
     @Schema(description = "Geographic coordinates for the mid point of the trail associated with the event, where x is the longitude coordinate and y is the latitude coordinate.")
     private Coordinate trailMidPoint;
+    @Schema(description = "Copyright credit required by the data provider for the event.")
+    private String copyright;
+    @Schema(description = "License applied by the data provider for the event data.")
+    private String license;
 }

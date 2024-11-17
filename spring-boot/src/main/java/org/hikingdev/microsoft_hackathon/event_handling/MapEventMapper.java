@@ -41,6 +41,8 @@ public class MapEventMapper {
         mapEvent.setCountry(event.getCountry());
         mapEvent.setUrl(event.getUrl());
         mapEvent.setTrailIds(event.getTrailIds());
+        mapEvent.setCopyright(publisher.getCopyright());
+        mapEvent.setLicense(publisher.getLicense());
         return mapEvent;
     }
 
@@ -83,6 +85,8 @@ public class MapEventMapper {
             List<Long> ids = Arrays.stream(parts).map(Long::parseLong).toList();
             mapEvent.setTrailIds(ids);
         }
+        mapEvent.setCopyright((String) object[13]);
+        mapEvent.setLicense((String) object[14]);
         return mapEvent;
     }
 

@@ -31,6 +31,8 @@ public class MapEvent implements Serializable {
     private String country;
     @JsonIgnore
     private Long publisherId;
+    private String copyright;
+    private String license;
 
     @Override
     public String toString(){
@@ -54,7 +56,11 @@ public class MapEvent implements Serializable {
                 "," +
                 country +
                 "," +
-                publisherId;
+                publisherId +
+                "," +
+                copyright +
+                "," +
+                license;
         return builder;
     }
 }

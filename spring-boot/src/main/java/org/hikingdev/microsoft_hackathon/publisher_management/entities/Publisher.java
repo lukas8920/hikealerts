@@ -18,4 +18,6 @@ public class Publisher {
     private String name;
     @Enumerated(EnumType.STRING)
     private Status status;
+    private String copyright;
+    private String license;
 }

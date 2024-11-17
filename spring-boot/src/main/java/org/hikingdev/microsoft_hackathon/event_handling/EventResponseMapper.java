@@ -23,6 +23,8 @@ public class EventResponseMapper {
         eventResponse.setPublisher((String) object[9]);
         eventResponse.setStatus(mapStatus((Status) object[10]));
         eventResponse.setTrailMidPoint(new Coordinate((double) object[11], (double) object[12]));
+        eventResponse.setCopyright((String) object[13]);
+        eventResponse.setLicense((String) object[14]);
         return eventResponse;
     }
 

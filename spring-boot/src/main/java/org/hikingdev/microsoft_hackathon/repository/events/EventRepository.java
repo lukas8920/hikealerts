@@ -157,7 +157,7 @@ public class EventRepository implements IEventRepository {
 
     private List<MapEvent> findAllByOffsetAndLimit(int offset, int limit) {
         TypedQuery<Object[]> query = entityManager.createQuery(
-                "SELECT e.id, e.title, e.description, p.name as publisher, p.status, e.createDatetime, e.midLatitudeCoordinate, e.midLongitudeCoordinate, e.event_id, e.country, e.publisherId, e.url, STRING_AGG(l, ',') FROM Event e JOIN Publisher p ON p.id = e.publisherId JOIN e.trailIds l GROUP BY e.id, e.title, e.description, p.name, p.status, e.createDatetime, e.midLatitudeCoordinate, e.midLongitudeCoordinate, e.event_id, e.country, e.publisherId, e.url ORDER BY e.id", Object[].class);
+                "SELECT e.id, e.title, e.description, p.name as publisher, p.status, e.createDatetime, e.midLatitudeCoordinate, e.midLongitudeCoordinate, e.event_id, e.country, e.publisherId, e.url, STRING_AGG(l, ','), p.copyright, p.license FROM Event e JOIN Publisher p ON p.id = e.publisherId JOIN e.trailIds l GROUP BY e.id, e.title, e.description, p.name, p.status, e.createDatetime, e.midLatitudeCoordinate, e.midLongitudeCoordinate, e.event_id, e.country, e.publisherId, e.url, p.copyright, p.license ORDER BY e.id", Object[].class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
