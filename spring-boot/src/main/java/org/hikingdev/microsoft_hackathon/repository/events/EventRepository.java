@@ -307,7 +307,7 @@ public class EventRepository implements IEventRepository {
         String countryClause = "e.country = :country";
 
         StringBuilder builder = new StringBuilder();
-        builder.append("SELECT e.id, e.country, t.trailname, t.id, e.title, e.description, e.fromDatetime, e.toDatetime, e.createDatetime, p.name, p.status, e.midLongitudeCoordinate, e.midLatitudeCoordinate " +
+        builder.append("SELECT e.id, e.country, t.trailname, t.id, e.title, e.description, e.fromDatetime, e.toDatetime, e.createDatetime, p.name, p.status, e.midLongitudeCoordinate, e.midLatitudeCoordinate, p.copyright, p.license " +
                 "FROM Event e " +
                 "INNER JOIN Publisher p ON p.id = e.publisherId " +
                 "INNER JOIN Trail t ON t.id MEMBER OF e.trailIds WHERE ");
