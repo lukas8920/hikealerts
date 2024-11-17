@@ -201,6 +201,9 @@ paths:
           default: 50
         example: 40
       responses:
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
         "200":
           description: The queried events.
           content:
@@ -209,9 +212,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventResponse'
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
 components:
   schemas:
     MessageResponse:
@@ -286,6 +286,12 @@ components:
           - Official
         trailMidPoint:
           $ref: '#/components/schemas/Coordinate'
+        copyright:
+          type: string
+          description: Copyright credit required by the data provider for the event.
+        license:
+          type: string
+          description: License applied by the data provider for the event data.
   securitySchemes:
     Authorization:
       type: http
