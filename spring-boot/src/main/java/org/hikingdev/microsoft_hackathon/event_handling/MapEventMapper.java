@@ -42,7 +42,6 @@ public class MapEventMapper {
         mapEvent.setUrl(event.getUrl());
         mapEvent.setTrailIds(event.getTrailIds());
         mapEvent.setCopyright(publisher.getCopyright());
-        mapEvent.setLicense(publisher.getLicense());
         return mapEvent;
     }
 
@@ -86,7 +85,6 @@ public class MapEventMapper {
             mapEvent.setTrailIds(ids);
         }
         mapEvent.setCopyright((String) object[13]);
-        mapEvent.setLicense((String) object[14]);
         return mapEvent;
     }
 

@@ -32,7 +32,6 @@ public class MapEvent implements Serializable {
     @JsonIgnore
     private Long publisherId;
     private String copyright;
-    private String license;
 
     @Override
     public String toString(){
