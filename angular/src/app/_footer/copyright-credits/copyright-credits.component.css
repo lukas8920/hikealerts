@@ -4,6 +4,7 @@
   padding-left: 8px;
   padding-right: 8px;
   height: calc(100svh - 148px);
+  overflow-y: scroll;
 }
 
 h1 {
