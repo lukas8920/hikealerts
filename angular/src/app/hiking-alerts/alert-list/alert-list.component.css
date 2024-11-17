@@ -46,8 +46,15 @@
   font-weight: var(--mat-card-title-text-weight);
 }
 
+.copyright {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  font-size: 11px;
+}
+
 .footer {
-  padding: 16px;
+  padding: 16px 16px 8px;
 }
 
 .footer-wrapper {
