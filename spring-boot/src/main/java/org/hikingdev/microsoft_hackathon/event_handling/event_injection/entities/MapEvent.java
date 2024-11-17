@@ -57,9 +57,7 @@ public class MapEvent implements Serializable {
                 "," +
                 publisherId +
                 "," +
-                copyright +
-                "," +
-                license;
+                copyright;
         return builder;
     }
 }
