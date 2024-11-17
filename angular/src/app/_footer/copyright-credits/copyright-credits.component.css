@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding-left: 8px;
   padding-right: 8px;
-  height: calc(100vh - 146px);
+  height: calc(100svh - 148px);
 }
 
 h1 {
@@ -13,4 +13,22 @@ h1 {
 
 p {
   text-align: justify;
+}
+
+@media screen and (max-width: 740px) {
+  .copy-container {
+    height: calc(100svh - 200px);
+  }
+}
+
+@media screen and (max-width: 598px) {
+  .copy-container {
+    height: calc(100svh - 190px);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .copy-container {
+    height: calc(100svh - 176px);
+  }
 }

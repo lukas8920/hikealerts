@@ -1,5 +1,5 @@
 .container {
-  height: calc(100vh - 126px);
+  height: calc(100svh - 126px);
   overflow-y: scroll;
 }
 
@@ -16,4 +16,22 @@ h1 {
 
 p {
   text-align: justify;
+}
+
+@media screen and (max-width: 740px) {
+  .container {
+    height: calc(100svh - 180px);
+  }
+}
+
+@media screen and (max-width: 598px) {
+  .container {
+    height: calc(100svh - 170px);
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .container {
+    height: calc(100svh - 156px);
+  }
 }
