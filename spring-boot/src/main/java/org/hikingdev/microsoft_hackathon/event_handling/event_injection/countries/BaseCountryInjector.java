@@ -62,7 +62,7 @@ public abstract class BaseCountryInjector {
         return true;
     }
 
-    private List<Event> mapTrailsToEvents(OpenAiEvent openAiEvent, RawEvent rawEvent, Event event) throws ParseException {
+    protected List<Event> mapTrailsToEvents(OpenAiEvent openAiEvent, RawEvent rawEvent, Event event) throws ParseException {
         List<Event> events = new ArrayList<>();
         if (openAiEvent
                 .getTrailName() != null && openAiEvent.getTrailName().length() > 3){

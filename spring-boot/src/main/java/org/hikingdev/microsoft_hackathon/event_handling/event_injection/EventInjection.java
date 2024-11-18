@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.event_handling.event_injection;
 
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.BaseCountryInjector;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.IEInjector;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.NZInjector;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Message;
@@ -114,6 +115,8 @@ public class EventInjection implements IEventInjection {
                 return new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
             case "NZ":
                 return new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "IE":
+                return new IEInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
             default:
                 return null;
         }

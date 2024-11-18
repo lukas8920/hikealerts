@@ -11,7 +11,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-public class USInjectorTest extends BaseInjectorTest {
+public class USInjectorTest extends RegionInjectorTest {
     private static final String country = "US";
 
     @BeforeEach
