@@ -36,9 +36,9 @@ public class RedisConfig {
     @Profile("prod")
     public RedisConnectionFactory lettuceProdConnectionFactory() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(8);
-        poolConfig.setMaxIdle(8);
-        poolConfig.setMinIdle(0);
+        poolConfig.setMaxTotal(128);
+        poolConfig.setMaxIdle(128);
+        poolConfig.setMinIdle(16);
         poolConfig.setMaxWait(Duration.ofMillis(5000));
 
         JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
