@@ -34,9 +34,11 @@ public class RedisConfig {
     @Bean
     @Profile("prod")
     public RedisConnectionFactory lettuceProdConnectionFactory() {
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
-        jedisConnectionFactory.setTimeout(5000);
-        return jedisConnectionFactory;
+        JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
+                .connectTimeout(Duration.ofSeconds(5))
+                .readTimeout(Duration.ofSeconds(5)) // Set read timeout
+                .build();
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379), jedisClientConfiguration);
     }
 
     @Bean
