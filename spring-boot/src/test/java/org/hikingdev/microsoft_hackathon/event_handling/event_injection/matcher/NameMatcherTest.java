@@ -42,6 +42,20 @@ public class NameMatcherTest {
     }
 
     @Test
+    public void testIEStringMatching(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
+        String searchString = "Dingle Way";
+        String targetString1 = "Dingle Way";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), is(trail1));
+    }
+
+    @Test
     public void testUSNonMatching(){
         NameMatcher<Trail> nameMatcher = new NameMatcher<>(GenericWeightDict.lowerWeightDict, GenericPenalizeDict.penalizeDict, US_MATCHER_THRESHOLD, US_LEVENSHTEIN_WEIGHT);
 

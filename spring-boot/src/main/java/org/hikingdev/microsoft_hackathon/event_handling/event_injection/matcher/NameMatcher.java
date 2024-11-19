@@ -7,6 +7,7 @@ import org.hikingdev.microsoft_hackathon.util.Levenshtein;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +52,14 @@ public class NameMatcher<T extends MatchProvider> {
         }
 
         String[] candidateStrings = t.getCandidateStrings();
+        // return on exact match
+        if (candidateStrings[0] != null && candidateStrings[0].equals(searchName)
+                || candidateStrings[1] != null && candidateStrings[1].equals(searchName)){
+            matchingScore = 1;
+            this.t = t;
+            return;
+        }
+
         String[] words1 = searchName.split("\\s+");
 
         for (String str: candidateStrings){

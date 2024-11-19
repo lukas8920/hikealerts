@@ -15,7 +15,7 @@ public class Jaccard {
 
     // Function to calculate the Jaccard Similarity between two sets of words
     public double calculateJaccardSimilarity(String[] words1, String[] words2) {
-        if (words2.length < 3 && words1.length < 3) {
+        if (words2.length < 2 && words1.length < 2) {
             return 0;
         }
 
