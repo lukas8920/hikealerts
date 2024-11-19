@@ -98,7 +98,7 @@ public class EventRepository implements IEventRepository {
 
             int offset = 0;
             List<MapEvent> mapEvents = findAllByOffsetAndLimit(offset, 100);
-            logger.info("Retrieved first 100 events from db.");
+            logger.info("Retrieved first {} events from db.", mapEvents.size());
             while (!mapEvents.isEmpty()){
                 outputEvents.addAll(mapEvents);
                 for (MapEvent mapEvent : mapEvents) {
@@ -107,7 +107,7 @@ public class EventRepository implements IEventRepository {
 
                 offset += 100;
                 mapEvents = findAllByOffsetAndLimit(offset, 100);
-                logger.info("Retrieved next 100 events.");
+                logger.info("Retrieved next {} events.", mapEvents.size());
             }
         } catch (Exception e){
             logger.error("Error while persisting", e);
