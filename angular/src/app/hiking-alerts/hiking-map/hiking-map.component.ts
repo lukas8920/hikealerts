@@ -8,6 +8,15 @@ import {Point} from 'leaflet';
 import * as pako from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
 
+class CustomMarker extends L.Marker {
+  id: string;
+
+  constructor(latlng: L.LatLngExpression, options: L.MarkerOptions, id: string) {
+    super(latlng, options);
+    this.id = id;
+  }
+}
+
 @Component({
   selector: 'app-hiking-map',
   templateUrl: './hiking-map.component.html',
@@ -127,7 +136,7 @@ export class HikingMapComponent implements OnInit {
     }
 
     events.forEach(event => {
-      const markerKey = `${event.lat}-${event.lng}`;
+      const markerKey = event.id.toString();
       event.create_date = event.create_date.split(" ")[0];
 
       // Check if this marker has already been loaded
@@ -142,12 +151,11 @@ export class HikingMapComponent implements OnInit {
           iconAnchor: [18, 18], // Anchor the icon to the center
         });
 
-        const markerInstance = this.leaflet.marker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon})
-          .addTo(this.markerClusterGroup);
+        const markerInstance = new CustomMarker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon}, markerKey).addTo(this.markerClusterGroup);
         markerInstance.bindPopup(`${event.title}`);
 
         // Open popup on hover
-        markerInstance.on('mouseover', function (e) {
+        markerInstance.on('mouseover', function () {
           event.trail_ids.forEach(lineId => {
             const lineLayer = self.linestringLayers.get(lineId);
             if (lineLayer) {
@@ -158,7 +166,7 @@ export class HikingMapComponent implements OnInit {
         });
 
         // Close popup when hover stops
-        markerInstance.on('mouseout', function (e) {
+        markerInstance.on('mouseout', function () {
           event.trail_ids.forEach(lineId => {
             const lineLayer = self.linestringLayers.get(lineId);
             if (lineLayer) {
@@ -169,7 +177,7 @@ export class HikingMapComponent implements OnInit {
         });
 
         //on click if mobile open overlay event
-        markerInstance.on('click', function (e) {
+        markerInstance.on('click', function () {
           if (self.isMobile){
             self.sharedOverlayService.updateOverlayEvent(event);
             self.sharedOverlayService.setOverlayVisibility(true);
@@ -197,7 +205,12 @@ export class HikingMapComponent implements OnInit {
       });
 
       const events = visibleMarkers
-        .map(marker => `${marker.getLatLng().lat}-${marker.getLatLng().lng}`)
+        .map(marker => {
+          if (marker instanceof CustomMarker){
+            return marker.id ?? "";
+          }
+          return "";
+        })
         .filter(markerKey => this.loadedMarkers.has(markerKey))
         .map(markerKey => this.loadedMarkers.get(markerKey));
 
