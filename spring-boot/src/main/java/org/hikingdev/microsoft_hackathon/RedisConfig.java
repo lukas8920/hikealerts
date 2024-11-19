@@ -8,10 +8,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.embedded.RedisServer;
+
+import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
@@ -21,9 +24,11 @@ public class RedisConfig {
     @Bean
     @Profile({"test", "mock"})
     public RedisConnectionFactory lettuceTestConnectionFactory(RedisServer redisServer) {
-        JedisConnectionFactory jedisConnectionFactory = new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
-        jedisConnectionFactory.setTimeout(5000);
-        return jedisConnectionFactory;
+        JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
+                .connectTimeout(Duration.ofSeconds(5))
+                .readTimeout(Duration.ofSeconds(5)) // Set read timeout
+                .build();
+        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379), jedisClientConfiguration);
     }
 
     @Bean
