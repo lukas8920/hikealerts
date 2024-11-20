@@ -16,11 +16,14 @@
       (click)="toggleView()">
       <span *ngIf="showMap">Map</span>
     </button>
-  </div><div class="clearfix container">
-    <app-alert-list class="left" (cardClick)="this.onCardClick($event)" [hidden]="isMobile && showMap"/>
-    <app-hiking-map class="right" #hikingMapComponent
-                    (click)="hideOverlay()"
-                    [hidden]="isMobile && !showMap" [isMobile]="isMobile"/>
+  </div>
+  <div class="container">
+    <div class="left" [hidden]="isMobile && showMap">
+      <app-alert-list (cardClick)="this.onCardClick($event)"/>
+    </div>
+    <div class="right" [hidden]="isMobile && !showMap" (click)="hideOverlay()">
+      <ng-container #container/>
+    </div>
   </div>
   <div *ngIf="isOverlayVisible" (click)="$event.stopPropagation()" class="overlay" >
     <img src="assets/close.svg" alt="close" height="36" width="36" class="close" (click)="hideOverlay()"/>

@@ -1,9 +1,10 @@
-import {Component} from '@angular/core';
+import {Component, DestroyRef, ElementRef, inject, NgZone, Renderer2, ViewChild} from '@angular/core';
 import {TokenStorageService} from './_service/token-storage.service';
 import {SharedLogoutService} from './shared-logout.service';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {SharedScreenSizeService} from './shared-screen-size.service';
 import {SharedOverlayService} from './hiking-alerts/shared-overlay.service';
+import {HikingAlertsComponent} from './hiking-alerts/hiking-alerts.component';
 
 @Component({
   selector: 'app-root',
@@ -57,4 +58,5 @@ export class AppComponent {
       this.isOpenSidebar = false;
     }
   }
+
 }

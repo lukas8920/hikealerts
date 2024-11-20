@@ -3,7 +3,6 @@ import {AppComponent} from './app.component';
 import {HikingAlertsComponent} from './hiking-alerts/hiking-alerts.component';
 import {AppRoutingModule} from './app.routing.module';
 import {BrowserModule} from '@angular/platform-browser';
-import {HikingMapComponent} from './hiking-alerts/hiking-map/hiking-map.component';
 import {AlertListComponent} from './hiking-alerts/alert-list/alert-list.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import {MatCardModule} from "@angular/material/card";
@@ -23,7 +22,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     AlertListComponent,
     AppComponent,
     HikingAlertsComponent,
-    HikingMapComponent,
     OverlayEventComponent,
     SidebarComponent,
     UnauthComponent

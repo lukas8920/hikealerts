@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit, Renderer2} from '@angular/core';
 import {Marker, MarkerOptions, Polyline, geoJSON, tooltip, latLng,
   latLngBounds, tileLayer, divIcon, LatLngExpression} from 'leaflet';
 import 'leaflet.markercluster';
@@ -8,6 +8,7 @@ import {SharedListService} from '../shared.list.service';
 import {Point} from 'leaflet';
 import {inflate} from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
+import {SharedScreenSizeService} from '../../shared-screen-size.service';
 
 class CustomMarker extends Marker {
   id: string;
@@ -21,11 +22,10 @@ class CustomMarker extends Marker {
 @Component({
   selector: 'app-hiking-map',
   templateUrl: './hiking-map.component.html',
-  styleUrl: './hiking-map.component.css'
+  styleUrl: './hiking-map.component.css',
+  standalone: true
 })
 export class HikingMapComponent implements OnInit {
-  @Input() isMobile = false;
-
   map: any;
   markerClusterGroup: any;
 
@@ -33,23 +33,74 @@ export class HikingMapComponent implements OnInit {
   private offset = 0; // Initial offset for chunking
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
+  private isMobile = false;
 
   linestringLayers: Map<number, Polyline> = new Map();
 
-  constructor(private apiService: ApiService, private sharedListService: SharedListService,
-              private sharedOverlayService: SharedOverlayService) {
+  constructor(private apiService: ApiService, private sharedListService: SharedListService, private renderer: Renderer2,
+              private sharedOverlayService: SharedOverlayService, private sharedScreenService: SharedScreenSizeService) {
   }
 
   ngOnInit(): void {
+    this.loadCSSFiles();
+    this.loadScripts();
+
     this.initializeMap();
     this.fetchMarkers();
 
+    this.sharedScreenService.isMobile$.subscribe(isMobile => {
+      this.isMobile = isMobile;
+    });
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => {
       this.updateVisibleMarkers(false);
     });
     // Fetch the GeoJSON data and add it to the map
     this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON))
+  }
+
+  loadCSSFiles(){
+    this.addStylesheets([
+      'assets/MarkerCluster.css',
+      'assets/MarkerCluster.Default.css',
+      'assets/leaflet.css'
+    ]);
+  }
+
+  loadScripts(){
+    this.addScripts([
+      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js', integrity: 'sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg=='},
+      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js', integrity: 'sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=='}
+    ]);
+  }
+
+  addStylesheets(filePaths: string[]) {
+    filePaths.forEach((path) => {
+      const link = this.renderer.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = path;
+      this.renderer.appendChild(document.head, link);
+    });
+  }
+
+  private addScripts(scripts: {scriptUrl: string, integrity: string}[]): void {
+    scripts.forEach((s) => {
+      if (!this.isScriptLoaded(s.scriptUrl)) {
+        const script = this.renderer.createElement('script');
+        script.type = 'text/javascript';
+        script.src = s.scriptUrl;
+        script.integrity = s.integrity;
+        script.async = true;
+        script.defer = true;
+        this.renderer.appendChild(document.body, script);
+      }
+    });
+  }
+
+  private isScriptLoaded(src: string): boolean {
+    return Array.from(document.getElementsByTagName('script')).some(
+      script => script.src.includes(src)
+    );
   }
 
   // Initialize the map
@@ -179,7 +230,9 @@ export class HikingMapComponent implements OnInit {
 
         //on click if mobile open overlay event
         markerInstance.on('click', function () {
+          console.log("click");
           if (self.isMobile){
+            console.log("show overlay");
             self.sharedOverlayService.updateOverlayEvent(event);
             self.sharedOverlayService.setOverlayVisibility(true);
           }

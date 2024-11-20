@@ -1,5 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {HikingMapComponent} from './hiking-map/hiking-map.component';
+import {AfterViewInit, Component, Injector, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {SharedOverlayService} from './shared-overlay.service';
 import {Event} from '../_service/event';
 import {SharedScreenSizeService} from '../shared-screen-size.service';
@@ -9,8 +8,8 @@ import {SharedScreenSizeService} from '../shared-screen-size.service';
   templateUrl: './hiking-alerts.component.html',
   styleUrl: './hiking-alerts.component.css'
 })
-export class HikingAlertsComponent implements OnInit {
-  @ViewChild('hikingMapComponent') hikingMapComponent!: HikingMapComponent;
+export class HikingAlertsComponent implements OnInit, AfterViewInit {
+  @ViewChild('container', { read: ViewContainerRef }) container!: ViewContainerRef;
 
   showMap: boolean = true;
   isMobile: boolean = false;
@@ -19,13 +18,16 @@ export class HikingAlertsComponent implements OnInit {
 
   event: Event | null = null;
 
-  constructor(private sharedOverlayService: SharedOverlayService, private sharedScreenSize: SharedScreenSizeService) {
+  componentRef: any;
+
+  constructor(private sharedOverlayService: SharedOverlayService, private sharedScreenSize: SharedScreenSizeService,
+              private injector: Injector) {
   }
 
   // Handle card click and pass the coordinates to Leaflet map
   onCardClick(coordinates: { lat: number, lng: number }) {
     if (!this.isMobile){
-      this.hikingMapComponent?.zoomToMarker(coordinates.lat, coordinates.lng);
+      this.componentRef.instance?.zoomToMarker(coordinates.lat, coordinates.lng);
     }
   }
 
@@ -43,6 +45,16 @@ export class HikingAlertsComponent implements OnInit {
         this.isOverlayOpening = false;
       }, 0);
     });
+  }
+
+  ngAfterViewInit() {
+    this.loadMapUI();
+  }
+
+  async loadMapUI(){
+    const { HikingMapComponent } = await import('./hiking-map/hiking-map.component');
+    this.componentRef = this.container.createComponent(HikingMapComponent, {injector: this.injector})
+    this.componentRef.instance.isMobile = this.isMobile;
   }
 
   hideOverlay(): void {
