@@ -19,8 +19,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatButtonModule} from '@angular/material/button';
-import {RegisterComponent} from './register/register.component';
-import {RegisterFormComponent} from './register/register-form/register-form.component';
 import {UnauthComponent} from './_error/unauth/unauth.component';
 import {ProfileComponent} from './profile/profile.component';
 import {ProfileNavComponent} from './profile/profile-nav/profile-nav.component';
@@ -48,8 +46,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     PrivacyPolicyComponent,
     ProfileComponent,
     ProfileNavComponent,
-    RegisterComponent,
-    RegisterFormComponent,
     SavePwComponent,
     SidebarComponent,
     TermsOfServiceComponent,
