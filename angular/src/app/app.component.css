@@ -25,7 +25,29 @@
 }
 
 .login {
-  padding-right: 24px;
+  box-sizing: border-box;
+  position: relative;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0;
+  min-width: 64px;
+  line-height: 24px;
+  padding: 0 24px 0 16px;
+  border-radius: 4px;
+  overflow: visible;
+  font-family: Roboto,Helvetica Neue,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
 }
 
 .menu {
