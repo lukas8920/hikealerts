@@ -1,6 +1,5 @@
-import {Injectable, ViewChild} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {HikingMapComponent} from './hiking-map/hiking-map.component';
 
 @Injectable({
   providedIn: 'root'

@@ -1,17 +1,18 @@
 import {Component, Input, OnInit} from '@angular/core';
-import * as L from 'leaflet';
+import {Marker, MarkerOptions, Polyline, geoJSON, tooltip, latLng,
+  latLngBounds, tileLayer, divIcon, LatLngExpression} from 'leaflet';
 import 'leaflet.markercluster';
 import {ApiService} from '../../_service/api.service';
 import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
 import {Point} from 'leaflet';
-import * as pako from 'pako';
+import {inflate} from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
 
-class CustomMarker extends L.Marker {
+class CustomMarker extends Marker {
   id: string;
 
-  constructor(latlng: L.LatLngExpression, options: L.MarkerOptions, id: string) {
+  constructor(latlng: LatLngExpression, options: MarkerOptions, id: string) {
     super(latlng, options);
     this.id = id;
   }
@@ -33,7 +34,7 @@ export class HikingMapComponent implements OnInit {
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
 
-  linestringLayers: Map<number, L.Polyline> = new Map();
+  linestringLayers: Map<number, Polyline> = new Map();
 
   constructor(private apiService: ApiService, private sharedListService: SharedListService,
               private sharedOverlayService: SharedOverlayService) {
@@ -60,14 +61,14 @@ export class HikingMapComponent implements OnInit {
       }).setView([51.505, -0.09], 2); // Set initial center and zoom
 
       // Set vertical bounds (latitude limits only)
-      const southWest = L.latLng(-85, -Infinity);
-      const northEast = L.latLng(85, Infinity);
-      const bounds = L.latLngBounds(southWest, northEast);
+      const southWest = latLng(-85, -Infinity);
+      const northEast = latLng(85, Infinity);
+      const bounds = latLngBounds(southWest, northEast);
 
       this.map.setMaxBounds(bounds);
 
       // Add OpenStreetMap tile layer
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
@@ -79,7 +80,7 @@ export class HikingMapComponent implements OnInit {
           var count = cluster.getChildCount(); // Get number of markers in the cluster
 
           // Customize the cluster icon
-          var icon = L.divIcon({
+          var icon = divIcon({
             html: '<div style="background-color: #cc3939d9; color: white; display: flex; justify-content: center; align-items: center; opacity: 0.95; font-size: 20px; width: 36px; height: 36px; border-radius: 50%;"><span>' + count + '</span></div>',
             className: 'marker-cluster',
             iconSize: [40, 40]
@@ -94,9 +95,9 @@ export class HikingMapComponent implements OnInit {
   }
 
   addGeoJsonData(geoJsonData: any): void {
-    const decompressedString = pako.inflate(new Uint8Array(geoJsonData), { to: 'string' });
+    const decompressedString = inflate(new Uint8Array(geoJsonData), { to: 'string' });
     const decompressedGeoJsonData = JSON.parse(decompressedString) as GeoJSON.FeatureCollection
-    const geoJsonLayer =  L.geoJSON(decompressedGeoJsonData, {
+    const geoJsonLayer =  geoJSON(decompressedGeoJsonData, {
       style: {
         color: 'red',
         weight: 2,
@@ -104,13 +105,13 @@ export class HikingMapComponent implements OnInit {
       onEachFeature: (feature, layer) => {
         // add trail id to the reference map for the markers
         const id = feature.properties.id;
-        if (layer instanceof L.Polyline) {
+        if (layer instanceof Polyline) {
           this.linestringLayers.set(id, layer);
         }
 
         // Show the 'name' property on hover
         layer.on('mouseover', (e) => {
-          const tooltip = L.tooltip()
+          const tooltip = this.leaflet.tooltip()
             .setContent(feature.properties.trail_name)
             .setLatLng(e.latlng)
             .addTo(this.map);
@@ -196,9 +197,9 @@ export class HikingMapComponent implements OnInit {
   updateVisibleMarkers(isInit: boolean): void {
     if (isInit || !this.isMobile){
       const bounds = this.map.getBounds();
-      const visibleMarkers: L.Marker[] = [];
+      const visibleMarkers: Marker[] = [];
 
-      this.markerClusterGroup.eachLayer((layer: L.Marker) => {
+      this.markerClusterGroup.eachLayer((layer: Marker) => {
         if (bounds.contains(layer.getLatLng())) {
           visibleMarkers.push(layer);
         }
