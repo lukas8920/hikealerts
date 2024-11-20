@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding-left: 8px;
   padding-right: 8px;
-  height: calc(100svh - 148px);
+  height: calc(100svh - 126px);
   overflow-y: scroll;
 }
 
@@ -18,18 +18,18 @@ p {
 
 @media screen and (max-width: 740px) {
   .copy-container {
-    height: calc(100svh - 200px);
+    height: calc(100svh - 180px);
   }
 }
 
 @media screen and (max-width: 598px) {
   .copy-container {
-    height: calc(100svh - 190px);
+    height: calc(100svh - 170px);
   }
 }
 
 @media screen and (max-width: 500px) {
   .copy-container {
-    height: calc(100svh - 176px);
+    height: calc(100svh - 156px);
   }
 }
