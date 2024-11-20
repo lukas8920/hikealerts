@@ -15,6 +15,29 @@
   width: 100%;
   background-color: red;
   color: white;
+  transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 var(--mat-protected-button-horizontal-padding, 16px);
+  box-shadow: var(--mdc-protected-button-container-elevation-shadow, var(--mat-app-level1));
+  height: var(--mdc-protected-button-container-height);
+  font-family: var(--mdc-protected-button-label-text-font,var(--mat-app-label-large-font) );
+  font-size: var(--mdc-protected-button-label-text-size, var(--mat-app-label-large-size));
+  letter-spacing: var(--mdc-protected-button-label-text-tracking, var(--mat-app-label-large-tracking));
+  text-transform: var(--mdc-protected-button-label-text-transform);
+  font-weight: var(--mdc-protected-button-label-text-weight, var(--mat-app-label-large-weight));
+  border-radius: var(--mdc-protected-button-container-shape, var(--mat-app-corner-full));
+  user-select: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 64px;
+  border: none;
+  outline: none;
+  line-height: inherit;
+  -webkit-appearance: none;
+  overflow: visible;
+  vertical-align: middle;
 }
 
 .error {
