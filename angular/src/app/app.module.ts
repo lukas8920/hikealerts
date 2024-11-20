@@ -11,22 +11,8 @@ import {MatChipsModule} from "@angular/material/chips";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
-import {CopyrightCreditsComponent} from './_footer/copyright-credits/copyright-credits.component';
-import {PrivacyPolicyComponent} from './_footer/privacy-policy/privacy-policy.component';
-import {TermsOfServiceComponent} from './_footer/terms-of-service/terms-of-service.component';
-import {ContactComponent} from './_footer/contact/contact.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {MatButtonModule} from '@angular/material/button';
 import {UnauthComponent} from './_error/unauth/unauth.component';
-import {ProfileComponent} from './profile/profile.component';
-import {ProfileNavComponent} from './profile/profile-nav/profile-nav.component';
-import {OverviewComponent} from './profile/overview/overview.component';
 import {authInterceptorProvider} from './auth.interceptor';
-import {ConfirmationComponent} from './profile/confirmation/confirmation.component';
-import {MatDialogModule} from '@angular/material/dialog';
-import {SavePwComponent} from './profile/save-pw/save-pw.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {OverlayEventComponent} from './hiking-alerts/overlay-event/overlay-event.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
@@ -36,19 +22,10 @@ import {SidebarComponent} from './sidebar/sidebar.component';
   declarations: [
     AlertListComponent,
     AppComponent,
-    ConfirmationComponent,
-    ContactComponent,
-    CopyrightCreditsComponent,
     HikingAlertsComponent,
     HikingMapComponent,
     OverlayEventComponent,
-    OverviewComponent,
-    PrivacyPolicyComponent,
-    ProfileComponent,
-    ProfileNavComponent,
-    SavePwComponent,
     SidebarComponent,
-    TermsOfServiceComponent,
     UnauthComponent
   ],
   imports: [
@@ -59,12 +36,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     MatCardModule,
     MatChipsModule,
     MatToolbarModule,
-    MatFormFieldModule, //tag
-    MatInputModule, //tag
-    MatButtonModule, //tag
-    FormsModule, //tag
-    ReactiveFormsModule, //tag
-    MatDialogModule,
     MatSlideToggleModule,
     MatTooltipModule
   ],
