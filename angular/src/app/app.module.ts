@@ -33,7 +33,6 @@ import {authInterceptorProvider} from './auth.interceptor';
 import {ConfirmationComponent} from './profile/confirmation/confirmation.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {SavePwComponent} from './profile/save-pw/save-pw.component';
-import {DocumentationComponent} from './documentation/documentation.component';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {OverlayEventComponent} from './hiking-alerts/overlay-event/overlay-event.component';
 import {MatTooltipModule} from '@angular/material/tooltip';
