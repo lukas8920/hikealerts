@@ -54,7 +54,6 @@ export class LoginFormComponent {
       .subscribe(
         data => {
           this.isError = false;
-          console.log('Token is: ' + data.token);
           this.tokenStorage.saveToken(data.token);
           this.tokenStorage.saveUser(data);
           if (isPlatformBrowser(this.platformId)){
