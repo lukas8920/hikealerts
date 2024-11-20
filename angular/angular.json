@@ -36,7 +36,6 @@
               "./node_modules/swagger-ui/dist/swagger-ui.css"
             ],
             "scripts": [
-              "./node_modules/leaflet/dist/leaflet.js",
               "./node_modules/leaflet.markercluster/dist/leaflet.markercluster.js"
             ]
           },
@@ -102,5 +101,5 @@
         }
       }
     }
-  }
+  },
 }
