@@ -47,7 +47,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     ConfirmationComponent,
     ContactComponent,
     CopyrightCreditsComponent,
-    DocumentationComponent,
     HikingAlertsComponent,
     HikingMapComponent,
     LoginComponent,
