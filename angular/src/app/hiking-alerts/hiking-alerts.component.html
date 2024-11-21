@@ -25,9 +25,10 @@
       <ng-container #map_container/>
     </div>
   </div>
-  <div *ngIf="isOverlayVisible" (click)="$event.stopPropagation()" class="overlay" >
+
+  <div (click)="$event.stopPropagation()" class="overlay" [style.display]="isOverlayVisible ? 'flex' : 'none'">
     <img src="assets/close.svg" alt="close" height="36" width="36" class="close" (click)="hideOverlay()"/>
-    <app-overlay-event [event]="event" class="dialog"></app-overlay-event>
+    <ng-container #overlay_container/>
   </div>
 </div>
 

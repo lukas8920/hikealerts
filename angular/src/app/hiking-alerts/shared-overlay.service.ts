@@ -16,7 +16,6 @@ export class SharedOverlayService {
   }
 
   updateOverlayEvent(event: any){
-    console.log(event.title);
     this.overlayEventSource.next(event);
   }
 }

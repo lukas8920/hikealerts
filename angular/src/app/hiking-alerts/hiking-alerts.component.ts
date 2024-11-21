@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, Injector, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {SharedOverlayService} from './shared-overlay.service';
-import {Event} from '../_service/event';
 import {SharedScreenSizeService} from '../shared-screen-size.service';
 
 @Component({
@@ -11,13 +10,12 @@ import {SharedScreenSizeService} from '../shared-screen-size.service';
 export class HikingAlertsComponent implements OnInit, AfterViewInit {
   @ViewChild('map_container', { read: ViewContainerRef }) map_container!: ViewContainerRef;
   @ViewChild('list_container', { read: ViewContainerRef }) list_container!: ViewContainerRef;
+  @ViewChild('overlay_container', { read: ViewContainerRef }) overlay_container!: ViewContainerRef;
 
   showMap: boolean = true;
   isMobile: boolean = false;
   isOverlayVisible: boolean = false;
   isOverlayOpening: boolean = true;
-
-  event: Event | null = null;
 
   mapRef: any;
   listRef: any;
@@ -36,9 +34,6 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.sharedScreenSize.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
-    });
-    this.sharedOverlayService.overlayEvent$.subscribe(event => {
-      this.event = event;
     });
     this.sharedOverlayService.isOverlayVisible$.subscribe(visible => {
       this.isOverlayVisible = visible;
@@ -75,6 +70,10 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
     }
     //add list event emitter
     this.listRef.instance.cardClick.subscribe((data: any) => this.onCardClick(data));
+
+    //add overlay component
+    const { OverlayEventComponent } = await import('./overlay-event/overlay-event.component');
+    this.overlay_container.createComponent(OverlayEventComponent, {injector: this.injector});
   }
 
   hideOverlay(): void {

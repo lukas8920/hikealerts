@@ -230,9 +230,7 @@ export class HikingMapComponent implements OnInit {
 
         //on click if mobile open overlay event
         markerInstance.on('click', function () {
-          console.log("click");
           if (self.isMobile){
-            console.log("show overlay");
             self.sharedOverlayService.updateOverlayEvent(event);
             self.sharedOverlayService.setOverlayVisibility(true);
           }
