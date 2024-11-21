@@ -15,7 +15,10 @@
 
 .content {
   font-size: 13px;
+  padding-right: 10px;
   text-align: justify;
+  max-height: 150px !important;
+  overflow-y: scroll;
 }
 
 .mat-card {
