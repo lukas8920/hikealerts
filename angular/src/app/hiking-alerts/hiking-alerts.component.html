@@ -19,10 +19,10 @@
   </div>
   <div class="container">
     <div class="left" [hidden]="isMobile && showMap">
-      <app-alert-list (cardClick)="this.onCardClick($event)"/>
+      <ng-container #list_container/>
     </div>
     <div class="right" [hidden]="isMobile && !showMap" (click)="hideOverlay()">
-      <ng-container #container/>
+      <ng-container #map_container/>
     </div>
   </div>
   <div *ngIf="isOverlayVisible" (click)="$event.stopPropagation()" class="overlay" >

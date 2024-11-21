@@ -1,11 +1,16 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 import {SharedListService} from '../shared.list.service';
 import {Event} from '../../_service/event';
+import {MatCardModule} from '@angular/material/card';
+import {MatChipsModule} from '@angular/material/chips';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-alert-list',
   templateUrl: './alert-list.component.html',
-  styleUrl: './alert-list.component.css'
+  styleUrl: './alert-list.component.css',
+  standalone: true,
+  imports: [MatCardModule, MatChipsModule, CommonModule]
 })
 export class AlertListComponent {
   @Output() cardClick = new EventEmitter<{ lat: number, lng: number }>();

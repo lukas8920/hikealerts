@@ -9,7 +9,8 @@ import {SharedScreenSizeService} from '../shared-screen-size.service';
   styleUrl: './hiking-alerts.component.css'
 })
 export class HikingAlertsComponent implements OnInit, AfterViewInit {
-  @ViewChild('container', { read: ViewContainerRef }) container!: ViewContainerRef;
+  @ViewChild('map_container', { read: ViewContainerRef }) map_container!: ViewContainerRef;
+  @ViewChild('list_container', { read: ViewContainerRef }) list_container!: ViewContainerRef;
 
   showMap: boolean = true;
   isMobile: boolean = false;
@@ -18,7 +19,8 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
 
   event: Event | null = null;
 
-  componentRef: any;
+  mapRef: any;
+  listRef: any;
 
   constructor(private sharedOverlayService: SharedOverlayService, private sharedScreenSize: SharedScreenSizeService,
               private injector: Injector) {
@@ -27,7 +29,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   // Handle card click and pass the coordinates to Leaflet map
   onCardClick(coordinates: { lat: number, lng: number }) {
     if (!this.isMobile){
-      this.componentRef.instance?.zoomToMarker(coordinates.lat, coordinates.lng);
+      this.mapRef.instance?.zoomToMarker(coordinates.lat, coordinates.lng);
     }
   }
 
@@ -48,13 +50,31 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadMapUI();
+    this.loadUIElements();
   }
 
-  async loadMapUI(){
-    const { HikingMapComponent } = await import('./hiking-map/hiking-map.component');
-    this.componentRef = this.container.createComponent(HikingMapComponent, {injector: this.injector})
-    this.componentRef.instance.isMobile = this.isMobile;
+  async loadUIElements(){
+    if (this.isMobile){
+      // load map first
+      const { HikingMapComponent } = await import('./hiking-map/hiking-map.component');
+      this.mapRef = this.map_container.createComponent(HikingMapComponent, {injector: this.injector})
+      this.mapRef.instance.isMobile = this.isMobile;
+
+      // then load list
+      const { AlertListComponent} = await import('./alert-list/alert-list.component');
+      this.listRef = this.list_container.createComponent(AlertListComponent, {injector: this.injector});
+    } else {
+      // create list first
+      const { AlertListComponent} = await import('./alert-list/alert-list.component');
+      this.listRef = this.list_container.createComponent(AlertListComponent, {injector: this.injector});
+
+      // then create map
+      const { HikingMapComponent } = await import('./hiking-map/hiking-map.component');
+      this.mapRef = this.map_container.createComponent(HikingMapComponent, {injector: this.injector})
+      this.mapRef.instance.isMobile = this.isMobile;
+    }
+    //add list event emitter
+    this.listRef.instance.cardClick.subscribe((data: any) => this.onCardClick(data));
   }
 
   hideOverlay(): void {

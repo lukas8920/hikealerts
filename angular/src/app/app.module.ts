@@ -3,10 +3,7 @@ import {AppComponent} from './app.component';
 import {HikingAlertsComponent} from './hiking-alerts/hiking-alerts.component';
 import {AppRoutingModule} from './app.routing.module';
 import {BrowserModule} from '@angular/platform-browser';
-import {AlertListComponent} from './hiking-alerts/alert-list/alert-list.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {MatCardModule} from "@angular/material/card";
-import {MatChipsModule} from "@angular/material/chips";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
@@ -18,7 +15,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
-    AlertListComponent,
     AppComponent,
     HikingAlertsComponent,
     OverlayEventComponent,
@@ -29,8 +25,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     AppRoutingModule,
     CommonModule,
     HttpClientModule,
-    MatCardModule,
-    MatChipsModule,
     MatToolbarModule,
     MatSlideToggleModule,
     MatTooltipModule
