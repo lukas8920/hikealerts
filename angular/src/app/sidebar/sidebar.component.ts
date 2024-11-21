@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {SharedLogoutService} from '../shared-logout.service';
 import {CommonModule} from '@angular/common';
 import {RouterModule} from '@angular/router';
+import {SharedAppService} from '../shared-app.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,15 +13,15 @@ import {RouterModule} from '@angular/router';
 export class SidebarComponent {
   @Output() closeEvent = new EventEmitter<void>();
 
-  constructor(private sharedLogoutService: SharedLogoutService) {
+  constructor(private sharedAppService: SharedAppService) {
   }
 
   getLoginStatus(): boolean {
-    return  this.sharedLogoutService.isLoggedIn;
+    return  this.sharedAppService.isLoggedIn;
   }
 
   logout(): void {
-    this.sharedLogoutService.logout();
+    this.sharedAppService.logout();
     this.closeSidebar();
   }
 

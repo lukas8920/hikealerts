@@ -4,7 +4,7 @@ import {ConfirmationComponent} from '../confirmation/confirmation.component';
 import {UserService} from '../../_service/user.service';
 import {SharedProfileService} from '../shared-profile.service';
 import {Router} from '@angular/router';
-import {SharedLogoutService} from '../../shared-logout.service';
+import {SharedAppService} from '../../shared-app.service';
 
 @Component({
   selector: 'app-overview',
@@ -17,7 +17,7 @@ export class OverviewComponent {
   isApiKeyVisible: boolean = false;
 
   constructor(private dialog: MatDialog, private userService: UserService, private sharedDataService: SharedProfileService,
-              private router: Router, @Inject(PLATFORM_ID) private platformId: any, private sharedLogoutService: SharedLogoutService) {
+              private router: Router, @Inject(PLATFORM_ID) private platformId: any, private sharedAppService: SharedAppService) {
   }
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class OverviewComponent {
   deleteAccount(){
     this.userService.deleteAccount().subscribe(data => {
       console.log(data);
-      this.sharedLogoutService.logout();
+      this.sharedAppService.logout();
     }, error => console.log(error));
   }
 

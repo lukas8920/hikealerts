@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, DestroyRef, inject, Injector, ViewChild, ViewContainerRef} from '@angular/core';
 import {TokenStorageService} from './_service/token-storage.service';
-import {SharedLogoutService} from './shared-logout.service';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {SharedAppService} from './shared-app.service';
 import {SharedOverlayService} from './hiking-alerts/shared-overlay.service';
@@ -21,7 +20,7 @@ export class AppComponent implements AfterViewInit {
   isSidebarOpening = false;
   isNavigating = false;
 
-  constructor(private tokenStorageService: TokenStorageService, private sharedLogoutService: SharedLogoutService,
+  constructor(private tokenStorageService: TokenStorageService,
               private breakpointObserver: BreakpointObserver, private sharedAppService: SharedAppService,
               private sharedOverlayService: SharedOverlayService, private injector: Injector, private router: Router) {
     this.router.events
@@ -33,10 +32,10 @@ export class AppComponent implements AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.sharedLogoutService.isLoggedIn = !!this.tokenStorageService.getToken();
+    this.sharedAppService.isLoggedIn = !!this.tokenStorageService.getToken();
     this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating);
 
-    if (this.sharedLogoutService.isLoggedIn){
+    if (this.sharedAppService.isLoggedIn){
       this.tokenStorageService.getUser();
     }
 
@@ -88,11 +87,11 @@ export class AppComponent implements AfterViewInit {
   }
 
   getLoginStatus(): boolean{
-    return this.sharedLogoutService.isLoggedIn;
+    return this.sharedAppService.isLoggedIn;
   }
 
   logout(): void{
-    this.sharedLogoutService.logout();
+    this.sharedAppService.logout();
   }
 
   closeRequest(): void {
