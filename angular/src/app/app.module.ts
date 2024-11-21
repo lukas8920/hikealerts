@@ -10,7 +10,6 @@ import {MatChipsModule} from "@angular/material/chips";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
-import {UnauthComponent} from './_error/unauth/unauth.component';
 import {authInterceptorProvider} from './auth.interceptor';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {OverlayEventComponent} from './hiking-alerts/overlay-event/overlay-event.component';
@@ -23,8 +22,7 @@ import {SidebarComponent} from './sidebar/sidebar.component';
     AppComponent,
     HikingAlertsComponent,
     OverlayEventComponent,
-    SidebarComponent,
-    UnauthComponent
+    SidebarComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'serverApp'}),

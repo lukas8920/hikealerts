@@ -1,7 +1,6 @@
 import {ExtraOptions, RouterModule, Routes} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {HikingAlertsComponent} from './hiking-alerts/hiking-alerts.component';
-import {UnauthComponent} from './_error/unauth/unauth.component';
 
 const routes: Routes = [
   { path: '',   redirectTo: '/hiking-alerts', pathMatch: 'full'},
@@ -9,7 +8,7 @@ const routes: Routes = [
   { path: 'hiking-alerts', component: HikingAlertsComponent},
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule)},
   { path: 'register', loadChildren: () => import('./register/register.module').then(m => m.RegisterModule)},
-  { path: 'unauth', component: UnauthComponent},
+  { path: 'unauth', loadChildren: () => import('./_error/unauth.module').then(m => m.UnauthModule)},
   { path: 'profile', loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule)},
   {path: 'specs', loadChildren: () => import('./documentation/documentation.module').then(m => m.DocumentationModule)}
 ]
