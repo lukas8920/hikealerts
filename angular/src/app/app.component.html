@@ -19,13 +19,14 @@
     <img src="assets/menu.svg" alt="menu" width="36" height="36" class="menu" (click)="toggleSidebar()">
   </mat-toolbar>
 
-  <div class="container">
+  <div class="container" [ngClass]="isNavigating ? 'container-loading': 'container'">
     <div class="sidebar" [style.display]="isOpenSidebar ? 'flex' : 'none'" (click)="$event.stopPropagation()">
       <ng-container #container/>
     </div>
     <router-outlet></router-outlet>
   </div>
 
+  <mat-progress-bar mode="indeterminate" [style.display]="isNavigating ? 'flex' : 'none'"></mat-progress-bar>
   <div class="footer">
     <div class="line"></div>
     <div class="body">

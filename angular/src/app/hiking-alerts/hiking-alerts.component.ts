@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, Injector, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {SharedOverlayService} from './shared-overlay.service';
-import {SharedScreenSizeService} from '../shared-screen-size.service';
+import {SharedAppService} from '../shared-app.service';
 
 @Component({
   selector: 'app-hiking-alerts',
@@ -20,7 +20,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   mapRef: any;
   listRef: any;
 
-  constructor(private sharedOverlayService: SharedOverlayService, private sharedScreenSize: SharedScreenSizeService,
+  constructor(private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService,
               private injector: Injector) {
   }
 
@@ -32,7 +32,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.sharedScreenSize.isMobile$.subscribe(isMobile => {
+    this.sharedAppService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
     this.sharedOverlayService.isOverlayVisible$.subscribe(visible => {
@@ -49,6 +49,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   }
 
   async loadUIElements(){
+    this.sharedAppService.updateIsNavigating(true);
     if (this.isMobile){
       // load map first
       const { HikingMapComponent } = await import('./hiking-map/hiking-map.component');
@@ -68,6 +69,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
       this.mapRef = this.map_container.createComponent(HikingMapComponent, {injector: this.injector})
       this.mapRef.instance.isMobile = this.isMobile;
     }
+    this.sharedAppService.updateIsNavigating(false);
     //add list event emitter
     this.listRef.instance.cardClick.subscribe((data: any) => this.onCardClick(data));
 

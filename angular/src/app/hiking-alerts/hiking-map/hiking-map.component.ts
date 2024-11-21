@@ -8,7 +8,7 @@ import {SharedListService} from '../shared.list.service';
 import {Point} from 'leaflet';
 import {inflate} from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
-import {SharedScreenSizeService} from '../../shared-screen-size.service';
+import {SharedAppService} from '../../shared-app.service';
 
 class CustomMarker extends Marker {
   id: string;
@@ -33,12 +33,15 @@ export class HikingMapComponent implements OnInit {
   private offset = 0; // Initial offset for chunking
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
+
   private isMobile = false;
+
+  isNavigating = false;
 
   linestringLayers: Map<number, Polyline> = new Map();
 
   constructor(private apiService: ApiService, private sharedListService: SharedListService, private renderer: Renderer2,
-              private sharedOverlayService: SharedOverlayService, private sharedScreenService: SharedScreenSizeService) {
+              private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService) {
   }
 
   ngOnInit(): void {
@@ -48,9 +51,11 @@ export class HikingMapComponent implements OnInit {
     this.initializeMap();
     this.fetchMarkers();
 
-    this.sharedScreenService.isMobile$.subscribe(isMobile => {
+    this.sharedAppService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
+    this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating);
+
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => {
       this.updateVisibleMarkers(false);

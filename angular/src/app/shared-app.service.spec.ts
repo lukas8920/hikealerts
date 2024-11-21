@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SharedScreenSizeService } from './shared-screen-size.service';
+import { SharedAppService } from './shared-app.service';
 
 describe('SharedScreenSizeService', () => {
-  let service: SharedScreenSizeService;
+  let service: SharedAppService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SharedScreenSizeService);
+    service = TestBed.inject(SharedAppService);
   });
 
   it('should be created', () => {

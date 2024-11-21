@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {SharedScreenSizeService} from '../../shared-screen-size.service';
+import {SharedAppService} from '../../shared-app.service';
 
 @Component({
   selector: 'app-profile-nav',
@@ -11,11 +11,11 @@ export class ProfileNavComponent {
   isProfile: boolean = true;
   isMobile: boolean = false;
 
-  constructor(private sharedScreenSize: SharedScreenSizeService) {
+  constructor(private sharedAppService: SharedAppService) {
   }
 
   ngOnInit(): void {
-    this.sharedScreenSize.isMobile$.subscribe(isMobile => {
+    this.sharedAppService.isMobile$.subscribe(isMobile => {
       if (this.isMobile != isMobile){
         this.isNavigation = !isMobile;
       }
