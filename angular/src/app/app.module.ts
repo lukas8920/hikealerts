@@ -7,21 +7,17 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {HttpClientModule} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {authInterceptorProvider} from './auth.interceptor';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {SidebarComponent} from './sidebar/sidebar.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    SidebarComponent
+    AppComponent
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'serverApp'}),
     AppRoutingModule,
     CommonModule,
     HttpClientModule,
-    MatToolbarModule,
-    MatSlideToggleModule
+    MatToolbarModule
   ],
   bootstrap: [AppComponent],
   providers: [

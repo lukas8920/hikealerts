@@ -20,7 +20,9 @@
   </mat-toolbar>
 
   <div class="container">
-    <app-sidebar class="sidebar" *ngIf="isOpenSidebar" (closeEvent)="closeRequest()" (click)="$event.stopPropagation()"></app-sidebar>
+    <div class="sidebar" [style.display]="isOpenSidebar ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+      <ng-container #container/>
+    </div>
     <router-outlet></router-outlet>
   </div>
 

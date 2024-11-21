@@ -1,23 +1,24 @@
-import {Component, DestroyRef, ElementRef, inject, NgZone, Renderer2, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Injector, ViewChild, ViewContainerRef} from '@angular/core';
 import {TokenStorageService} from './_service/token-storage.service';
 import {SharedLogoutService} from './shared-logout.service';
 import {BreakpointObserver} from '@angular/cdk/layout';
 import {SharedScreenSizeService} from './shared-screen-size.service';
 import {SharedOverlayService} from './hiking-alerts/shared-overlay.service';
-import {HikingAlertsComponent} from './hiking-alerts/hiking-alerts.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
+  @ViewChild('container', { read: ViewContainerRef }) container!: ViewContainerRef;
+
   isOpenSidebar = false;
   isSidebarOpening = false;
 
   constructor(private tokenStorageService: TokenStorageService, private sharedLogoutService: SharedLogoutService,
               private breakpointObserver: BreakpointObserver, private sharedScreenSize: SharedScreenSizeService,
-              private sharedOverlayService: SharedOverlayService) {
+              private sharedOverlayService: SharedOverlayService, private injector: Injector) {
   }
 
   ngOnInit(): void {
@@ -33,6 +34,16 @@ export class AppComponent {
         this.sharedOverlayService.setOverlayVisibility(false);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.loadSidebar();
+  }
+
+  async loadSidebar(){
+    const { SidebarComponent } = await import('./sidebar/sidebar.component');
+    const sidebarRef = this.container.createComponent(SidebarComponent, {injector: this.injector});
+    sidebarRef.instance.closeEvent.subscribe((data: any) => this.closeRequest());
   }
 
   toggleSidebar(): void {
@@ -58,5 +69,4 @@ export class AppComponent {
       this.isOpenSidebar = false;
     }
   }
-
 }
