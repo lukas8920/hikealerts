@@ -27,7 +27,8 @@ import java.util.regex.Pattern;
 public class EventService {
     private static final Logger logger = LoggerFactory.getLogger(EventService.class.getName());
 
-    private static final List<String> supportedCountries = Arrays.asList("NZ", "US");
+    private static final List<String> supportedQueryCountries = Arrays.asList("NZ", "US", "CH", "IE");
+    private static final List<String> supportedPushCountries = Arrays.asList("NZ", "US", "IE");
     private static final List<String> supportedCreatedBys = Arrays.asList("All", "Community", "Official");
 
     private static final Pattern COORDINATE_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?");
@@ -113,7 +114,7 @@ public class EventService {
         if (country != null && country.length() != 2){
             throw new BadRequestException("Countries need to be provided in format ISO 3166-1 alpha-2.");
         }
-        if (country != null && !supportedCountries.contains(country)){
+        if (country != null && !supportedPushCountries.contains(country)){
             throw new BadRequestException("Country " + country + " is currently not supported.");
         }
 
@@ -144,7 +145,7 @@ public class EventService {
         if (country != null && country.length() != 2){
             throw new BadRequestException("Countries need to be provided in format ISO 3166-1 alpha-2.", 400);
         }
-        if (country != null  && !supportedCountries.contains(country)){
+        if (country != null  && !supportedQueryCountries.contains(country)){
             throw new BadRequestException("Country " + country + " is currently not supported.", 400);
         }
 
