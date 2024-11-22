@@ -11,6 +11,7 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
 import org.hikingdev.microsoft_hackathon.publisher_management.entities.Publisher;
 import org.hikingdev.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
+import org.hikingdev.microsoft_hackathon.repository.trails.ITrailJpaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class EventRepository implements IEventRepository {
     private static final String EVENTS_KEY = "events";
 
     private final IEventJpaRepository iEventJpaRepository;
+    private final ITrailJpaRepository iTrailJpaRepository;
     private final IRawEventJpaRepository iRawEventJpaRepository;
     private final IPublisherRepository iPublisherRepository;
     private final RedisTemplate<String, MapEvent> redisTemplate;
@@ -47,7 +49,7 @@ public class EventRepository implements IEventRepository {
     @Autowired
     public EventRepository(IEventJpaRepository iEventJpaRepository, RedisTemplate<String, MapEvent> redisTemplate, MapEventMapper mapEventMapper,
                            EntityManager entityManager, IRawEventJpaRepository iRawEventJpaRepository, IPublisherRepository iPublisherRepository,
-                           EventResponseMapper eventResponseMapper){
+                           EventResponseMapper eventResponseMapper, ITrailJpaRepository iTrailJpaRepository){
         this.mapEventMapper = mapEventMapper;
         this.iPublisherRepository = iPublisherRepository;
         this.iEventJpaRepository = iEventJpaRepository;
@@ -55,6 +57,7 @@ public class EventRepository implements IEventRepository {
         this.entityManager = entityManager;
         this.iRawEventJpaRepository = iRawEventJpaRepository;
         this.eventResponseMapper = eventResponseMapper;
+        this.iTrailJpaRepository = iTrailJpaRepository;
     }
 
     @Override
@@ -266,6 +269,9 @@ public class EventRepository implements IEventRepository {
                 logger.info("Delete {} / {}", event.getEvent_id(), event.getId());
                 this.iEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
                 this.iRawEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
+                if (event.getCountry().equals("CH")){
+                    this.iTrailJpaRepository.deleteAllByTrailIdAndCountry(event.getEvent_id(), event.getCountry());
+                }
             } catch (Exception e){
                 logger.error("Error during deletion, ", e);
             }

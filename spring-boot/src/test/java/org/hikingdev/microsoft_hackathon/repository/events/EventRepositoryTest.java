@@ -95,7 +95,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testThatSavingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
 
         when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
 
@@ -115,7 +115,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testThatFindingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Publisher publisher = new Publisher();
         publisher.setId(1L);
 
@@ -141,7 +141,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testThatSpecificDeletingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
 
         Trail trail = new Trail();
         trail.setId(1L);
@@ -185,7 +185,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testThatDeletingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         List<String> ids = Arrays.asList("79", "80");
 
         Event tmpEvent1 = this.iEventJpaRepository.save(event1);
@@ -308,7 +308,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryEvents(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Double[] boundaries = new Double[]{1.0, 1.0, 4.0, 4.0};
         this.setupQueryEvents();
 
@@ -319,7 +319,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryEventsFromDate(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         this.setupQueryEvents();
 
         List<EventResponse> eventResponses = repository.queryEvents(new Double[]{}, "NZ", LocalDate.of(2024, 7, 31), null, null,null, true, 50, 0);
@@ -329,7 +329,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryEventsStatus(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
@@ -340,7 +340,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryEventsOffsetAndLimit(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
@@ -351,7 +351,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryEventsToDate(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
@@ -362,7 +362,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testQueryCreateDate(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
@@ -373,7 +373,7 @@ public class EventRepositoryTest {
 
     @Test
     public void testDeleteByIdAndPublisher(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper);
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
 
         Publisher publisher = new Publisher();
         publisher.setId(3L);
