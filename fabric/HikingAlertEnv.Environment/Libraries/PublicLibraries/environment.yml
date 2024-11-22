@@ -1,4 +1,5 @@
 dependencies:
   - pip:
+      - pyproj==3.7.0
       - azure-keyvault-secrets==4.8.0
       - shapely==2.0.6
