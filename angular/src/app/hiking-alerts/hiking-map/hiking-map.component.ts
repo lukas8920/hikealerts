@@ -54,14 +54,14 @@ export class HikingMapComponent implements OnInit {
     this.sharedAppService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
-    this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating);
+    this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating, error => console.log(error));
 
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => {
       this.updateVisibleMarkers(false);
     });
     // Fetch the GeoJSON data and add it to the map
-    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON))
+    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON), error => console.log(error));
   }
 
   loadCSSFiles(){
