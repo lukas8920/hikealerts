@@ -177,10 +177,15 @@ public class Event implements Serializable {
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
 
-        int fromMonth = Integer.parseInt(fromDatetime.substring(3, 5));
 
-        return fromMonth < month ? fromDatetime.replace("YYYY", String.valueOf(year + 1))
-                : fromDatetime.replace("YYYY", String.valueOf(year));
+        try {
+            int fromMonth = Integer.parseInt(fromDatetime.substring(3, 5));
+            return fromMonth < month ? fromDatetime.replace("YYYY", String.valueOf(year + 1))
+                    : fromDatetime.replace("YYYY", String.valueOf(year));
+        } catch (NumberFormatException e){
+            logger.info("Non parseable characters in date string {}", fromDatetime.substring(3, 5));
+            return null;
+        }
     }
 
     private String parseToDateTimePlaceholders(String fromDatetime, String toDatetime){

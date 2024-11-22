@@ -146,4 +146,15 @@ public class EventTest {
         assertThat(event.getFromDatetime().getYear(), is(2024));
         assertThat(event.getToDatetime(), nullValue());
     }
+
+    @Test
+    public void testOtherPlaceholder(){
+        String fromDatetime = "dd/mm/YYYY";
+        String toDatetime = "dd/mm/YYYY";
+
+        event.parseTimeInterval(fromDatetime, toDatetime);
+
+        assertThat(event.getFromDatetime(), nullValue());
+        assertThat(event.getToDatetime(), nullValue());
+    }
 }
