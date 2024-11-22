@@ -21,4 +21,6 @@ public class OpenAiEvent {
     private String fromDate;
     @JsonProperty("to_date")
     private String toDate;
+    private String title;
+    private String description;
 }

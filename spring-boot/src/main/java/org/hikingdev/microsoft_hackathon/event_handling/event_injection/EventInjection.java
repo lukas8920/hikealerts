@@ -1,9 +1,6 @@
 package org.hikingdev.microsoft_hackathon.event_handling.event_injection;
 
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.BaseCountryInjector;
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.IEInjector;
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.NZInjector;
-import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.USInjector;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.countries.*;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.hikingdev.microsoft_hackathon.map_layer.MapLayerService;
@@ -55,7 +52,7 @@ public class EventInjection implements IEventInjection {
         // trigger event injection
         processableEvents.forEach(openAiEvent -> {
             logger.info("Try to inject: " + openAiEvent.getEventId());
-            BaseCountryInjector injector = openAiEvent.getCountry() != null ? assignCountryInjector(openAiEvent) : null;
+            BaseInjector injector = openAiEvent.getCountry() != null ? assignCountryInjector(openAiEvent) : null;
             if (injector == null){
                 Message message = new Message(openAiEvent.getEventId(), "Invalid country: " + openAiEvent.getCountry());
                 logger.error("No valid injector for event " + openAiEvent.getEventId());
@@ -109,7 +106,7 @@ public class EventInjection implements IEventInjection {
         return processableEvents;
     }
 
-    protected BaseCountryInjector assignCountryInjector(OpenAiEvent openAiEvent) {
+    protected BaseInjector assignCountryInjector(OpenAiEvent openAiEvent) {
         switch (openAiEvent.getCountry()){
             case "US":
                 return new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
@@ -117,6 +114,8 @@ public class EventInjection implements IEventInjection {
                 return new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
             case "IE":
                 return new IEInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "CH":
+                return new CHInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
             default:
                 return null;
         }

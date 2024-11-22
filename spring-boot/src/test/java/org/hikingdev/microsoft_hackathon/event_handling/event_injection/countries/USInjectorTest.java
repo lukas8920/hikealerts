@@ -22,7 +22,7 @@ public class USInjectorTest extends RegionInjectorTest {
     }
 
     @Override
-    protected void mockTestThatMatchTrailsWorksForTrailname(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail){
+    protected void mockTestThatMatchTrailsWorksForTrail(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail){
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
         when(iTrailRepository.searchTrailByNameUnitCodeAndCountry(eq(openAiEvent.getTrailName()), eq("abc"), eq(country), any())).thenReturn(trail);
     }

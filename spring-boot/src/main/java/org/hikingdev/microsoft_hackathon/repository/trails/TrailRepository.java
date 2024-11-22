@@ -130,4 +130,9 @@ public class TrailRepository implements ITrailRepository {
         logger.info("Identified matching trail: " + nameMatcher.getT());
         return nameMatcher.getT();
     }
+
+    @Override
+    public Trail findTrailByIdAndCountry(String trailId, String country) {
+        return this.iTrailJpaRepository.findByTrailIdAndCountry(trailId, country);
+    }
 }

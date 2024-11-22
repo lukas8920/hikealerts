@@ -13,8 +13,6 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBWriter;
 
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -28,7 +26,7 @@ public abstract class BaseInjectorTest {
 
     protected LineString line;
 
-    protected BaseCountryInjector injector;
+    protected BaseInjector injector;
     protected String country;
 
     @BeforeEach
@@ -44,10 +42,10 @@ public abstract class BaseInjectorTest {
         line = new LineString(coordinateSequence, geometryFactory);
     }
 
-    protected abstract void mockTestThatMatchTrailsWorksForTrailname(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail);
+    protected abstract void mockTestThatMatchTrailsWorksForTrail(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail);
 
     @Test
-    public void testThatMatchTrailsWorksForTrailname() throws ParseException {
+    public void testThatMatchTrailsWorksForTrail() throws ParseException {
         WKBWriter wkbWriter = new WKBWriter();
         RawEvent rawEvent = new RawEvent();
         rawEvent.setUnitCode("abc");
@@ -59,7 +57,7 @@ public abstract class BaseInjectorTest {
         trail.setId(1L);
         trail.setCoordinates(wkbWriter.write(line));
 
-        this.mockTestThatMatchTrailsWorksForTrailname(openAiEvent, rawEvent, trail);
+        this.mockTestThatMatchTrailsWorksForTrail(openAiEvent, rawEvent, trail);
 
         boolean flag = injector.matchTrails(openAiEvent);
 

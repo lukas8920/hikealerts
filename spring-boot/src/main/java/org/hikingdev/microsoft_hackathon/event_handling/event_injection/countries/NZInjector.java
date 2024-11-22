@@ -14,7 +14,7 @@ import org.locationtech.jts.io.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NZInjector extends BaseCountryInjector {
+public class NZInjector extends RegionInjector {
     private static final String URL = "https://www.doc.govt.nz/";
 
     public NZInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, ITrailRepository iTrailRepository, IRegionRepository iRegionRepository) {

@@ -21,7 +21,6 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     @Transactional
     void deleteAllByTrailIdAndCountry(String trail_id, String country);
 
-    // for test purpose only
     Trail findByTrailIdAndCountry(String trailId, String country);
 
     @Query(value = "SELECT TOP 100 id, trail_id, trailname, country, maplabel, unitcode, unitname, regioncode, maintainer, coordinates.STAsBinary() AS coordinates " +

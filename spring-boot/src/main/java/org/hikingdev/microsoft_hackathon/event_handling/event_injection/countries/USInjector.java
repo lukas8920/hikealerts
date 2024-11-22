@@ -11,7 +11,7 @@ import org.locationtech.jts.geom.Polygon;
 
 import java.util.List;
 
-public class USInjector extends BaseCountryInjector {
+public class USInjector extends RegionInjector {
     public USInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, ITrailRepository iTrailRepository, IRegionRepository iRegionRepository) {
         super(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
     }

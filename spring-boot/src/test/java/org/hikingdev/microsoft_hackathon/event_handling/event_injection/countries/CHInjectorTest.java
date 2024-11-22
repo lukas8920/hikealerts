@@ -9,13 +9,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class IEInjectorTest extends BaseInjectorTest {
-    private static final String country = "IE";
+public class CHInjectorTest extends BaseInjectorTest {
+    private static final String country = "CH";
 
     @BeforeEach
     public void setup(){
         super.setup();
-        this.injector = new IEInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+        this.injector = new CHInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
         super.country = country;
     }
 
@@ -23,13 +23,13 @@ public class IEInjectorTest extends BaseInjectorTest {
     protected void mockTestThatMatchTrailsWorksForTrail(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail) {
         rawEvent.setDescription("dummy. test description");
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameAndCountry(eq(openAiEvent.getTrailName()), eq(country), any())).thenReturn(trail);
+        when(iTrailRepository.findTrailByIdAndCountry(eq("1") , eq(country))).thenReturn(trail);
     }
 
     @Override
     protected void mockTestThatMatchTrailsQuitsForEmptyEvents(OpenAiEvent openAiEvent, RawEvent rawEvent) {
         rawEvent.setDescription("dummy. test description");
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
-        when(iTrailRepository.searchTrailByNameAndCountry(eq(openAiEvent.getTrailName()) , eq(country), any())).thenReturn(null);
+        when(iTrailRepository.findTrailByIdAndCountry(any() , eq(country))).thenReturn(null);
     }
 }

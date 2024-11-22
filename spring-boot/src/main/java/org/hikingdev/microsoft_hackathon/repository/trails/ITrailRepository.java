@@ -13,4 +13,5 @@ public interface ITrailRepository {
     List<Trail> fetchTrails(int offset, int limit);
     List<Trail> findAllTrailsByIds(List<Long> ids);
     Trail searchTrailByNameAndCountry(String name, String country, NameMatcher<Trail> nameMatcher);
+    Trail findTrailByIdAndCountry(String trailId, String country);
 }

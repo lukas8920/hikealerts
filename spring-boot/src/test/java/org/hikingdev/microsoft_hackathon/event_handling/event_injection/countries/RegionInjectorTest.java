@@ -36,7 +36,7 @@ public abstract class RegionInjectorTest extends BaseInjectorTest {
 
         this.mockTestThatDisplayMidCoordinateWorks(region, trail);
 
-        List<Event> events = this.injector.identifyTrailsViaRegion(event);
+        List<Event> events = ((RegionInjector) this.injector).identifyTrailsViaRegion(event);
 
         assertThat(events.get(0).getMidLatitudeCoordinate(), is(1.0));
         assertThat(events.get(0).getMidLongitudeCoordinate(), is(1.0));
