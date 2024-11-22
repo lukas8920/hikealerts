@@ -108,6 +108,23 @@ def standardize_event(json_string):
     return send_openai_request(message_dict)
 
 
+def standardize_ch_event(json_string):
+    message_dict = {
+        "model": "gpt-4",
+        "messages": [
+            {
+                "role": "system",
+                "content": "Output a json list. Each json item consists of: Event id, country as two-letter code, title, description, from_date and to_date \nFor each item create a coherent and full sentenced description from the provided description\nFor the title, summarize the description with maximum 15 words. \n Each item might have a from and to date in format dd/mm/YYYY. If no year mentioned, enter a placeholder YYYY. \n Each alert corresponds to one json item \n Replace any known abbreviations and correct known misspellings. \n Respond only with the data without any additional comments."
+            },
+            {
+                "role": "user",
+                "content": json_string
+            }
+        ]
+    }
+    return send_openai_request(message_dict)
+
+
 def update_title(event_id, country, title):
     if not title is None:
         title = title.replace("'", r"''")
@@ -156,7 +173,8 @@ if len(resultlist) > 0:
         try:
             for row in sublist:
                 title = row[2]
-                if title == "None" or title is None or len(title) < 2:
+                country = row[1]
+                if (title == "None" or title is None or len(title) < 2) and country != "CH":
                     row[2] = create_title(row[4])['choices'][0]['message']['content']
                     print("Created title: " + row[2])
                     update_title(row[0], row[1], row[2])
@@ -184,7 +202,10 @@ if len(resultlist) > 0:
         print(json_string)
 
         # Request standardized event via openai
-        data = standardize_event(json_string)
+        if sublist[0][1] != "CH":
+            data = standardize_event(json_string)
+        else:
+            data = standardize_ch_event(json_string)
 
         try:
             # Extract content
