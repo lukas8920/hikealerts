@@ -29,6 +29,11 @@ def transform_line(line):
     return LineString(transformed_coords)
 
 
+def to_8_digits(number):
+    num_str = str(number).replace('.', '')
+    return num_str[:8].ljust(8, '0')
+
+
 jdbc_url = "jdbc:sqlserver://hiking-sql-server.database.windows.net:1433;database=hiking-sql-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
 sql_username = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-username')
 sql_password = notebookutils.credentials.getSecret('https://lk-keyvault-93.vault.azure.net/', 'sql-server-password')
@@ -66,7 +71,7 @@ while True:
         event_attributes = []
 
         for result in results:
-            event_attribute = {'id': result['id']}
+            event_attribute = {}
 
             properties = result.get('attributes', {})
 
@@ -77,8 +82,6 @@ while True:
 
             if val4 in ["Closure", "Closure and diversion"]:
                 # Not relevant for us, therefore ignore in processing
-
-                id_list.append(event_attribute['id'])
                 event_attribute['description'] = ""
                 event_attribute['description'] += f"{val4}. " if val4 else ""
                 event_attribute['description'] += f"{val1}. " if val1 else ""
@@ -86,13 +89,18 @@ while True:
                 event_attribute['description'] += f"{val3}." if val3 else ""
                 event_attribute['url'] = properties['url1_link_en']
 
-                event_attributes.append(event_attribute)
-
                 paths = result['geometry']['paths']
                 for p in paths:
+                    transformed_linestring = transform_line(LineString(p))
+
+                    event_attribute['id'] = to_8_digits(transformed_linestring.coords[0][0]) + "-" + to_8_digits(transformed_linestring.coords[0][1])
+                    id_list.append(event_attribute['id'])
+
                     trail_attribute = {'id': result['id'], 'name': properties['title_en'],
-                                'maintainer': properties['content_provider_en'], 'linestring': transform_line(LineString(p)).wkt}
+                                'maintainer': properties['content_provider_en'], 'linestring': transformed_linestring.wkt}
+
                     trail_attributes.append(trail_attribute)
+                    event_attributes.append(event_attribute)
 
         df_trails = pd.DataFrame(trail_attributes)
         df_trails = spark.createDataFrame(df_trails)
