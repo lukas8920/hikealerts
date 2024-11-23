@@ -1,14 +1,14 @@
 import {Component, OnInit, Renderer2} from '@angular/core';
 import {Marker, MarkerOptions, Polyline, geoJSON, tooltip, latLng,
-  latLngBounds, tileLayer, divIcon, LatLngExpression} from 'leaflet';
+  latLngBounds, tileLayer, LatLngExpression} from 'leaflet';
 import 'leaflet.markercluster';
 import {ApiService} from '../../_service/api.service';
 import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
-import {Point} from 'leaflet';
 import {inflate} from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
 import {SharedAppService} from '../../shared-app.service';
+import {Icon} from './icon';
 
 class CustomMarker extends Marker {
   id: string;
@@ -33,6 +33,7 @@ export class HikingMapComponent implements OnInit {
   private offset = 0; // Initial offset for chunking
   private limit = 100; // Number of markers to fetch per request
   private leaflet = window.L;
+  private icon;
 
   private isMobile = false;
 
@@ -42,6 +43,7 @@ export class HikingMapComponent implements OnInit {
 
   constructor(private apiService: ApiService, private sharedListService: SharedListService, private renderer: Renderer2,
               private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService) {
+    this.icon = new Icon(this.leaflet);
   }
 
   ngOnInit(): void {
@@ -130,18 +132,12 @@ export class HikingMapComponent implements OnInit {
       }).addTo(this.map);
 
       // Create the marker cluster group
+      var self = this;
       this.markerClusterGroup = this.leaflet.markerClusterGroup({
         showCoverageOnHover: false,
         iconCreateFunction: function(cluster) {
           var count = cluster.getChildCount(); // Get number of markers in the cluster
-
-          // Customize the cluster icon
-          var icon = divIcon({
-            html: '<div style="background-color: #cc3939d9; color: white; display: flex; justify-content: center; align-items: center; opacity: 0.95; font-size: 20px; width: 36px; height: 36px; border-radius: 50%;"><span>' + count + '</span></div>',
-            className: 'marker-cluster',
-            iconSize: [40, 40]
-          });
-          return icon;
+          return self.icon.getClusterIcon(count);
         }
       });
 
@@ -200,15 +196,7 @@ export class HikingMapComponent implements OnInit {
       if (!this.loadedMarkers.has(markerKey)) {
         this.loadedMarkers.set(markerKey, event); // Mark this marker as loaded
 
-        const iconSize = new Point(36,36); // Set the desired size for the icon
-        const customIcon = this.leaflet.divIcon({
-          className: 'custom-marker', // Add a custom class for styling if needed
-          html: '<div style="background-color: #cc3939d9; border: 5px solid transparent; font-weight: bold; font-size: 36px; display: flex; justify-content: center; align-items: center;  color: white; border-radius: 50%; width: 36px; height: 36px; opacity: 0.95;">!</div>',
-          iconSize: iconSize,
-          iconAnchor: [18, 18], // Anchor the icon to the center
-        });
-
-        const markerInstance = new CustomMarker(this.leaflet.latLng(event.lat, event.lng), {icon: customIcon}, markerKey).addTo(this.markerClusterGroup);
+        const markerInstance = new CustomMarker(this.leaflet.latLng(event.lat, event.lng), {icon: this.icon.getMainIcon()}, markerKey).addTo(this.markerClusterGroup);
         markerInstance.bindPopup(`${event.title}`);
 
         // Open popup on hover
