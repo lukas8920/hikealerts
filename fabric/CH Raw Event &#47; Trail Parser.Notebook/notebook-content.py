@@ -96,7 +96,7 @@ while True:
                     event_attribute['id'] = to_8_digits(transformed_linestring.coords[0][0]) + "-" + to_8_digits(transformed_linestring.coords[0][1])
                     id_list.append(event_attribute['id'])
 
-                    trail_attribute = {'id': result['id'], 'name': properties['title_en'],
+                    trail_attribute = {'id': event_attribute['id'], 'name': properties['title_en'],
                                 'maintainer': properties['content_provider_en'], 'linestring': transformed_linestring.wkt}
 
                     trail_attributes.append(trail_attribute)
