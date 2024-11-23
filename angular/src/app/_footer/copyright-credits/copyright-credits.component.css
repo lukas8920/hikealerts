@@ -1,10 +1,13 @@
 .copy-container {
+  height: calc(100svh - 126px);
+  overflow-y: scroll;
+}
+
+.body {
   max-width: 800px;
   margin: 0 auto;
   padding-left: 8px;
   padding-right: 8px;
-  height: calc(100svh - 126px);
-  overflow-y: scroll;
 }
 
 h1 {
