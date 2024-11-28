@@ -135,4 +135,8 @@ public class TrailRepository implements ITrailRepository {
     public Trail findTrailByIdAndCountry(String trailId, String country) {
         return this.iTrailJpaRepository.findByTrailIdAndCountry(trailId, country);
     }
+
+    public List<Trail> findTrailsByEventIdAndCountry(String eventId, String country){
+        return this.iTrailJpaRepository.findTrailsByEventIdAndCountry(eventId, country);
+    }
 }

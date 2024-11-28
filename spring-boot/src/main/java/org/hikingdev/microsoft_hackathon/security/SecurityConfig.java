@@ -53,6 +53,7 @@ public class SecurityConfig {
                     }
                     authz.requestMatchers("/v1/events/pull").permitAll();
                     authz.requestMatchers("/v1/map/layer").permitAll();
+                    authz.requestMatchers("/v1/tiles/**").permitAll();
                     authz.requestMatchers("/v1/auth/register").permitAll();
                     authz.requestMatchers("/v1/auth/login").permitAll();
                     authz.requestMatchers("/v1/auth/registration_confirm").permitAll();

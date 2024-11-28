@@ -2,6 +2,7 @@ package org.hikingdev.microsoft_hackathon;
 
 import org.hikingdev.microsoft_hackathon.event_handling.MapEventSerializer;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
+import org.hikingdev.microsoft_hackathon.map_layer.TileSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +57,15 @@ public class RedisConfig {
         template.setConnectionFactory(redisConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new MapEventSerializer());
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, byte[]> byteArrayRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, byte[]> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setKeySerializer(new StringRedisSerializer()); // Key serializer (e.g., String)
+        template.setValueSerializer(new TileSerializer()); // Value serializer for byte arrays
         return template;
     }
 }

@@ -47,4 +47,7 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
 
     @Query(value = "EXEC GetTrailsAfterOffset @offset = :offset, @limit = :limit", nativeQuery = true)
     List<Trail> getTrailsAfterOffset(int offset, int limit);
+
+    @Query(value = "EXEC GetTrailsByEventIdAndCountry @event_id = :event_id, @country = :country", nativeQuery = true)
+    List<Trail> findTrailsByEventIdAndCountry(String event_id, String country);
 }

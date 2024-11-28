@@ -212,7 +212,7 @@ public class EventRepository implements IEventRepository {
     }
 
     @Transactional
-    public void deleteEventsNotInList(List<String> idsToKeep, String country) {
+    public Set<MapEvent> deleteEventsNotInList(List<String> idsToKeep, String country) {
         // get list of ids from sql database
         List<Object[]> objEvents = this.iEventJpaRepository.findByEventIdsAndCountry(idsToKeep, country);
         List<MapEvent> events = objEvents.stream().map(this.mapEventMapper::map).toList();
@@ -259,12 +259,12 @@ public class EventRepository implements IEventRepository {
                 redisTemplate.opsForZSet().remove(EVENTS_KEY, eventsToDelete.toArray());
             } catch (Exception e){
                 logger.error("Error during Redis Operation: " + e.getMessage());
-                return;
+                return new HashSet<>();
             }
         }
 
         // delete ids in raw events and events
-        eventsToDelete.forEach(event -> {
+        for (MapEvent event: eventsToDelete){
             try {
                 logger.info("Delete {} / {}", event.getEvent_id(), event.getId());
                 this.iEventJpaRepository.deleteByIdAndCountry(event.getEvent_id(), event.getCountry());
@@ -272,10 +272,12 @@ public class EventRepository implements IEventRepository {
                 if (event.getCountry().equals("CH")){
                     this.iTrailJpaRepository.deleteAllByTrailIdAndCountry(event.getEvent_id(), event.getCountry());
                 }
+                return eventsToDelete;
             } catch (Exception e){
                 logger.error("Error during deletion, ", e);
             }
-        });
+        }
+        return new HashSet<>();
     }
 
     public List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset){

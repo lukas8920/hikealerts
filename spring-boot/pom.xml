@@ -16,6 +16,7 @@
         <apache.commons>1.12.0</apache.commons>
         <azure.keyvault.version>4.0.0</azure.keyvault.version>
         <azure.queue.version>12.23.0</azure.queue.version>
+        <geotools.version>22.2</geotools.version>
         <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
         <jedis.client.version>4.4.8</jedis.client.version>
@@ -28,6 +29,7 @@
         <retrofit.version>2.11.0</retrofit.version>
         <springdoc.version>2.6.0</springdoc.version>
         <sqlserver.version>12.8.1.jre11</sqlserver.version>
+        <vector.tile.version>3.1.0</vector.tile.version>
     </properties>
 
     <dependencies>
@@ -185,6 +187,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
+        </dependency>
+
+        <!-- Tile Generation Library -->
+        <dependency>
+            <groupId>com.wdtinc</groupId>
+            <artifactId>mapbox-vector-tile</artifactId>
+            <version>${vector.tile.version}</version>
         </dependency>
     </dependencies>
 

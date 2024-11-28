@@ -11,5 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Message {
     private String id;
+    private String country;
     private String message;
+
+    public Message(String id, String message){
+        this.id = id;
+        this.message = message;
+    }
 }

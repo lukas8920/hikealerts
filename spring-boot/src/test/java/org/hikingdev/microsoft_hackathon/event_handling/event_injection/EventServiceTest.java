@@ -140,7 +140,7 @@ public class EventServiceTest {
 
         OpenAiEvent openAiEvent = new OpenAiEvent();
         when(openAiService.sendOpenAiRequest(any())).thenReturn(openAiEvent);
-        when(iEventInjection.injectEvent(List.of(openAiEvent))).thenReturn(List.of(new Message("1L", "test")));
+        when(iEventInjection.injectEvent(List.of(openAiEvent))).thenReturn(List.of(new Message("1L", "xx", "test")));
 
         MessageResponse message = eventService.publishEvent(country, title, description, null, null);
 

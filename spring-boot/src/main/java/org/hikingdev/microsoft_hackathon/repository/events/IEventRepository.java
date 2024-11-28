@@ -7,11 +7,12 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public interface IEventRepository {
     void save(Event event);
     List<MapEvent> findEvents(int offset, int limit);
-    void deleteEventsNotInList(List<String> idsToKeep, String country);
+    Set<MapEvent> deleteEventsNotInList(List<String> idsToKeep, String country);
     void deleteByOpenAiEvent(OpenAiEvent openAiEvent);
     List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset);
     boolean deleteByIdAndPublisher(Long eventId, Long publisherId);
