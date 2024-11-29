@@ -33,7 +33,6 @@ public class TileUtils {
             Map<String, Object> properties = new HashMap<>();
             properties.put("name", trail.getTrailname());
             properties.put("id", trail.getId());
-            trail.getLineString().setUserData(properties);
 
             TileGeomResult tileGeom = JtsAdapter.createTileGeom(
                     trail.getLineString(),
@@ -45,13 +44,59 @@ public class TileUtils {
             MvtLayerProps layerProps = new MvtLayerProps();
             IUserDataConverter userDataConverter = new UserDataKeyValueMapConverter();
             List<VectorTile.Tile.Feature> features = JtsAdapter.toFeatures(tileGeom.mvtGeoms, layerProps, userDataConverter);
-            layerBuilder.addAllFeatures(features);
-            MvtLayerBuild.writeProps(layerBuilder, layerProps);
+            if (features.size() > 0){
+                VectorTile.Tile.Feature feature = addPropertiesToFeature(features.get(0), layerBuilder, properties);
+                layerBuilder.addAllFeatures(List.of(feature));
+            }
         });
 
         tileBuilder.addLayers(layerBuilder.build());
         VectorTile.Tile mvt = tileBuilder.build();
         return mvt.toByteArray();
+    }
+
+    static VectorTile.Tile.Feature addPropertiesToFeature(VectorTile.Tile.Feature feature,
+                                                   VectorTile.Tile.Layer.Builder layerBuilder,
+                                                   Map<String, Object> properties) {
+        VectorTile.Tile.Feature.Builder featureBuilder = feature.toBuilder();
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            // Find or add key index
+            int keyIndex = layerBuilder.getKeysList().indexOf(key);
+            if (keyIndex == -1) {
+                layerBuilder.addKeys(key);
+                keyIndex = layerBuilder.getKeysList().size() - 1;
+            }
+
+            // Find or add value index
+            int valueIndex = -1;
+            for (int i = 0; i < layerBuilder.getValuesList().size(); i++) {
+                if (layerBuilder.getValuesList().get(i).getStringValue().equals(value)) {
+                    valueIndex = i;
+                    break;
+                }
+            }
+            if (valueIndex == -1) {
+                VectorTile.Tile.Value.Builder builder = VectorTile.Tile.Value.newBuilder();
+                if (value instanceof String){
+                    builder.setStringValue((String) value);
+                } else if (value instanceof Long){
+                    builder.setIntValue((Long) value);
+                }
+                VectorTile.Tile.Value newValue = builder.build();
+                layerBuilder.addValues(newValue);
+                valueIndex = layerBuilder.getValuesList().size() - 1;
+            }
+
+            // Add the new key-value pair to the feature's tags
+            featureBuilder.addTags(keyIndex);
+            featureBuilder.addTags(valueIndex);
+        }
+
+        return featureBuilder.build();
     }
 
     public static LineString transformLineString(Geometry geometry){
