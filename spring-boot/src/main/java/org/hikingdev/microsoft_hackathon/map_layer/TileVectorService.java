@@ -83,19 +83,31 @@ public class TileVectorService extends BaseScheduler {
                             System.gc();
                         }
 
-                        this.executorService.submit(() -> {
-                            try {
-                                executorService.schedule(() -> {
-                                    if (!interrupted_flag){
-                                        try {
-                                            this.generateTile(tileGenerator, finalX, finalY, finalZoomLevel);
-                                        } catch (Exception e){
-                                            logger.error("Error while parsing {}, {}, {}. But resume...", finalZoomLevel, finalX, finalY, e);
-                                        }
-                                    }}, 20, TimeUnit.SECONDS);
-                            } catch (Exception timeout){
-                                logger.warn("Tile Vector timeout for {}, {}, {}", finalZoomLevel, finalX, finalY);
-                            }});
+                        ListenableFutureTask<Void> task = new ListenableFutureTask<>(() -> {
+                            if (!interrupted_flag){
+                                try {
+                                    this.generateTile(tileGenerator, finalX, finalY, finalZoomLevel);
+                                } catch (Exception e){
+                                    logger.error("Error while parsing {}, {}, {}. But resume...", finalZoomLevel, finalX, finalY, e);
+                                }
+                            }
+                            return null;
+                        });
+
+                        final ScheduledFuture<?> scheduledCancel = executorService.schedule(() -> {
+                            boolean flag = task.cancel(true);
+                            if (flag){
+                                logger.error("Stopped execution of thread for {}, {}, {}.", finalX, finalY, finalZoomLevel);
+                            }
+                        }, 20, TimeUnit.SECONDS);
+
+                        task.addListener(() -> {
+                            if (!task.isCancelled() && task.isDone()) {
+                                scheduledCancel.cancel(true);
+                            }
+                        });
+
+                        executorService.submit(task);
                     }
                 }
                 logger.info("Next zoom level");
@@ -143,5 +155,24 @@ public class TileVectorService extends BaseScheduler {
         trails.clear();
         logger.info("Fetched {} trails", lineStrings.size());
         return new TileGenerator(lineStrings);
+    }
+
+    static class ListenableFutureTask<V> extends FutureTask<V> {
+        private Runnable listener;
+
+        public ListenableFutureTask(Callable<V> callable) {
+            super(callable);
+        }
+
+        public void addListener(Runnable listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        protected void done() {
+            if (listener != null) {
+                listener.run();
+            }
+        }
     }
 }
