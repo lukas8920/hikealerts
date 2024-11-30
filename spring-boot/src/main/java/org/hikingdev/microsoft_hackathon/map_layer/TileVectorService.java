@@ -71,7 +71,6 @@ public class TileVectorService extends BaseScheduler {
                 int maxTileIndex = (int) Math.pow(2, zoomLevel); // Number of tiles in one direction at this zoom level
                 for (int x = 0; x < maxTileIndex; x++) {
                     for (int y = 0; y < maxTileIndex; y++) {
-                        // Call your tile generation method here
                         int finalZoomLevel = zoomLevel;
                         int finalY = y;
                         int finalX = x;
@@ -82,6 +81,8 @@ public class TileVectorService extends BaseScheduler {
                                     if (!interrupted_flag){
                                         try {
                                             this.generateTile(tileGenerator, finalX, finalY, finalZoomLevel);
+                                            // trigger garbage collector
+                                            System.gc();
                                         } catch (Exception e){
                                             logger.error("Error while parsing {}, {}, {}. But resume...", finalZoomLevel, finalX, finalY, e);
                                         }

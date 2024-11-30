@@ -49,6 +49,7 @@ public class TileUtils {
                 layerBuilder.addAllFeatures(List.of(feature));
             }
         });
+        trails.clear();
 
         tileBuilder.addLayers(layerBuilder.build());
         VectorTile.Tile mvt = tileBuilder.build();
