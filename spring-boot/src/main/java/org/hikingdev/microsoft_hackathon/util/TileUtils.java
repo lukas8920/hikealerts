@@ -49,7 +49,8 @@ public class TileUtils {
                 layerBuilder.addAllFeatures(List.of(feature));
             }
         });
-        trails.clear();
+        // indicate that trails should be cleared by garbage collector
+        trails = null;
 
         tileBuilder.addLayers(layerBuilder.build());
         VectorTile.Tile mvt = tileBuilder.build();
