@@ -77,7 +77,7 @@ public class TileVectorService extends BaseScheduler {
                         int finalY = y;
                         int finalX = x;
 
-                        if((counter % 5000000) == 0){
+                        if((counter % 10000000) == 0){
                             // trigger garbage collector
                             logger.info("run garbage collector");
                             System.gc();
