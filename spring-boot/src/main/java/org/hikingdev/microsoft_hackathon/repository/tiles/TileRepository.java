@@ -26,7 +26,7 @@ public class TileRepository implements ITileRepository {
     public void save(Tile tile) {
         try {
             this.tileRepository.opsForHash().put(tile.getZoom(), tile.getTileKey(), tile.getTile());
-            this.tileRepository.expire(tile.getZoom(), Duration.ofHours(48));
+            this.tileRepository.expire(tile.getZoom(), Duration.ofHours(56));
         } catch (Exception e){
             logger.error("Error while saving.", e);
         }
