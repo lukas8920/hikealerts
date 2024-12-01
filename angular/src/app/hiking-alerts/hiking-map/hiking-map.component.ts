@@ -1,11 +1,10 @@
 import {Component, OnInit, Renderer2} from '@angular/core';
-import {Marker, MarkerOptions, Polyline, geoJSON, tooltip, latLng,
-  latLngBounds, tileLayer, LatLngExpression} from 'leaflet';
+import {latLng, latLngBounds, LatLngExpression, Marker, MarkerOptions, Polyline, tileLayer} from 'leaflet';
+import 'leaflet.vectorgrid';
 import 'leaflet.markercluster';
 import {ApiService} from '../../_service/api.service';
 import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
-import {inflate} from 'pako';
 import {SharedOverlayService} from '../shared-overlay.service';
 import {SharedAppService} from '../../shared-app.service';
 import {Icon} from './icon';
@@ -26,8 +25,12 @@ class CustomMarker extends Marker {
   standalone: true
 })
 export class HikingMapComponent implements OnInit {
+  vectorTileUrl = 'https://hiking-alerts.org:8080/v1/tiles/{z}/{x}/{y}.pbf';
+
+  vectorGridLayer: any;
   map: any;
   markerClusterGroup: any;
+  currentTooltip: any;
 
   private loadedMarkers: Map<string, Event> = new Map<string, Event>(); // Track loaded markers
   private offset = 0; // Initial offset for chunking
@@ -53,17 +56,15 @@ export class HikingMapComponent implements OnInit {
     this.initializeMap();
     this.fetchMarkers();
 
+    this.addVectorTiles();
+
     this.sharedAppService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
     this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating, error => console.log(error));
 
     // Update visible markers when the map stops moving (panning or zooming)
-    this.map.on('moveend', () => {
-      this.updateVisibleMarkers(false);
-    });
-    // Fetch the GeoJSON data and add it to the map
-    this.apiService.getGeoJsonLayer().subscribe(geoJSON => this.addGeoJsonData(geoJSON), error => console.log(error));
+    this.map.on('moveend', () => this.updateVisibleMarkers(false));
   }
 
   loadCSSFiles(){
@@ -77,7 +78,8 @@ export class HikingMapComponent implements OnInit {
   loadScripts(){
     this.addScripts([
       {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js', integrity: 'sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg=='},
-      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js', integrity: 'sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=='}
+      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js', integrity: 'sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=='},
+      {scriptUrl: 'https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.min.js', integrity: null}
     ]);
   }
 
@@ -90,13 +92,15 @@ export class HikingMapComponent implements OnInit {
     });
   }
 
-  private addScripts(scripts: {scriptUrl: string, integrity: string}[]): void {
+  private addScripts(scripts: {scriptUrl: string, integrity: string | null}[]): void {
     scripts.forEach((s) => {
       if (!this.isScriptLoaded(s.scriptUrl)) {
         const script = this.renderer.createElement('script');
         script.type = 'text/javascript';
         script.src = s.scriptUrl;
-        script.integrity = s.integrity;
+        if (s.integrity != null){
+          script.integrity = s.integrity;
+        }
         script.async = true;
         script.defer = true;
         this.renderer.appendChild(document.body, script);
@@ -127,7 +131,7 @@ export class HikingMapComponent implements OnInit {
 
       // Add OpenStreetMap tile layer
       tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+        maxZoom: 13,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }).addTo(this.map);
 
@@ -143,37 +147,54 @@ export class HikingMapComponent implements OnInit {
 
       // Add the cluster group to the map
       this.map.addLayer(this.markerClusterGroup);
+      this.map.on('zoomend', () => this.addVectorTiles());
     }
   }
 
-  addGeoJsonData(geoJsonData: any): void {
-    const decompressedString = inflate(new Uint8Array(geoJsonData), { to: 'string' });
-    const decompressedGeoJsonData = JSON.parse(decompressedString) as GeoJSON.FeatureCollection
-    const geoJsonLayer =  geoJSON(decompressedGeoJsonData, {
-      style: {
-        color: 'red',
-        weight: 2,
-      },
-      onEachFeature: (feature, layer) => {
-        // add trail id to the reference map for the markers
-        const id = feature.properties.id;
-        if (layer instanceof Polyline) {
-          this.linestringLayers.set(id, layer);
-        }
+  addVectorTiles(): void {
+    const self = this;
+    // Check if zoom level is between 12 and 15
+    var zoomLevel = this.map.getZoom();
+    if (zoomLevel >= 7 && zoomLevel <= 13) {
+      // If the vector grid layer doesn't exist yet, add it
+      if (!this.vectorGridLayer) {
+        this.vectorGridLayer = (this.leaflet as any).vectorGrid.protobuf(this.vectorTileUrl, {
+          minZoom: 7,
+          vectorTileLayerStyles: {
+            'trail_layer': {
+              color: 'red',
+              weight: 2
+            }
+          },
+          interactive: true,
+          getFeatureId: (feature: any) => feature.properties.id
+        }).addTo(this.map);
+        this.vectorGridLayer.on('mouseover', function(e: any) {
+          var properties = e.layer.properties;  // Access feature properties (tags)
+          console.log("mouseover");
 
-        // Show the 'name' property on hover
-        layer.on('mouseover', (e) => {
-          const tooltip = this.leaflet.tooltip()
-            .setContent(feature.properties.trail_name)
+          // Example: Show a popup with a specific tag value
+          var name = properties.name || 'Unknown';
+          self.currentTooltip = self.leaflet.tooltip()
+            .setContent(name)
             .setLatLng(e.latlng)
-            .addTo(this.map);
-          layer.on('mouseout', () => {
-            this.map.removeLayer(tooltip);
-          });
+            .addTo(self.map);
+        });
+        this.vectorGridLayer.on('mouseout', () => {
+          if (self.currentTooltip){
+            self.map.removeLayer(self.currentTooltip);
+            self.currentTooltip = null;
+          }
         });
       }
-    });
-    geoJsonLayer.addTo(this.map);
+    } else {
+      // Remove the vector grid layer if zoom level is outside range
+      if (this.vectorGridLayer) {
+        this.map.removeLayer(this.vectorGridLayer);
+        this.vectorGridLayer = null;
+        self.currentTooltip = null;
+      }
+    }
   }
 
   fetchMarkers(): void {
@@ -202,10 +223,9 @@ export class HikingMapComponent implements OnInit {
         // Open popup on hover
         markerInstance.on('mouseover', function () {
           event.trail_ids.forEach(lineId => {
-            const lineLayer = self.linestringLayers.get(lineId);
-            if (lineLayer) {
-              lineLayer.setStyle({ color: 'blue' }); // Highlight color
-            }
+            self.vectorGridLayer.setFeatureStyle(lineId, {
+              color: 'blue'
+            });
           });
           markerInstance.openPopup();
         });
@@ -213,10 +233,7 @@ export class HikingMapComponent implements OnInit {
         // Close popup when hover stops
         markerInstance.on('mouseout', function () {
           event.trail_ids.forEach(lineId => {
-            const lineLayer = self.linestringLayers.get(lineId);
-            if (lineLayer) {
-              lineLayer.setStyle({ color: 'red' }); // Original color
-            }
+            self.vectorGridLayer.resetFeatureStyle(lineId)
           });
           markerInstance.closePopup();
         });
