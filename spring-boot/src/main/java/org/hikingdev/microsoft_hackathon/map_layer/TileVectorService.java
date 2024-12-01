@@ -24,7 +24,7 @@ public class TileVectorService extends BaseScheduler {
     private static final Object lock = new Object();
 
     public static final int MIN_ZOOM = 7;
-    public static final int MAX_ZOOM = 13;
+    public static final int MAX_ZOOM = 14;
 
     private final ScheduledExecutorService executorService;
     private final ITrailRepository iTrailRepository;
