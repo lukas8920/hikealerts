@@ -3,7 +3,6 @@ package org.hikingdev.microsoft_hackathon.event_handling.event_injection;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
-import org.hikingdev.microsoft_hackathon.map_layer.MapLayerService;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.EventRepository;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 public class EventInjectionTest {
     private static EventInjection eventInjection;
-    private static MapLayerService mapLayerService;
     private static TileVectorService tileVectorService;
     private static IEventRepository iEventRepository;
     private static ITrailRepository iTrailRepository;
@@ -28,10 +26,9 @@ public class EventInjectionTest {
     @BeforeAll
     public static void setup(){
         iEventRepository = mock(EventRepository.class);
-        mapLayerService = mock(MapLayerService.class);
         tileVectorService = mock(TileVectorService.class);
         iTrailRepository = mock(ITrailRepository.class);
-        eventInjection = new EventInjection(null, iEventRepository, tileVectorService, iTrailRepository, null, mapLayerService);
+        eventInjection = new EventInjection(null, iEventRepository, tileVectorService, iTrailRepository, null);
     }
 
     @Test

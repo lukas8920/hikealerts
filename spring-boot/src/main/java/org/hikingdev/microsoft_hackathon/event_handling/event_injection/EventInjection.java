@@ -5,8 +5,6 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
-import org.hikingdev.microsoft_hackathon.map_layer.MapLayerService;
-import org.hikingdev.microsoft_hackathon.map_layer.Tile;
 import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,18 +33,16 @@ public class EventInjection implements IEventInjection {
     protected final IEventRepository iEventRepository;
     protected final ITrailRepository iTrailRepository;
     protected final IRegionRepository iRegionRepository;
-    private final MapLayerService mapLayerService;
     private final TileVectorService tileVectorService;
 
     @Autowired
     public EventInjection(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, TileVectorService tileVectorService,
-                          ITrailRepository iTrailRepository, IRegionRepository iRegionRepository, MapLayerService mapLayerService){
+                          ITrailRepository iTrailRepository, IRegionRepository iRegionRepository){
         this.tileVectorService = tileVectorService;
         this.iRawEventRepository = iRawEventRepository;
         this.iEventRepository = iEventRepository;
         this.iTrailRepository = iTrailRepository;
         this.iRegionRepository = iRegionRepository;
-        this.mapLayerService = mapLayerService;
     }
 
     public List<Message> injectEvent(List<OpenAiEvent> openAiEvents){
@@ -91,7 +86,6 @@ public class EventInjection implements IEventInjection {
         // request geojson layer update if there have been events added to the db
         if (errorMessages.size() != openAiEvents.size()){
             logger.info("Updating geojson file due to event changes ...");
-            this.mapLayerService.requestGeoJsonFileUpdate();
 
             List<byte[]> trails = this.successfulTrails(openAiEvents, errorMessages);
             List<PbfTile> pbfTiles = this.inverseTileCoordinates(trails);
