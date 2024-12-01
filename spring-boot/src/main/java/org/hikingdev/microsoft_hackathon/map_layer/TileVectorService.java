@@ -117,7 +117,7 @@ public class TileVectorService extends BaseScheduler {
                 long end_timestamp = System.currentTimeMillis();
                 long diff = (end_timestamp - start_timestamp) / 60000;
                 logger.info("TileVectorService finished refreshing the cache and goes to sleep - {} minutes", diff);
-                TimeUnit.HOURS.sleep(36);
+                TimeUnit.HOURS.sleep(24);
             } catch (InterruptedException e){
                 logger.info("TileVectorService has been interrupted.");
                 interrupted_flag = true;
