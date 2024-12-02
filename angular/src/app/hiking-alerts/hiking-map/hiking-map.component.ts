@@ -77,9 +77,7 @@ export class HikingMapComponent implements OnInit {
 
   loadScripts(){
     this.addScripts([
-      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js', integrity: 'sha512-OFs3W4DIZ5ZkrDhBFtsCP6JXtMEDGmhl0QPlmWYBJay40TT1n3gt2Xuw8Pf/iezgW9CdabjkNChRqozl/YADmg=='},
-      {scriptUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js', integrity: 'sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=='},
-      {scriptUrl: 'https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.min.js', integrity: null}
+      'https://unpkg.com/leaflet.vectorgrid@1.3.0/dist/Leaflet.VectorGrid.bundled.min.js'
     ]);
   }
 
@@ -92,15 +90,12 @@ export class HikingMapComponent implements OnInit {
     });
   }
 
-  private addScripts(scripts: {scriptUrl: string, integrity: string | null}[]): void {
-    scripts.forEach((s) => {
-      if (!this.isScriptLoaded(s.scriptUrl)) {
+  private addScripts(scriptUrls: string[]): void {
+    scriptUrls.forEach((s) => {
+      if (!this.isScriptLoaded(s)) {
         const script = this.renderer.createElement('script');
         script.type = 'text/javascript';
-        script.src = s.scriptUrl;
-        if (s.integrity != null){
-          script.integrity = s.integrity;
-        }
+        script.src = s;
         script.async = true;
         script.defer = true;
         this.renderer.appendChild(document.body, script);
