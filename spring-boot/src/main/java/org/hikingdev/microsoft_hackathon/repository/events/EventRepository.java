@@ -152,7 +152,7 @@ public class EventRepository implements IEventRepository {
             logger.info("Fetched events from {} to {} via MS SQL.", offset, limit);
             return fetchedMapEvents;
         } else {
-            logger.info("Fetched events from {} to {} via Redis.", offset, limit);
+            logger.debug("Fetched events from {} to {} via Redis.", offset, limit);
         }
 
         return List.copyOf(mapEvents);

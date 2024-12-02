@@ -39,7 +39,7 @@ public class EventController {
     @GetMapping("/pull")
     @Hidden
     public ResponseEntity<List<MapEvent>> getEventData(@RequestParam int offset, @RequestParam int limit) throws BadRequestException {
-        logger.info("Request event data - offset: " + offset + " - limit: " + limit);
+        logger.debug("Request event data - offset: " + offset + " - limit: " + limit);
         List<MapEvent> mapEvents = this.eventService.pullData(offset, limit);
         return ResponseEntity.ok(mapEvents);
     }
