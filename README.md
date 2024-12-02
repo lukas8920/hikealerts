@@ -68,3 +68,8 @@ Run on server:
 10) Update host connection details in docker-compose file<br>
     https://github.com/lukas8920/hikealerts/tree/main/docker-compose.yml1
 11) Run docker-compose file
+
+## 1.4 Licenses
+This project is licensed under the **MIT License**. See the [https://github.com/lukas8920/hikealerts/blob/main/LICENSE](LICENSE) file for details.
+
+This project uses third-party libraries that have their own licenses. For a complete list of dependencies and their licenses, please refer to the [https://github.com/lukas8920/hikealerts/blob/main/THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES) file.
