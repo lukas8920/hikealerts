@@ -33,7 +33,7 @@ export class AppComponent implements AfterViewInit {
 
   ngOnInit(): void {
     this.sharedAppService.isLoggedIn = !!this.tokenStorageService.getToken();
-    this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating);
+    this.sharedAppService.isNavigating$.subscribe(isNavigating => setTimeout(() => this.isNavigating = isNavigating, 0));
 
     if (this.sharedAppService.isLoggedIn){
       this.tokenStorageService.getUser();
