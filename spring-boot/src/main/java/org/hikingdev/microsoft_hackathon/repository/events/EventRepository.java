@@ -110,7 +110,7 @@ public class EventRepository implements IEventRepository {
 
                 offset += 100;
                 mapEvents = findAllByOffsetAndLimit(offset, 100);
-                logger.info("Retrieved next {} events.", mapEvents.size());
+                logger.debug("Retrieved next {} events.", mapEvents.size());
             }
         } catch (Exception e){
             logger.error("Error while persisting", e);
@@ -165,7 +165,7 @@ public class EventRepository implements IEventRepository {
         query.setMaxResults(limit);
 
         List<Object[]> objects = query.getResultList();
-        logger.info("Fetched {} events with offset {}.", objects.size(), offset);
+        logger.debug("Fetched {} events with offset {}.", objects.size(), offset);
 
         return objects.stream().map(this.mapEventMapper::map).collect(Collectors.toList());
     }
