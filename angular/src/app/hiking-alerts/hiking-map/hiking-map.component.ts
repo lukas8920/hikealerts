@@ -166,7 +166,6 @@ export class HikingMapComponent implements OnInit {
         }).addTo(this.map);
         this.vectorGridLayer.on('mouseover', function(e: any) {
           var properties = e.layer.properties;  // Access feature properties (tags)
-          console.log("mouseover");
 
           // Example: Show a popup with a specific tag value
           var name = properties.name || 'Unknown';
