@@ -12,13 +12,19 @@ import org.locationtech.jts.geom.Polygon;
 import java.util.List;
 
 public class USInjector extends RegionInjector {
+    private static final String URL = "https://www.nps.gov/";
+
     public USInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, ITrailRepository iTrailRepository, IRegionRepository iRegionRepository) {
         super(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
     }
 
     @Override
     protected void overwriteUrl(Event event) {
-        event.setUrl(event.getUrl());
+        if (event.getUrl() == null || event.getUrl().isEmpty()){
+            event.setUrl(URL);
+        } else {
+            event.setUrl(event.getUrl());
+        }
     }
 
     @Override

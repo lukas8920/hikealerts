@@ -11,13 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IEInjector extends BaseInjector {
+    private static final String URL = "https://www.sportireland.ie/";
+
     public IEInjector(IRawEventRepository iRawEventRepository, IEventRepository iEventRepository, ITrailRepository iTrailRepository, IRegionRepository iRegionRepository) {
         super(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
     }
 
     @Override
     protected void overwriteUrl(Event event) {
-        event.setUrl(event.getUrl());
+        if (event.getUrl() == null || event.getUrl().isEmpty()){
+            event.setUrl(URL);
+        } else {
+            event.setUrl(event.getUrl());
+        }
     }
 
     @Override
