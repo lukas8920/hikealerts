@@ -64,7 +64,7 @@ export class HikingMapComponent implements OnInit {
     this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating, error => console.log(error));
 
     // Update visible markers when the map stops moving (panning or zooming)
-    this.map.on('moveend', () => this.updateVisibleMarkers(false));
+    this.map.on('moveend', () => this.updateVisibleMarkers());
   }
 
   loadCSSFiles(){
@@ -194,7 +194,7 @@ export class HikingMapComponent implements OnInit {
   fetchMarkers(): void {
     const self = this;
     this.apiService.getEvents(this.offset, this.limit).subscribe(events =>
-      this.processResponse(events, self), error => this.updateVisibleMarkers(true), () => this.updateVisibleMarkers(true));
+      this.processResponse(events, self), error => this.updateVisibleMarkers(), () => this.updateVisibleMarkers());
   }
 
   processResponse(events: Event[], self: HikingMapComponent): void {
@@ -249,8 +249,8 @@ export class HikingMapComponent implements OnInit {
   }
 
   //init and
-  updateVisibleMarkers(isInit: boolean): void {
-    if (isInit || !this.isMobile){
+  updateVisibleMarkers(): void {
+    if (!this.isMobile){
       const bounds = this.map.getBounds();
       const visibleMarkers: Marker[] = [];
 
@@ -270,6 +270,9 @@ export class HikingMapComponent implements OnInit {
         .filter(markerKey => this.loadedMarkers.has(markerKey))
         .map(markerKey => this.loadedMarkers.get(markerKey));
 
+      this.sharedListService.updateObjectList(events);
+    } else {
+      const events = Array.from(this.loadedMarkers.values());
       this.sharedListService.updateObjectList(events);
     }
   }
