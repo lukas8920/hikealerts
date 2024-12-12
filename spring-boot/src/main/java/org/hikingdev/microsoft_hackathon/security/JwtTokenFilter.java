@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.hikingdev.microsoft_hackathon.chat.entities.Chat;
 import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.security.failures.service.LoginAttemptService;
 import org.hikingdev.microsoft_hackathon.security.failures.service.RegisterAttemptService;
@@ -46,14 +47,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
         String token = jwtTokenProvider.resolveToken(httpServletRequest);
         try {
-            if (token != null){
+            if (token != null) {
                 Claims claims = jwtTokenProvider.getClaims(token);
                 Authentication auth = jwtTokenProvider.getAuthentication(claims);
                 String allowedEndpoints = claims.get("allowedEndpoints", String.class);
 
                 String requestPath = httpServletRequest.getRequestURI();
                 logger.info("Trying to access " + requestPath);
-                if (allowedEndpoints == null || !requestPath.startsWith(allowedEndpoints)){
+                if (allowedEndpoints == null || !requestPath.startsWith(allowedEndpoints)) {
                     httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                     httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");
                     return;

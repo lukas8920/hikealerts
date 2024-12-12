@@ -59,6 +59,7 @@ public class SecurityConfig {
                     authz.requestMatchers("/v1/auth/registration_confirm").permitAll();
                     authz.requestMatchers("/v1/user/resetPassword").permitAll();
                     authz.requestMatchers("/v1/user/changePassword").permitAll();
+                    authz.requestMatchers("/v1/chat/init").permitAll();
                     authz.anyRequest().authenticated();
                 });
 

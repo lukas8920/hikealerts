@@ -1,6 +1,6 @@
 package org.hikingdev.microsoft_hackathon.event_handling;
 
-import com.azure.storage.queue.QueueClientBuilder;
+import com.azure.storage.queue.QueueClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,8 @@ import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
+import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
+import org.hikingdev.microsoft_hackathon.util.InvalidationException;
 import org.hikingdev.microsoft_hackathon.util.ScheduledService;
 import org.hikingdev.microsoft_hackathon.util.TileUtils;
 import org.locationtech.jts.geom.LineString;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RemovalService extends ScheduledService {
@@ -35,12 +38,9 @@ public class RemovalService extends ScheduledService {
     private final TileVectorService tileVectorService;
 
     @Autowired
-    public RemovalService(IEventRepository iEventRepository, @Qualifier("queueConnectionString") String queueConnectionString,
+    public RemovalService(IEventRepository iEventRepository, @Qualifier("queueClient") QueueClient queueClient,
                           ITrailRepository iTrailRepository, TileVectorService tileVectorService) {
-        super(new QueueClientBuilder()
-                .connectionString(queueConnectionString)
-                .queueName("deleted-events")
-                .buildClient());
+        super(queueClient);
 
         this.logger = LoggerFactory.getLogger(EventListenerService.class.getName());
 
@@ -86,6 +86,31 @@ public class RemovalService extends ScheduledService {
                 });
             });
             logger.info("Refreshed all tiles.");
+        }
+    }
+
+    public void removeEvent(String trail, String country, Long publisherId) throws EventNotFoundException, InvalidationException {
+        // determine trail by country
+        List<MapEvent> mapEvents = this.iEventRepository.findEventsByTrailAndCountry(trail, country);
+        if (!mapEvents.isEmpty()){
+            // filter on publisher
+            mapEvents = mapEvents.stream()
+                    .filter(mapEvent -> mapEvent.getPublisherId().equals(publisherId))
+                    .collect(Collectors.toList());
+            if (!mapEvents.isEmpty()){
+                for(MapEvent mapEvent: mapEvents){
+                    boolean flag = this.iEventRepository.deleteByIdAndPublisher(mapEvent.getId(), mapEvent.getPublisherId());
+                    if (flag) {
+                        refreshTiles(Set.of(mapEvent));
+                    } else {
+                        throw new EventNotFoundException("Event deletion for " + mapEvent.getId() + " not possible.");
+                    }
+                }
+            } else {
+                throw new InvalidationException("User is not authorized to delete events.");
+            }
+        } else {
+            throw new EventNotFoundException("No events found for " + trail + ", " + country);
         }
     }
 

@@ -17,4 +17,5 @@ public interface IEventRepository {
     List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset);
     boolean deleteByIdAndPublisher(Long eventId, Long publisherId);
     List<MapEvent> refreshCache();
+    List<MapEvent> findEventsByTrailAndCountry(String trail, String country);
 }

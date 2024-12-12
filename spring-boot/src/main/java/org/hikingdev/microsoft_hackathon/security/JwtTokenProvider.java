@@ -19,6 +19,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -35,11 +37,13 @@ public class JwtTokenProvider {
     private final UserDetailsImpl userDetails;
 
     private String encoderKey;
+    private String signalRKey;
 
     @Autowired
-    public JwtTokenProvider(UserDetailsImpl userDetails, @Qualifier("encoderKey") String encoderKey){
+    public JwtTokenProvider(UserDetailsImpl userDetails, @Qualifier("encoderKey") String encoderKey, @Qualifier("signalRKey") String signalRKey){
         this.userDetails = userDetails;
         this.encoderKey = encoderKey;
+        this.signalRKey = signalRKey;
     }
 
     @PostConstruct
@@ -65,6 +69,31 @@ public class JwtTokenProvider {
                 .signWith(key) // Sign with the Key object
                 .compact();
     }
+
+    public String generateSignalRToken(String audience, String userId) {
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        long expMillis = nowMillis + (30 * 60 * 1000);
+        Date exp = new Date(expMillis);
+
+        byte[] apiKeySecretBytes = signalRKey.getBytes(StandardCharsets.UTF_8);
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        JwtBuilder builder = Jwts.builder()
+                .setAudience(audience)
+                .setIssuedAt(now)
+                .setExpiration(exp)
+                .signWith(signingKey);
+
+        if (userId != null) {
+            builder.claim("nameid", userId);
+        }
+
+        return builder.compact();
+    }
+
 
     public String generateApiToken(Long id){
         // Create a Key instance from the encoderKey

@@ -29,6 +29,34 @@ public class Levenshtein {
         return penalizeWordFound ? levenshteinSimilarity * 0.7 : levenshteinSimilarity;
     }
 
+    // used for h2 test purposes
+    public static int levenshtein(String s, String t, int max) {
+        int sLen = s.length();
+        int tLen = t.length();
+        int[][] dist = new int[sLen + 1][tLen + 1];
+
+        // Initialize distance matrix
+        for (int i = 0; i <= sLen; i++) {
+            dist[i][0] = i;
+        }
+        for (int j = 0; j <= tLen; j++) {
+            dist[0][j] = j;
+        }
+
+        for (int i = 1; i <= sLen; i++) {
+            for (int j = 1; j <= tLen; j++) {
+                int cost = s.charAt(i - 1) == t.charAt(j - 1) ? 0 : 1;
+                dist[i][j] = Math.min(Math.min(
+                                dist[i - 1][j] + 1,          // Deletion
+                                dist[i][j - 1] + 1),         // Insertion
+                        dist[i - 1][j - 1] + cost);  // Substitution
+            }
+        }
+
+        int result = dist[sLen][tLen];
+        return result <= max ? result : -1; // Return null equivalent as -1 if greater than max
+    }
+
     private int calculateCustomLevenshtein(String word1, String word2) {
         int len1 = word1.length();
         int len2 = word2.length();

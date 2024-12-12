@@ -12,6 +12,7 @@ import org.hikingdev.microsoft_hackathon.publisher_management.repository.IPublis
 import org.hikingdev.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
 import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventJpaRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailJpaRepository;
+import org.hikingdev.microsoft_hackathon.util.TestH2Config;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.when;
 @Disabled
 @DataJpaTest
 @ActiveProfiles("mock")
-@Import({EmbeddedRedisConfig.class, RedisConfig.class})
+@Import({EmbeddedRedisConfig.class, RedisConfig.class, TestH2Config.class})
 public class EventRepositoryTest {
     @Autowired
     private EntityManager entityManager;
@@ -446,5 +447,34 @@ public class EventRepositoryTest {
         assertThat(rawEvents.size(), is(1));
 
         this.redisTemplate.opsForZSet().remove("events", mapEvent2);
+    }
+
+    @Test
+    public void testFindEventsByTrailAndCountry(){
+        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
+
+        Publisher publisher = new Publisher();
+        publisher.setId(1L);
+        publisher.setName("test");
+        Event event = new Event();
+        event.setId(1L);
+        event.setEvent_id("2L");
+        event.setPublisherId(1L);
+        event.setCountry("ZZ");
+        event.setTrailIds(List.of(1L));
+        Trail trail = new Trail();
+        trail.setId(1L);
+        trail.setTrailname("Test Trail");
+
+        this.iPublisherJpaRepository.save(publisher);
+        this.iEventJpaRepository.save(event);
+        this.iTrailJpaRepository.save(trail);
+
+        List<MapEvent> mapEvents = repository.findEventsByTrailAndCountry("Test Tra", "ZZ");
+
+        assertThat(mapEvents.size(), is(1));
+        assertThat(mapEvents.get(0).getPublisher(), is("test"));
+        assertThat(mapEvents.get(0).getCountry(), is("ZZ"));
+        assertThat(mapEvents.get(0).getTrailIds().contains(1L), is(true));
     }
 }

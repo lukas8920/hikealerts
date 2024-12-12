@@ -23,6 +23,7 @@
         <jetty.version>12.0.12</jetty.version>
         <jjwt.version>0.12.6</jjwt.version>
         <jts.version>1.20.0</jts.version>
+        <kong.version>4.0.0-RC2</kong.version>
         <lombok.version>1.18.28</lombok.version>
         <okhttp.version>4.10.0</okhttp.version>
         <redis.version>3.3.4</redis.version>
@@ -194,6 +195,18 @@
             <groupId>com.wdtinc</groupId>
             <artifactId>mapbox-vector-tile</artifactId>
             <version>${vector.tile.version}</version>
+        </dependency>
+
+        <!-- Rest library -->
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>${kong.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-object-mappers-gson</artifactId>
+            <version>${kong.version}</version>
         </dependency>
     </dependencies>
 

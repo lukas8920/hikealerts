@@ -60,6 +60,15 @@ public class RedisConfig {
         return template;
     }
 
+    @Bean(name = "chatTemplate")
+    public RedisTemplate<String, String> chatTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        return template;
+    }
+
     @Bean
     public RedisTemplate<String, byte[]> byteArrayRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, byte[]> template = new RedisTemplate<>();

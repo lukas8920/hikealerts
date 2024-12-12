@@ -89,6 +89,12 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
+    public List<MapEvent> findEventsByTrailAndCountry(String trail, String country){
+        List<Object[]> objects = this.iEventJpaRepository.findEventsByTrailAndCountry(trail, country);
+        return objects.stream().map(mapEventMapper::map).collect(Collectors.toList());
+    }
+
+    @Override
     public List<MapEvent> refreshCache(){
         List<MapEvent> outputEvents = new ArrayList<>();
         logger.info("Start cache refreshing.");

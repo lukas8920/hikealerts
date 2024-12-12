@@ -235,3 +235,12 @@ This project includes third-party dependencies. Below is a list of those depende
   https://opensource.org/license/0bsd
 
 ---
+
+## 27. Kong Unirest Library
+- **Version:** 4.0.0-RC2
+- **License:** MIT License
+- **Source:** https://github.com/Kong/unirest-java
+- **License Text:**
+  https://mit-license.org/
+
+---

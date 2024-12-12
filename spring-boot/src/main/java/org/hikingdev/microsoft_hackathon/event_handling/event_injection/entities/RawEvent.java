@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hikingdev.microsoft_hackathon.chat.entities.ChatEvent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,6 +58,15 @@ public class RawEvent {
         // set publisherId to community publisher by default
         this.publisherId = 3L;
         this.createDateTime = LocalDateTime.now();
+    }
+
+    public RawEvent(ChatEvent chatEvent, Long publisherId){
+        this.eventId = UUID.randomUUID().toString();
+        this.createDateTime = LocalDateTime.now();
+        this.country = chatEvent.getCountry();
+        this.title = chatEvent.getTitle();
+        this.description = chatEvent.getDescription();
+        this.publisherId = publisherId;
     }
 
     public String parseToJson() throws JsonProcessingException {

@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hikingdev.microsoft_hackathon.chat.entities.ChatEvent;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,4 +26,12 @@ public class OpenAiEvent {
     private String toDate;
     private String title;
     private String description;
+
+    public OpenAiEvent(ChatEvent chatEvent, String eventId){
+        this.eventId = eventId;
+        this.trailName = chatEvent.getTrailName();
+        this.country = chatEvent.getCountry();
+        this.title = chatEvent.getTitle();
+        this.description = chatEvent.getDescription();
+    }
 }

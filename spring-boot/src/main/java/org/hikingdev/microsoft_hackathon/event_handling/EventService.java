@@ -82,7 +82,7 @@ public class EventService {
         try {
             this.rawEventRepository.save(rawEvent);
             String jsonString = rawEvent.parseToJson();
-            OpenAiEvent openAiEvent = this.openAiService.sendOpenAiRequest(jsonString);
+            OpenAiEvent openAiEvent = this.openAiService.sendStructuredApiRequest(jsonString);
             logger.info("Received openai response for community request: " + title);
             List<Message> messageResponses = this.iEventInjection.injectEvent(List.of(openAiEvent));
 

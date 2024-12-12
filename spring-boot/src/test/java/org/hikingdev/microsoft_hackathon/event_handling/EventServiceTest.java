@@ -1,6 +1,8 @@
-package org.hikingdev.microsoft_hackathon.event_handling.event_injection;
+package org.hikingdev.microsoft_hackathon.event_handling;
 
 import org.hikingdev.microsoft_hackathon.event_handling.EventService;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.IEventInjection;
+import org.hikingdev.microsoft_hackathon.event_handling.event_injection.OpenAiService;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.EventResponse;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
@@ -139,7 +141,7 @@ public class EventServiceTest {
         String country = "NZ";
 
         OpenAiEvent openAiEvent = new OpenAiEvent();
-        when(openAiService.sendOpenAiRequest(any())).thenReturn(openAiEvent);
+        when(openAiService.sendStructuredApiRequest(any())).thenReturn(openAiEvent);
         when(iEventInjection.injectEvent(List.of(openAiEvent))).thenReturn(List.of(new Message("1L", "xx", "test")));
 
         MessageResponse message = eventService.publishEvent(country, title, description, null, null);

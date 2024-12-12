@@ -4,6 +4,8 @@ import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import com.azure.storage.queue.QueueClient;
+import com.azure.storage.queue.QueueClientBuilder;
 import org.hikingdev.microsoft_hackathon.security.gpg.GpgSecret;
 import org.hikingdev.microsoft_hackathon.security.gpg.GpgService;
 import org.slf4j.Logger;
@@ -30,6 +32,8 @@ public class KeyVaultProdProvider {
     private static final String queueConnectionString= "queue-connection-string";
     private static final String securityEncoderKey = "spring-security-encoder-key";
     private static final String mailPassword = "google-mail-password";
+    private static final String signalRKey = "signalr-key";
+    private static final String signalrEndpoint = "signalr-endpoint";
 
     @Value("${db.driver}")
     private String dbDriver;
@@ -89,9 +93,27 @@ public class KeyVaultProdProvider {
         return secretClient.getSecret(queueConnectionString).getValue();
     }
 
+    @Bean(name = "queueClient")
+    public QueueClient queueClient(){
+        return new QueueClientBuilder()
+                .connectionString(queueConnectionString)
+                .queueName("deleted-events")
+                .buildClient();
+    }
+
     @Bean(name = "encoderKey")
     public String encoderkey(SecretClient secretClient){
         return secretClient.getSecret(securityEncoderKey).getValue();
+    }
+
+    @Bean(name = "signalrEndpoint")
+    public String signalrEndpoint(SecretClient secretClient){
+        return secretClient.getSecret(signalrEndpoint).getValue();
+    }
+
+    @Bean(name = "signalRKey")
+    public String signalrKey(SecretClient secretClient){
+        return secretClient.getSecret(signalRKey).getValue();
     }
 
     @Bean(name = "mailPassword")

@@ -25,4 +25,12 @@ public interface IEventJpaRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url, i.trail_ids, p.copyright, p.license FROM events e JOIN publisher p ON p.id = e.publisher_id JOIN events_trail_ids i ON i.event_id = e.id WHERE e.id = :id AND p.id = :publisher", nativeQuery = true)
     List<Object[]> findByIdAndPublisher(@Param("id") Long id, @Param("publisher") Long publisher);
+
+    @Query(value = "SELECT e.id, e.title, e.description, p.name, p.status, e.create_date_time, e.mid_latitude_coordinate, e.mid_longitude_coordinate, e.event_id, e.country, e.publisher_id, e.url, i.trail_ids, p.copyright, p.license \n" +
+            "FROM events e \n" +
+            "JOIN publisher p ON p.id = e.publisher_id \n" +
+            "JOIN events_trail_ids i ON i.event_id = e.id \n" +
+            "JOIN geodata_trails t ON t.id  = i.trail_ids \n" +
+            "WHERE (dbo.Levenshtein(t.trailname, :trail, 4) <= 4 or dbo.Levenshtein(t.maplabel, :trail, 4) <= 4) AND e.country = :country", nativeQuery = true)
+    List<Object[]> findEventsByTrailAndCountry(@Param("trail") String trail, @Param("country") String country);
 }
