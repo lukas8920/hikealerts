@@ -182,7 +182,7 @@ public class ChatServiceTest {
         boolean executed = false;
 
         public TestSignalRService() {
-            super(null, null, null);
+            super(null, null, null, null);
         }
 
         @Override
