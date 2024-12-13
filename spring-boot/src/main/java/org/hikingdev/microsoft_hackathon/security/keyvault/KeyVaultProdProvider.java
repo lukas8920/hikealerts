@@ -10,6 +10,7 @@ import org.hikingdev.microsoft_hackathon.security.gpg.GpgSecret;
 import org.hikingdev.microsoft_hackathon.security.gpg.GpgService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -94,7 +95,7 @@ public class KeyVaultProdProvider {
     }
 
     @Bean(name = "queueClient")
-    public QueueClient queueClient(){
+    public QueueClient queueClient(@Qualifier("queueConnectionString") String queueConnectionString){
         return new QueueClientBuilder()
                 .connectionString(queueConnectionString)
                 .queueName("deleted-events")
