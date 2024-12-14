@@ -43,7 +43,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sharedChatService.connection.stop();
+    this.sharedChatService.connection?.stop();
   }
 
   initSignalR(): void {
