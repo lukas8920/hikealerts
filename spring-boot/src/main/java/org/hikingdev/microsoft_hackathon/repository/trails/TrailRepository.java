@@ -103,7 +103,7 @@ public class TrailRepository implements ITrailRepository {
 
     @Override
     public List<Trail> findAllTrailsByIds(List<Long> ids){
-        return this.iTrailJpaRepository.findAllById(ids);
+        return this.iTrailJpaRepository.findAllByIds(ids);
     }
 
     @Override

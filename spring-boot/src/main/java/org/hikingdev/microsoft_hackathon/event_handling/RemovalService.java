@@ -74,7 +74,7 @@ public class RemovalService extends ScheduledService {
 
             logger.info("Refresh cached tiles.");
             deletedEvents.forEach(event -> {
-                List<Trail> trails = this.iTrailRepository.findTrailsByEventIdAndCountry(event.getEvent_id(), event.getCountry());
+                List<Trail> trails = this.iTrailRepository.findAllTrailsByIds(event.getTrailIds());
                 trails.forEach(trail -> {
                     try {
                         LineString lineString = (LineString) wkbReader.read(trail.getCoordinates());
