@@ -41,7 +41,9 @@ public class NZInjector extends RegionInjector {
 
     @Override
     protected void overwriteUrl(Event event) {
-        event.setUrl(URL);
+        if (event.getPublisherId() == 2L){
+            event.setUrl(URL);
+        }
     }
 
     @Override

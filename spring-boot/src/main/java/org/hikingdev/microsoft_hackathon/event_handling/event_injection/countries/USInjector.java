@@ -20,7 +20,7 @@ public class USInjector extends RegionInjector {
 
     @Override
     protected void overwriteUrl(Event event) {
-        if (event.getUrl() == null || event.getUrl().isEmpty()){
+        if (event.getPublisherId() == 1L && (event.getUrl() == null || event.getUrl().isEmpty())){
             event.setUrl(URL);
         } else {
             event.setUrl(event.getUrl());
