@@ -5,6 +5,7 @@ import org.hikingdev.microsoft_hackathon.chat.entities.SignalRConnectionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,8 @@ public class ChatController {
         return ResponseEntity.ok().body("Processed Message");
     }
 
-    @CrossOrigin(origins = {"http://localhost:8081", "http://localhost:4200", "https://hiking-alerts.org"}, allowCredentials = "true")
+    // for test purposes, add "http://localhost:8081", "http://localhost:4200"
+    @CrossOrigin(origins = {"https://hiking-alerts.org"}, allowCredentials = "true")
     @PostMapping("/negotiate")
     public ResponseEntity<SignalRConnectionInfo> negotiate(){
         SignalRConnectionInfo signalRConnectionInfo = this.signalRService.getConnectionInfo();
