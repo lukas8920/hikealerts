@@ -50,11 +50,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (token != null) {
                 Claims claims = jwtTokenProvider.getClaims(token);
                 Authentication auth = jwtTokenProvider.getAuthentication(claims);
-                String allowedEndpoints = claims.get("allowedEndpoints", String.class);
+                List<String> allowedEndpoints = (List<String>) claims.get("allowedEndpoints");
 
                 String requestPath = httpServletRequest.getRequestURI();
                 logger.info("Trying to access " + requestPath);
-                if (allowedEndpoints == null || !requestPath.startsWith(allowedEndpoints)) {
+                if (allowedEndpoints == null || !this.isPathAllowed(requestPath, allowedEndpoints)) {
                     httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                     httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");
                     return;
@@ -71,6 +71,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    private boolean isPathAllowed(String requestPath, List<String> allowedEndpoints) {
+        for (String endpoint : allowedEndpoints) {
+            if (requestPath.startsWith(endpoint)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String getClientIP(HttpServletRequest request) {

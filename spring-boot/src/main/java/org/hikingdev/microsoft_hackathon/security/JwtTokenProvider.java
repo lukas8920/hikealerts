@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
@@ -63,7 +64,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(id.toString()) // Set the subject
                 .claim("auth", new SimpleGrantedAuthority(role.toString())) // Add custom claims
-                .claim("allowedEndpoints", "/v1/user")
+                .claim("allowedEndpoints", List.of("/v1/user", "/v1/chat/negotiate", "/v1/chat/communicate"))
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key) // Sign with the Key object
@@ -102,7 +103,7 @@ public class JwtTokenProvider {
         // Build the token directly using JwtBuilder
         return Jwts.builder()
                 .subject(id.toString()) // Set the subject
-                .claim("allowedEndpoints", "/v1/events")
+                .claim("allowedEndpoints", List.of("/v1/events"))
                 .issuedAt(new Date())
                 .signWith(key) // Sign with the Key object
                 .compact();

@@ -62,7 +62,7 @@ public class KeyTestProvider {
     public String openaiEndpoint() { return this.openaiEndpoint; }
 
     @Bean(name = "signalrEndpoint")
-    public String signalrEndpoint(SecretClient secretClient){
+    public String signalrEndpoint(){
         return this.signalrEndpoint;
     }
 }
