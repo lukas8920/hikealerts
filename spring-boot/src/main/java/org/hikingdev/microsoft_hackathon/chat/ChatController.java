@@ -29,7 +29,7 @@ public class ChatController {
         return ResponseEntity.ok().body("Processed Message");
     }
 
-    @CrossOrigin(origins = {"http://localhost:8081", "https://hiking-alerts.org"}, allowCredentials = "true")
+    @CrossOrigin(origins = {"http://localhost:8081", "http://localhost:4200", "https://hiking-alerts.org"}, allowCredentials = "true")
     @PostMapping("/negotiate")
     public ResponseEntity<SignalRConnectionInfo> negotiate(){
         SignalRConnectionInfo signalRConnectionInfo = this.signalRService.getConnectionInfo();

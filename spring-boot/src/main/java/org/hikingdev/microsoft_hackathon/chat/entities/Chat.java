@@ -11,7 +11,7 @@ public class Chat {
     private final String minTextError = "The description must be at least 5 words long. Please try again.";
     private final String intro = "Hi, let me know, if you are aware of a hiking alert.";
     private final String login = "Please log in first to use the chat";
-    private final String instruction = "Let me know, if you would like to delete or insert an alert. Please describe the situation, name the trail and country";
+    private final String instruction = "You can delete or insert an alert. Describe the situation, name the trail and country";
     private final String inputEvaluation = "Thanks for your input. Please be patient, evaluating input...";
     private final String trailNameError = "I was not able to identify a trail name from your input. Feel free to write your alert with a trail name again.";
     private final String countryError = "I can not add this alert. Currently, we only support alerts for " + supported_countries;
