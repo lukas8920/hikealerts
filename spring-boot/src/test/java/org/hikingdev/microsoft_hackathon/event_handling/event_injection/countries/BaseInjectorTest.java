@@ -44,11 +44,14 @@ public abstract class BaseInjectorTest {
 
     protected abstract void mockTestThatMatchTrailsWorksForTrail(OpenAiEvent openAiEvent, RawEvent rawEvent, Trail trail);
 
+    protected abstract void setPublisherId(RawEvent rawEvent);
+
     @Test
     public void testThatMatchTrailsWorksForTrail() throws ParseException {
         WKBWriter wkbWriter = new WKBWriter();
         RawEvent rawEvent = new RawEvent();
         rawEvent.setUnitCode("abc");
+        setPublisherId(rawEvent);
         OpenAiEvent openAiEvent = new OpenAiEvent();
         openAiEvent.setEventId("1");
         openAiEvent.setCountry(this.country);

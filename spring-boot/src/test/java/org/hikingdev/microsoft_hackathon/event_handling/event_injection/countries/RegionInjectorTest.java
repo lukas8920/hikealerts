@@ -55,6 +55,7 @@ public abstract class RegionInjectorTest extends BaseInjectorTest {
         Polygon polygon = new Polygon(linearRing, new LinearRing[]{}, geometryFactory);
 
         RawEvent rawEvent = new RawEvent();
+        setPublisherId(rawEvent);
         OpenAiEvent openAiEvent = new OpenAiEvent();
         openAiEvent.setEventId("1");
         openAiEvent.setCountry(this.country);

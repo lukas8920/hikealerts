@@ -28,6 +28,11 @@ public class NZInjectorTest extends RegionInjectorTest {
     }
 
     @Override
+    protected void setPublisherId(RawEvent rawEvent) {
+        rawEvent.setPublisherId(2L);
+    }
+
+    @Override
     protected void mockTestThatMatchTrailsWorksForTrailFoundViaRegion(RawEvent rawEvent, Region region, Trail trail) {
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
         when(iRegionRepository.findUniqueRegionName(eq("region"), eq(country))).thenReturn(List.of(region));

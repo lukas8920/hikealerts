@@ -27,6 +27,11 @@ public class CHInjectorTest extends BaseInjectorTest {
     }
 
     @Override
+    protected void setPublisherId(RawEvent rawEvent) {
+        rawEvent.setPublisherId(5L);
+    }
+
+    @Override
     protected void mockTestThatMatchTrailsQuitsForEmptyEvents(OpenAiEvent openAiEvent, RawEvent rawEvent) {
         rawEvent.setDescription("dummy. test description");
         when(iRawEventRepository.findRawEvent("1", country)).thenReturn(rawEvent);
