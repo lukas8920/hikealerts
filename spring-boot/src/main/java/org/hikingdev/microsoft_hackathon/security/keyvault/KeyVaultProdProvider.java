@@ -35,6 +35,7 @@ public class KeyVaultProdProvider {
     private static final String mailPassword = "google-mail-password";
     private static final String signalRKey = "signalr-key";
     private static final String signalrEndpoint = "signalr-endpoint";
+    private static final String openaiKey = "openai-api-key";
 
     @Value("${db.driver}")
     private String dbDriver;
@@ -124,7 +125,7 @@ public class KeyVaultProdProvider {
 
     @Bean(name = "openai_key")
     public String openaiKey(SecretClient secretClient){
-        return secretClient.getSecret("proxyai-api-key").getValue();
+        return secretClient.getSecret(openaiKey).getValue();
     }
 
     @Bean(name = "openai_endpoint")
