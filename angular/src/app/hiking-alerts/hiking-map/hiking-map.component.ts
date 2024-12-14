@@ -2,12 +2,15 @@ import {Component, OnInit, Renderer2} from '@angular/core';
 import {latLng, latLngBounds, LatLngExpression, Marker, MarkerOptions, Polyline, tileLayer} from 'leaflet';
 import 'leaflet.vectorgrid';
 import 'leaflet.markercluster';
-import {ApiService} from '../../_service/api.service';
+import {EventService} from '../../_service/event.service';
 import {Event} from '../../_service/event';
 import {SharedListService} from '../shared.list.service';
 import {SharedOverlayService} from '../shared-overlay.service';
 import {SharedAppService} from '../../shared-app.service';
 import {Icon} from './icon';
+import {ChatService} from '../../_service/chat.service';
+import {CommonModule} from '@angular/common';
+import {SharedChatService} from '../shared-chat.service';
 
 class CustomMarker extends Marker {
   id: string;
@@ -20,6 +23,7 @@ class CustomMarker extends Marker {
 
 @Component({
   selector: 'app-hiking-map',
+  imports: [CommonModule],
   templateUrl: './hiking-map.component.html',
   styleUrl: './hiking-map.component.css',
   standalone: true
@@ -40,12 +44,16 @@ export class HikingMapComponent implements OnInit {
 
   private isMobile = false;
 
+  messageCounter = 0;
+
+  isChatInit = false;
   isNavigating = false;
 
   linestringLayers: Map<number, Polyline> = new Map();
 
-  constructor(private apiService: ApiService, private sharedListService: SharedListService, private renderer: Renderer2,
-              private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService) {
+  constructor(private apiService: EventService, private sharedListService: SharedListService, private renderer: Renderer2,
+              private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService, private chatService: ChatService,
+              private sharedChatService: SharedChatService) {
     this.icon = new Icon(this.leaflet);
   }
 
@@ -61,10 +69,15 @@ export class HikingMapComponent implements OnInit {
     this.sharedAppService.isMobile$.subscribe(isMobile => {
       this.isMobile = isMobile;
     });
+    this.sharedChatService.hasUnreadMessages$.subscribe(i => {
+      this.messageCounter = i;
+      this.isChatInit = i > 0;
+    });
     this.sharedAppService.isNavigating$.subscribe(isNavigating => this.isNavigating = isNavigating, error => console.log(error));
 
     // Update visible markers when the map stops moving (panning or zooming)
     this.map.on('moveend', () => this.updateVisibleMarkers());
+    this.initChat();
   }
 
   loadCSSFiles(){
@@ -73,6 +86,13 @@ export class HikingMapComponent implements OnInit {
       'assets/MarkerCluster.Default.css',
       'assets/leaflet.css'
     ]);
+  }
+
+  initChat(){
+    this.chatService.initChat().subscribe((o: any) => {
+      this.sharedChatService.setUnreadMessages(3);
+      this.sharedChatService.setInitialMessages(o);
+    });
   }
 
   loadScripts(){
@@ -279,5 +299,10 @@ export class HikingMapComponent implements OnInit {
 
   zoomToMarker(lat: number, lng: number) {
     this.map.setView(new this.leaflet.LatLng(lat, lng), 15);
+  }
+
+  onButtonClick(): void {
+    this.sharedChatService.setChatVisibility(true);
+    this.sharedChatService.setUnreadMessages(0);
   }
 }

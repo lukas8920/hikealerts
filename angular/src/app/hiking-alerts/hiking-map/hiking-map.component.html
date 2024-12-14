@@ -3,4 +3,10 @@
   <div class="overlay-div">
     <div class="info"><span>AI can make mistakes.</span><span class="info-break"><br/></span><span>Check info via provided links.</span></div>
   </div>
+  <button mat-fab color="primary" class="floating-button" (click)="onButtonClick()">
+    <img src="assets/chat_24dp.svg" width="24" height="24" alt="chat icon" />
+  </button>
+  <div class="overlay-counter" *ngIf="isChatInit">
+    <div class="info-counter">{{messageCounter}}</div>
+  </div>
 </div>

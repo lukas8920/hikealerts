@@ -1,4 +1,4 @@
-<div>
+<div class="body">
   <div class="secondary-toolbar">
     <button
       matTooltip="Switch to list"
@@ -29,5 +29,8 @@
   <div (click)="$event.stopPropagation()" class="overlay" [style.display]="isOverlayVisible ? 'flex' : 'none'">
     <img src="assets/close.svg" alt="close" height="36" width="36" class="close" (click)="hideOverlay()"/>
     <ng-container #overlay_container/>
+  </div>
+  <div (click)="$event.stopPropagation()" class="chat-overlay" [style.display]="isChatVisible ? 'flex' : 'none'">
+    <ng-container #chat_container/>
   </div>
 </div>

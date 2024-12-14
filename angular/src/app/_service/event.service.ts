@@ -8,7 +8,7 @@ const headers = new HttpHeaders({'Content-Type': 'application/json'});
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class EventService {
   constructor(private http: HttpClient){}
 
   getEvents(offset: Number, limit: Number): Observable<Event[]> {

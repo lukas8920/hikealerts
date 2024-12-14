@@ -33,5 +33,6 @@ export class SharedAppService {
       this.router.navigateByUrl("/hiking-alerts")
         .then(() => {window.location.reload()});
     }
+    //todo end signalr connection
   }
 }

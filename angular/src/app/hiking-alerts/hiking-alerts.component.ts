@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, Injector, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {SharedOverlayService} from './shared-overlay.service';
 import {SharedAppService} from '../shared-app.service';
+import {SharedChatService} from './shared-chat.service';
 
 @Component({
   selector: 'app-hiking-alerts',
@@ -11,17 +12,20 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
   @ViewChild('map_container', { read: ViewContainerRef }) map_container!: ViewContainerRef;
   @ViewChild('list_container', { read: ViewContainerRef }) list_container!: ViewContainerRef;
   @ViewChild('overlay_container', { read: ViewContainerRef }) overlay_container!: ViewContainerRef;
+  @ViewChild('chat_container', { read: ViewContainerRef }) chat_container!: ViewContainerRef;
 
   showMap: boolean = true;
   isMobile: boolean = false;
   isOverlayVisible: boolean = false;
   isOverlayOpening: boolean = true;
+  isChatVisible: boolean = false;
+  isChatOpening: boolean = true;
 
   mapRef: any;
   listRef: any;
 
   constructor(private sharedOverlayService: SharedOverlayService, private sharedAppService: SharedAppService,
-              private injector: Injector) {
+              private injector: Injector, private sharedChatService: SharedChatService) {
   }
 
   // Handle card click and pass the coordinates to Leaflet map
@@ -40,6 +44,13 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
       this.isOverlayOpening = true;
       setTimeout(() => {
         this.isOverlayOpening = false;
+      }, 0);
+    });
+    this.sharedChatService.isChatVisible$.subscribe(visible => {
+      this.isChatVisible = visible;
+      this.isChatOpening = true;
+      setTimeout(() => {
+        this.isChatOpening = false;
       }, 0);
     });
   }
@@ -76,11 +87,17 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
     //add overlay component
     const { OverlayEventComponent } = await import('./overlay-event/overlay-event.component');
     this.overlay_container.createComponent(OverlayEventComponent, {injector: this.injector});
+
+    const { ChatComponent } = await import('./chat/chat.component');
+    this.chat_container.createComponent(ChatComponent, { injector: this.injector })
   }
 
   hideOverlay(): void {
     if (this.isMobile && !this.isOverlayOpening){
       this.isOverlayVisible = false;
+    }
+    if (!this.isChatOpening){
+      this.sharedChatService.setChatVisibility(false);
     }
   }
 
@@ -88,6 +105,7 @@ export class HikingAlertsComponent implements OnInit, AfterViewInit {
     this.showMap = !this.showMap;
     if (!this.showMap){
       this.isOverlayVisible = false;
+      this.isChatVisible = false;
     }
   }
 }

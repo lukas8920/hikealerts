@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ApiService } from './api.service';
+import { SharedChatService } from './shared-chat.service';
 
-describe('ApiService', () => {
-  let service: ApiService;
+describe('SharedChatService', () => {
+  let service: SharedChatService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ApiService);
+    service = TestBed.inject(SharedChatService);
   });
 
   it('should be created', () => {

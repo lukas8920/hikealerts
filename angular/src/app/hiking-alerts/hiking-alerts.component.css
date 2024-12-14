@@ -1,3 +1,7 @@
+.body {
+  position: relative;
+}
+
 .left {
   height: calc(100svh - 126px);
   width: 22%;
@@ -59,6 +63,14 @@
   align-items: center;
   display: flex;
   border-top: #74777FFF 1px solid;
+}
+
+.chat-overlay {
+  position: absolute;
+  right: 0.5%;
+  bottom: 0;
+  z-index: 1500;
+  background-color: #f9f9f9;
 }
 
 /* Media query for mobile screens */

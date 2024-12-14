@@ -22,12 +22,45 @@
   border-radius: 15px;
 }
 
+.overlay-counter {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 65px;
+  right: 9px;
+  font-size: 20px;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #cc3939d9;
+  opacity: 0.95;
+  font-weight: bold;
+  color: white;
+}
+
+.info-counter {
+  padding: 4px;
+}
+
 .info {
   padding: 4px;
 }
 
 .info-break {
   display: None;
+}
+
+.floating-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #2196F3;
+  border: none;
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  z-index: 1000;
 }
 
 @media screen and (max-width: 600px) {

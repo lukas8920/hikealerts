@@ -1,0 +1,21 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <img src="assets/chevron_left.svg" width="36" height="36" alt="chevron left" (click)="closeChat()"/>
+    <h3>Chat</h3>
+  </div>
+
+  <div class="chat-messages" #chatContainer>
+    <div *ngFor="let message of messages" [ngClass]="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
+      <p [ngClass]="{'user-content': message.sender === 'user', 'bot-content': message.sender === 'bot'}">{{ message.content }}</p>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input
+      [(ngModel)]="newMessage"
+      (keyup.enter)="sendMessage()"
+      placeholder="Type your message..."
+    />
+    <button (click)="sendMessage()">Send</button>
+  </div>
+</div>
