@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class EventInjection implements IEventInjection {
     private static final Logger logger = LoggerFactory.getLogger(EventInjection.class);
+
+    private static final List<String> preProcessorCountires = List.of("IE");
 
     protected final IRawEventRepository iRawEventRepository;
     protected final IEventRepository iEventRepository;
@@ -51,6 +54,12 @@ public class EventInjection implements IEventInjection {
         // filter events with valid input
         List<OpenAiEvent> processableEvents = validateOpenAiInputs(openAiEvents, errorMessages);
 
+        /*
+           Some countries require a 1:1 relationship between raw event and openaievent. The pre-processor takes care of
+           this within one run. Between runs the next deletion step ensures that each raw event is just once in the final
+           event table
+         */
+        processableEvents = preProcessEvents(processableEvents);
         /*
            Delete for each openaievent
            Needs to be done before event injection!
@@ -111,6 +120,13 @@ public class EventInjection implements IEventInjection {
         List<Trail> trails = new ArrayList<>();
         openAiEvents.forEach(o -> trails.addAll(this.iTrailRepository.findTrailsByEventIdAndCountry(o.getEventId(), o.getCountry())));
         return trails.stream().map(Trail::getCoordinates).collect(Collectors.toList());
+    }
+
+    protected List<OpenAiEvent> preProcessEvents(List<OpenAiEvent> openAiEvents){
+        Set<String> seenIds = new HashSet<>();
+        return openAiEvents.stream()
+                .filter(obj -> !preProcessorCountires.contains(obj.getCountry()) || seenIds.add(obj.getEventId()))
+                .collect(Collectors.toList());
     }
 
     private void updateCachedTiles(List<PbfTile> pbfTiles){
