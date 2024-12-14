@@ -205,6 +205,7 @@ public class EventRepository implements IEventRepository {
         if (!rawObjects.isEmpty()){
             List<MapEvent> mapEvents = rawObjects.stream().map(this.mapEventMapper::map).toList();
             MapEvent mapEvent = mapEvents.get(0);
+            logger.info("Delete mapEvent: " + mapEvent);
 
             this.iEventJpaRepository.deleteById(mapEvent.getId());
             this.iRawEventJpaRepository.deleteByIdAndCountry(mapEvent.getEvent_id(), mapEvent.getCountry());
