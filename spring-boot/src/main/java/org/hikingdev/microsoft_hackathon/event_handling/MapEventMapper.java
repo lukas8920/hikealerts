@@ -41,6 +41,7 @@ public class MapEventMapper {
         mapEvent.setCountry(event.getCountry());
         mapEvent.setUrl(event.getUrl());
         mapEvent.setTrailIds(event.getTrailIds());
+        mapEvent.setPublisherId(publisher.getId());
         mapEvent.setCopyright(publisher.getCopyright());
         return mapEvent;
     }
