@@ -25,6 +25,10 @@ export class AlertListComponent {
     });
   }
 
+  isNullUrl(url: string): boolean {
+    return url != null;
+  }
+
   onCardClick(event: Event) {
     var lat = event.lat;
     var lng = event.lng;
