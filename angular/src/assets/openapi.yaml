@@ -49,8 +49,8 @@ paths:
         example: Mount Herbert Walkway track closed due to lumbering operations.
       - name: country
         in: query
-        description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
-          or US.
+        description: "Country in ISO 3166-1 alpha-2 format. Valid countries are IE,\
+          \ NZ & US."
         required: true
         schema:
           type: string
@@ -74,6 +74,9 @@ paths:
           format: date
         example: 2024-12-05
       responses:
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
         "200":
           description: Feedback whether event injection worked.
           content:
@@ -82,9 +85,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MessageResponse'
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
   /v1/events/delete:
     post:
       tags:
@@ -129,8 +129,8 @@ paths:
         example: "1.14,1.14,4.8,4.8"
       - name: country
         in: query
-        description: Country in ISO 3166-1 alpha-2 format. Valid countries are NZ
-          or US. Either a boundary box or a country is required for the query.
+        description: "Country in ISO 3166-1 alpha-2 format. Valid countries are CH,\
+          \ IE, NZ & US. Either a boundary box or a country is required for the query."
         required: false
         schema:
           type: string
@@ -180,6 +180,15 @@ paths:
           type: string
           default: All
         example: Official
+      - name: returnGeometry
+        in: query
+        description: Boolean flag indicating whether the coordinates for the trail
+          should be returned. Default value is false.
+        required: false
+        schema:
+          type: boolean
+          default: false
+        example: true
       - name: offset
         in: query
         description: The offset for the results in the event datasource. Enables paging
@@ -228,9 +237,7 @@ components:
         "y":
           type: number
           format: double
-      description: "Geographic coordinates for the mid point of the trail associated\
-        \ with the event, where x is the longitude coordinate and y is the latitude\
-        \ coordinate."
+      description: Geographic coordinates of the trail in WGS84 format.
     EventResponse:
       type: object
       properties:
@@ -292,6 +299,11 @@ components:
         license:
           type: string
           description: License applied by the data provider for the event data.
+        coordinates:
+          type: array
+          description: Geographic coordinates of the trail in WGS84 format.
+          items:
+            $ref: '#/components/schemas/Coordinate'
   securitySchemes:
     Authorization:
       type: http
