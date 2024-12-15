@@ -313,7 +313,7 @@ public class EventRepositoryTest {
         Double[] boundaries = new Double[]{1.0, 1.0, 4.0, 4.0};
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(boundaries, "NZ", null, null, null,null, true, 50, 0);
+        List<EventResponse> eventResponses = repository.queryEvents(boundaries, "NZ", null, null, null,null, true, false, 50, 0);
 
         assertThat(eventResponses.size(), is(1));
     }
@@ -323,7 +323,7 @@ public class EventRepositoryTest {
         EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(new Double[]{}, "NZ", LocalDate.of(2024, 7, 31), null, null,null, true, 50, 0);
+        List<EventResponse> eventResponses = repository.queryEvents(new Double[]{}, "NZ", LocalDate.of(2024, 7, 31), null, null,null, true, false,50, 0);
 
         assertThat(eventResponses.size(), is(2));
     }
@@ -334,7 +334,7 @@ public class EventRepositoryTest {
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, null,"Official", true, 50, 0);
+        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, null,"Official", true, false, 50, 0);
 
         assertThat(eventResponses.size(), is(1));
     }
@@ -345,7 +345,7 @@ public class EventRepositoryTest {
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, null,null, true, 1, 1);
+        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, null,null, true, false,1, 1);
 
         assertThat(eventResponses.size(), is(1));
     }
@@ -356,7 +356,7 @@ public class EventRepositoryTest {
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, LocalDate.of(2024, 11, 30), null,null, true, 50, 0);
+        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, LocalDate.of(2024, 11, 30), null,null, true, false,50, 0);
 
         assertThat(eventResponses.size(), is(2));
     }
@@ -367,7 +367,7 @@ public class EventRepositoryTest {
         Double[] boundaries = new Double[]{1.0, 1.0, 8.0, 8.0};
         this.setupQueryEvents();
 
-        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, LocalDate.of(2024, 9, 30),null, true, 50, 0);
+        List<EventResponse> eventResponses = repository.queryEvents(boundaries, null, null, null, LocalDate.of(2024, 9, 30),null, true, false,50, 0);
 
         assertThat(eventResponses.size(), is(1));
     }

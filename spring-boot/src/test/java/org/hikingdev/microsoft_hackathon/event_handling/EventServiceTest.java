@@ -1,6 +1,5 @@
 package org.hikingdev.microsoft_hackathon.event_handling;
 
-import org.hikingdev.microsoft_hackathon.event_handling.EventService;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.IEventInjection;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.OpenAiService;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.EventResponse;
@@ -46,7 +45,7 @@ public class EventServiceTest {
     public void testPullRequestInvalidBoundary(){
         String boundary = "1.234,0.234,4.567";
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(boundary, null, null, null, null, false, "All", 0, 0));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(boundary, null, null, null, null, false, "All", false,0, 0));
 
         assertThat(e.getMessage(), is("Provided boundaries are not valid."));
     }
@@ -55,9 +54,9 @@ public class EventServiceTest {
     public void testPullRequestValidBoundary() throws BadRequestException {
         String boundary = "1.234,0.234,4.567,4.789";
         Double[] dblBoundary = new Double[]{1.234, 0.234, 4.567, 4.789};
-        when(iEventRepository.queryEvents(dblBoundary, null, null, null, null, "All", false, 0, 0)).thenReturn(List.of(new EventResponse()));
+        when(iEventRepository.queryEvents(dblBoundary, null, null, null, null, "All", false, false, 0, 0)).thenReturn(List.of(new EventResponse()));
 
-        List<EventResponse> eventResponses = eventService.requestEvents(boundary, null, null, null, null, false, "All", 0, 0);
+        List<EventResponse> eventResponses = eventService.requestEvents(boundary, null, null, null, null, false, "All", false,0, 0);
 
         assertThat(eventResponses.size(), is(1));
     }
@@ -68,7 +67,7 @@ public class EventServiceTest {
         LocalDate fromDate = LocalDate.of(2024, 11, 6);
         LocalDate toDate = LocalDate.of(2024, 11, 5);
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, fromDate, toDate, null, false, "All", 0, 0));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, fromDate, toDate, null, false, "All", false,0, 0));
 
         assertThat(e.getMessage(), is("To date needs to be greater than the from date."));
     }
@@ -78,7 +77,7 @@ public class EventServiceTest {
         String country = null;
         String boundary = null;
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(boundary, country, null, null, null, false, "All", 0, 0));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(boundary, country, null, null, null, false, "All", false, 0, 0));
 
         assertThat(e.getMessage(), is("Either country or boundary needs to be provided."));
     }
@@ -88,7 +87,7 @@ public class EventServiceTest {
         int limit = 110;
         String country = "NZ";
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, "All", 0, limit));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, "All", false,0, limit));
 
         assertThat(e.getMessage(), is("Maximum 100 events can be returned per request."));
     }
@@ -97,7 +96,7 @@ public class EventServiceTest {
     public void testPullRequestInvalidCountry(){
         String country = "PL";
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, "All", 0, 0));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, "All", false,0, 0));
 
         assertThat(e.getMessage(), is("Country PL is currently not supported."));
     }
@@ -106,12 +105,12 @@ public class EventServiceTest {
     public void testPullRequestValidCreatedBys() throws BadRequestException {
         String country = "NZ";
 
-        when(iEventRepository.queryEvents(new Double[]{}, country, null, null, null, "Community", false, 0, 0)).thenReturn(List.of(new EventResponse()));
-        List<EventResponse> eventResponses1 = eventService.requestEvents(null, country, null, null, null, false, "Community", 0, 0);
+        when(iEventRepository.queryEvents(new Double[]{}, country, null, null, null, "Community", false, false,0, 0)).thenReturn(List.of(new EventResponse()));
+        List<EventResponse> eventResponses1 = eventService.requestEvents(null, country, null, null, null, false, "Community", false,0, 0);
         assertThat(eventResponses1.size(), is(1));
 
-        when(iEventRepository.queryEvents(new Double[]{}, country, null, null, null, "Official", false, 0, 0)).thenReturn(List.of(new EventResponse()));
-        List<EventResponse> eventResponses2 = eventService.requestEvents(null, country, null, null, null, false, "Official", 0, 0);
+        when(iEventRepository.queryEvents(new Double[]{}, country, null, null, null, "Official", false, false,0, 0)).thenReturn(List.of(new EventResponse()));
+        List<EventResponse> eventResponses2 = eventService.requestEvents(null, country, null, null, null, false, "Official", false,0, 0);
         assertThat(eventResponses2.size(), is(1));
     }
 
@@ -120,7 +119,7 @@ public class EventServiceTest {
         String createdBy = "everything";
         String country = "NZ";
 
-        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, createdBy, 0, 0));
+        Exception e = assertThrows(BadRequestException.class, () -> eventService.requestEvents(null, country, null, null, null, false, createdBy, false,0, 0));
 
         assertThat(e.getMessage(), is("Valid values for createdBy are [All, Community, Official]"));
     }

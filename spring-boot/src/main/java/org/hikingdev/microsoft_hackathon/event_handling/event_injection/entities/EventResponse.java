@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -39,4 +40,6 @@ public class EventResponse {
     private String copyright;
     @Schema(description = "License applied by the data provider for the event data.")
     private String license;
+    @Schema(description = "Geographic coordinates of the trail in WGS84 format.")
+    private List<Coordinate> coordinates;
 }

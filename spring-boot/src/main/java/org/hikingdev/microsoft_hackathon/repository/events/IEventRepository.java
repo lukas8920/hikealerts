@@ -14,7 +14,7 @@ public interface IEventRepository {
     List<MapEvent> findEvents(int offset, int limit);
     Set<MapEvent> deleteEventsNotInList(List<String> idsToKeep, String country);
     void deleteByOpenAiEvent(OpenAiEvent openAiEvent);
-    List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset);
+    List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, boolean returnGeometry, int limit, int offset);
     boolean deleteByIdAndPublisher(Long eventId, Long publisherId);
     List<MapEvent> refreshCache();
     List<MapEvent> findEventsByTrailAndCountry(String trail, String country);

@@ -61,10 +61,11 @@ public class EventController {
                                                            @Parameter(description = "Create date which specifies when the event was provided by data provider. Returns all events greater or equal to the create date. The date should be in format yyyy-MM-dd", example = "2024-11-09", required = false) @RequestParam(name = "createDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate createDate,
                                                            @Parameter(description = "Boolean flag indicating whether events with null values for the from or the to date should be returned. The default value is true.") @RequestParam(name = "nullDates", defaultValue = "true", required = false) boolean nullDates,
                                                            @Parameter(description = "Filters on who created the events. Valid values are: 'All', 'Community' or 'Official'. Default value is 'All'.", example = "Official", required = false) @RequestParam(name = "createdBy", required = false, defaultValue = "All") String createdBy,
+                                                           @Parameter(description = "Boolean flag indicating whether the coordinates for the trail should be returned. Default value is false.", example = "true", required = false) @RequestParam(name = "returnGeometry", defaultValue = "false", required = false) boolean returnGeometry,
                                                            @Parameter(description = "The offset for the results in the event datasource. Enables paging through the events. Default value is 0", example = "50", required = false) @RequestParam(name = "offset", required = false, defaultValue = "0") int offset,
                                                            @Parameter(description = "The limit defining the maximum number of results to return. Default value is 50. Maximum value is 100.", example = "40", required = false) @RequestParam(name = "limit", required = false, defaultValue = "50") int limit) throws BadRequestException {
         List<EventResponse> events = this.eventService.requestEvents(boundary, country, fromDate, toDate, createDate,
-                nullDates, createdBy, offset, limit);
+                nullDates, createdBy, returnGeometry, offset, limit);
         return ResponseEntity.ok(events);
     }
 

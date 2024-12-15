@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.repository.events;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.hikingdev.microsoft_hackathon.event_handling.EventResponseMapper;
 import org.hikingdev.microsoft_hackathon.event_handling.MapEventMapper;
@@ -287,10 +288,10 @@ public class EventRepository implements IEventRepository {
         return new HashSet<>();
     }
 
-    public List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int limit, int offset){
-        String selectQuery = buildQuery(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, offset);
+    public List<EventResponse> queryEvents(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, boolean returnGeometry, int limit, int offset){
+        String selectQuery = buildQuery(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, returnGeometry);
 
-        TypedQuery<Object[]> query = entityManager.createQuery(selectQuery, Object[].class);
+        Query query = entityManager.createNativeQuery(selectQuery, Object[].class);
 
         if (country != null) {
             query.setParameter("country", country);
@@ -312,20 +313,27 @@ public class EventRepository implements IEventRepository {
         }
 
         query.setMaxResults(limit);
+        query.setFirstResult(offset);
 
         List<Object[]> objects = query.getResultList();
         return objects.stream().map(this.eventResponseMapper::map).collect(Collectors.toList());
     }
 
-    private String buildQuery(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, int offset){
-        String boundaryClause = "e.midLongitudeCoordinate >= :minx AND e.midLongitudeCoordinate <= :maxx AND e.midLatitudeCoordinate >= :miny AND e.midLatitudeCoordinate <= :maxy";
+    private String buildQuery(Double[] boundaries, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate, String createdBy, boolean nullDates, boolean returnGeometry){
+        String boundaryClause = "e.mid_longitude_coordinate >= :minx AND e.mid_longitude_coordinate <= :maxx AND e.mid_latitude_coordinate >= :miny AND e.mid_latitude_coordinate <= :maxy";
         String countryClause = "e.country = :country";
 
         StringBuilder builder = new StringBuilder();
-        builder.append("SELECT e.id, e.country, t.trailname, t.id, e.title, e.description, e.fromDatetime, e.toDatetime, e.createDatetime, p.name, p.status, e.midLongitudeCoordinate, e.midLatitudeCoordinate, p.copyright, p.license " +
-                "FROM Event e " +
-                "INNER JOIN Publisher p ON p.id = e.publisherId " +
-                "INNER JOIN Trail t ON t.id MEMBER OF e.trailIds WHERE ");
+        builder.append("SELECT e.id, e.country, t.trailname, t.id, e.title, e.description, e.from_date_time, e.to_date_time, e.create_date_time, p.name, p.status, e.mid_longitude_coordinate, e.mid_latitude_coordinate, p.copyright, p.license");
+        if (returnGeometry){
+            builder.append(", t.coordinates.STAsBinary() as coordinates ");
+        } else {
+            builder.append(" ");
+        }
+        builder.append("FROM events e " +
+                "INNER JOIN publisher p ON p.id = e.publisher_id " +
+                "INNER JOIN events_trail_ids i ON i.event_id = e.id " +
+                "INNER JOIN geodata_trails t ON t.id = i.trail_ids WHERE ");
 
         if (boundaries.length != 0 && country != null){
             builder.append(countryClause);
@@ -339,7 +347,7 @@ public class EventRepository implements IEventRepository {
 
         if (createDate != null){
             builder.append(" AND ");
-            builder.append("e.createDatetime >= :createDate");
+            builder.append("e.create_date_time >= :createDate");
         }
 
         if (createdBy != null){
@@ -354,27 +362,28 @@ public class EventRepository implements IEventRepository {
 
         if (fromDate != null && !nullDates){
             builder.append(" AND ");
-            builder.append("(e.fromDatetime >= :fromDate AND e.fromDatetime is not null)");
+            builder.append("(e.from_date_time >= :fromDate AND e.from_date_time is not null)");
         } else if (fromDate != null){
             builder.append(" AND ");
-            builder.append("(e.fromDatetime >= :fromDate OR e.fromDatetime is null)");
+            builder.append("(e.from_date_time >= :fromDate OR e.from_date_time is null)");
         }
 
         if (toDate != null && !nullDates){
             builder.append(" AND ");
-            builder.append("(e.toDatetime <= :toDate AND e.toDatetime is not null)");
+            builder.append("(e.to_date_time <= :toDate AND e.to_date_time is not null)");
         } else if (toDate != null){
             builder.append(" AND ");
-            builder.append("(e.toDatetime <= :toDate OR e.toDatetime is null)");
+            builder.append("(e.to_date_time <= :toDate OR e.to_date_time is null)");
         }
 
         if (fromDate == null && toDate == null && !nullDates){
-            builder.append(" AND e.fromDatetime is not null and e.toDatetime is not null");
+            builder.append(" AND e.from_date_time is not null and e.to_date_time is not null");
         }
 
-        builder.append(" ORDER BY e.id OFFSET ");
+        builder.append(" ORDER BY e.id");
+        /*builder.append(" ORDER BY e.id OFFSET ");
         builder.append(offset);
-        builder.append(" rows");
+        builder.append(" rows");*/
 
         return builder.toString();
     }

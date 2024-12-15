@@ -57,11 +57,11 @@ public class EventService {
     }
 
     public List<EventResponse> requestEvents(String boundary, String country, LocalDate fromDate, LocalDate toDate, LocalDate createDate,
-                                             boolean nullDates, String createdBy, int offset, int limit) throws BadRequestException {
+                                             boolean nullDates, String createdBy, boolean returnGeometry, int offset, int limit) throws BadRequestException {
         validateQuery(boundary, country, fromDate, toDate, createdBy, limit);
 
         Double[] boundaries = parseBoundary(boundary);
-        return this.iEventRepository.queryEvents(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, limit, offset);
+        return this.iEventRepository.queryEvents(boundaries, country, fromDate, toDate, createDate, createdBy, nullDates, returnGeometry, limit, offset);
     }
 
     public MessageResponse deleteEvent(String eventId) throws BadRequestException{
