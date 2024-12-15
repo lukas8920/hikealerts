@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.util.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 
 @RestController()
 @RequestMapping("/v1/tiles")
+@Hidden
 public class TileController {
     private static final Logger logger = LoggerFactory.getLogger(TileController.class);
 

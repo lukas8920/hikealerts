@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.chat;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.chat.entities.ChatInit;
 import org.hikingdev.microsoft_hackathon.chat.entities.SignalRConnectionInfo;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/chat")
+@Hidden
 public class ChatController {
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
