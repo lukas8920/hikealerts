@@ -69,7 +69,18 @@ Run on server:
     https://github.com/lukas8920/hikealerts/tree/main/docker-compose.yml1
 11) Run docker-compose file
 
-## 1.4 Licenses
+## 1.4 Contributions
+### 1.4.1 Data Providers
+Anybody with an account can contribute events via the chat interface on [hiking.alerts.org] and via the API.
+By default a user is part of the 'Community' group and events show up with the 'Community' tag. Please reach out via info.hikingalerts@gmail.com to tag events with an organisation.
+
+### 1.4.2 Improvements
+1) Create an issue in [https://hiking-alerts.atlassian.net/jira/software/projects/CCS/boards/1](Jira)
+2) If you would like to contribute code, please reference the relevant Jira case in the pull request
+
+Unit Tests helps to ensure that pull requests for bugs and improvements are processed quickly.
+
+## 1.5 Licenses
 This project is licensed under the **MIT License**. See [https://github.com/lukas8920/hikealerts/blob/main/LICENSE](LICENSE) for details.
 
 This project uses third-party libraries that have their own licenses. For a complete list of dependencies and their licenses, please refer to [https://github.com/lukas8920/hikealerts/blob/main/THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES).
