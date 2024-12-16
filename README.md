@@ -75,12 +75,12 @@ Anybody with an account can contribute events via the chat interface on [hiking.
 By default a user is part of the 'Community' group and events show up with the 'Community' tag. Please reach out via info.hikingalerts@gmail.com to tag events with an organisation.
 
 ### 1.4.2 Improvements
-1) Create an issue in [https://hiking-alerts.atlassian.net/jira/software/projects/CCS/boards/1](Jira)
+1) Create an issue in [Jira](https://hiking-alerts.atlassian.net/jira/software/projects/CCS/boards/1)
 2) If you would like to contribute code, please reference the relevant Jira case in the pull request
 
 Unit Tests helps to ensure that pull requests for bugs and improvements are processed quickly.
 
 ## 1.5 Licenses
-This project is licensed under the **MIT License**. See [https://github.com/lukas8920/hikealerts/blob/main/LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License**. See [LICENSE](https://github.com/lukas8920/hikealerts/blob/main/LICENSE) for details.
 
-This project uses third-party libraries that have their own licenses. For a complete list of dependencies and their licenses, please refer to [https://github.com/lukas8920/hikealerts/blob/main/THIRD-PARTY-LICENSES](THIRD-PARTY-LICENSES).
+This project uses third-party libraries that have their own licenses. For a complete list of dependencies and their licenses, please refer to [THIRD-PARTY-LICENSES](https://github.com/lukas8920/hikealerts/blob/main/THIRD-PARTY-LICENSES).
