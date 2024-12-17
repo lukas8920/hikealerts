@@ -13,17 +13,14 @@ Microsoft's AI and Fabric services enable to standardize the events issued by di
 
 ### 1.2.2. Deployment
 
-Microsoft Setup:
 1. Set up Azure Services (Blob Storage with queues, Openai Service, Keyvault, MS SQL Server, RSignal)
 2. Configure Fabric data gateways to access Azure services
 3. Schedule Fabric notebooks in directory
 4. Configure Keyvault keys used in the Fabric notebooks & specified in [KeyvaultProdProvider.java](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/security/keyvault/KeyVaultProdProvider.java)
-
-Angular / Spring Boot deployment:
-6. Configure environment variables in [application.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application.properties) and [application-prod.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application-prod.properties)
-7. Adjust & build docker containers [Spring Boot Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/spring-boot), [Angular Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/angular) & [GPG Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/gpg)
-8. Move config files to locations as specified in docker-compose.yaml
-9. Spin up docker-compose
+5. Configure environment variables in [application.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application.properties) and [application-prod.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application-prod.properties)
+6. Adjust & build docker containers [Spring Boot Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/spring-boot), [Angular Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/angular) & [GPG Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/gpg)
+7. Move config files to locations as specified in docker-compose.yaml
+8. Spin up docker-compose
 
 ## 1.3 Contributions
 ### 1.3.1 Data Providers
