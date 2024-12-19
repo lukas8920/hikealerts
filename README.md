@@ -1,4 +1,4 @@
-# 1. Microsoft Fabric and AI Hackathon: Hiking Alerts
+# 1. Hiking Alerts
 
 ## 1.1. Use Case Description
 When viewing and planning tracks, popular hiking apps do not display current information by official institutions for hiking tracks in a standard format. Instead, those apps heavily rely on their respective communities updating the information manually.
