@@ -364,6 +364,21 @@ public class NameMatcherTest {
     }
 
     @Test
+    public void testNzNonMatchingTrail9(){
+        NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
+
+        String searchString = "Herekino Forest Track";
+        String targetString1 = "Forest Walk";
+
+        Trail trail1 = new Trail();
+        trail1.setTrailname(targetString1);
+
+        nameMatcher.match(searchString, trail1);
+
+        assertThat(nameMatcher.getT(), nullValue());
+    }
+
+    @Test
     public void testNzMatchingTrail3(){
         NameMatcher<Trail> nameMatcher = new NameMatcher<>(NZWeightDict.lowerWeightDict, NZPenalizeDict.penalizeDict, NZ_MATCHER_THRESHOLD, NZ_LEVENSHTEIN_WEIGHT);
 
