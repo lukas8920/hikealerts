@@ -24,7 +24,7 @@ Microsoft's AI and Fabric services enable to standardize the events issued by di
 
 ## 1.3 Contributions
 ### 1.3.1 Data Providers
-Anybody with an account can contribute events via the chat interface on [hiking.alerts.org](hiking.alerts.org) and via the API.
+Anybody with an account can contribute events via the chat interface on [hiking.alerts.org](https://hiking.alerts.org) and via the API.
 By default a user is part of the 'Community' group and events show up with the 'Community' tag. Please reach out via info.hikingalerts@gmail.com to tag events with an organisation.
 
 ### 1.3.2 Improvements
