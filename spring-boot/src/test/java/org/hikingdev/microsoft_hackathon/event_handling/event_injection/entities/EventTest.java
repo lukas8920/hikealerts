@@ -77,7 +77,6 @@ public class EventTest {
         LocalDateTime toResult = event.getToDatetime();
 
         assertThat(fromResult.getYear(), is((year + 1)));
-
     }
 
     @Test

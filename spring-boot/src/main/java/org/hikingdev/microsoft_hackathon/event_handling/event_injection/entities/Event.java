@@ -174,13 +174,15 @@ public class Event implements Serializable {
             return null;
         }
 
+        int day = LocalDate.now().getDayOfMonth();
         int month = LocalDate.now().getMonthValue();
         int year = LocalDate.now().getYear();
 
 
         try {
             int fromMonth = Integer.parseInt(fromDatetime.substring(3, 5));
-            return fromMonth < month ? fromDatetime.replace("YYYY", String.valueOf(year + 1))
+            int fromDay = Integer.parseInt(fromDatetime.substring(0, 2));
+            return fromMonth < month || (fromMonth == month && fromDay < day) ? fromDatetime.replace("YYYY", String.valueOf(year + 1))
                     : fromDatetime.replace("YYYY", String.valueOf(year));
         } catch (NumberFormatException e){
             logger.info("Non parseable characters in date string {}", fromDatetime.substring(3, 5));
@@ -201,12 +203,14 @@ public class Event implements Serializable {
 
         int year = LocalDate.now().getYear();
 
+        int fromDay = fromDatetime == null ? this.fromDatetime.getDayOfMonth() : Integer.parseInt(fromDatetime.substring(0, 2));
+        int toDay = Integer.parseInt(toDatetime.substring(0, 2));
         int fromMonth = fromDatetime == null ? this.fromDatetime.getMonthValue() : Integer.parseInt(fromDatetime.substring(3, 5));
         int fromYear = fromDatetime == null ? this.fromDatetime.getYear() : Integer.parseInt(fromDatetime.substring(6, 10));
         int toMonth = Integer.parseInt(toDatetime.substring(3, 5));
 
         String toDatetimePlusOne = toDatetime.replace("YYYY", String.valueOf(year + 1));
-        return toMonth < fromMonth ? toDatetimePlusOne
+        return toMonth < fromMonth || (toMonth == fromMonth && toDay < fromDay) ? toDatetimePlusOne
                 : (fromYear == (year + 1) ? toDatetimePlusOne
                 : toDatetime.replace("YYYY", String.valueOf(year)));
     }
