@@ -155,7 +155,7 @@ public class TileUtils {
     }
 
     public static Set<PbfTile> getIntersectedTiles(LineString lineString, int zoomMin, int zoomMax) {
-        logger.info("Number of coords {}", lineString.getCoordinates().length);
+        logger.debug("Number of coords {}", lineString.getCoordinates().length);
         Set<PbfTile> intersectedTiles = ConcurrentHashMap.newKeySet(); // Thread-safe set for parallel processing
 
         // Process each zoom level in parallel
