@@ -53,4 +53,9 @@ public class IEInjector extends BaseInjector {
         }
         return events;
     };
+
+    @Override
+    protected void saveEvent(Event e){
+        this.iEventRepository.save(e, true);
+    }
 }

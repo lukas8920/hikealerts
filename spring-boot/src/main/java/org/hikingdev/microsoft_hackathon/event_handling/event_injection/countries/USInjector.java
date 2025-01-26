@@ -36,4 +36,9 @@ public class USInjector extends RegionInjector {
     protected List<Region> findRegionsInDatabase(String regionName, String country) {
         return this.iRegionRepository.findUniqueRegionName(regionName, country);
     }
+
+    @Override
+    protected void saveEvent(Event e){
+        this.iEventRepository.save(e, true);
+    }
 }

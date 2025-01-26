@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface IEventRepository {
-    void save(Event event);
+    void save(Event event, boolean overrideData);
     List<MapEvent> findEvents(int offset, int limit);
     Set<MapEvent> deleteEventsNotInList(List<String> idsToKeep, String country);
     void deleteByOpenAiEvent(OpenAiEvent openAiEvent);

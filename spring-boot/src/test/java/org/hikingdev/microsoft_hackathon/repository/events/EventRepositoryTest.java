@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -96,20 +97,60 @@ public class EventRepositoryTest {
 
     @Test
     public void testThatSavingWorks(){
-        EventRepository repository = new EventRepository(iEventJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
+        IEventJpaRepository tmpJpaRepository = mock(IEventJpaRepository.class);
+        EventRepository repository = new EventRepository(tmpJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
 
         when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
+        when(tmpJpaRepository.saveEvent(event1.getEvent_id(), event1.getRegion(), event1.getCountry(), event1.getCreateDatetime(), event1.getFromDatetime(), event1.getToDatetime(), event1.getMidLongitudeCoordinate(),
+                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), event1.getPublisherId(), event1.getUrl(), false)).thenAnswer(invocationOnMock -> this.iEventJpaRepository.save(event1));
+        when(tmpJpaRepository.saveEvent(event2.getEvent_id(), event2.getRegion(), event2.getCountry(), event2.getCreateDatetime(), event2.getFromDatetime(), event2.getToDatetime(), event2.getMidLongitudeCoordinate(),
+                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), event2.getPublisherId(), event2.getUrl(), false)).then(invocationOnMock -> this.iEventJpaRepository.save(event2));
 
-        repository.save(event1);
-        repository.save(event2);
+        repository.save(event1, false);
+        repository.save(event2, false);
 
         List<Event> results = iEventJpaRepository.findAll();
 
         Set<MapEvent> events = this.redisTemplate.opsForZSet().range("events", 0, -1);
 
-        assertThat(results.size() >= 2, is(true));
+        assertThat(results.size() == 2, is(true));
         assertThat(events == null, is(false));
-        assertThat(events.size() >= 2, is(true));
+        assertThat(events.size() == 2, is(true));
+
+        events.forEach(event -> this.redisTemplate.opsForZSet().remove("events"));
+    }
+
+    @Test
+    public void testThatOverrideSavingWorks(){
+        IEventJpaRepository tmpJpaRepository = mock(IEventJpaRepository.class);
+        EventRepository repository = new EventRepository(tmpJpaRepository, redisTemplate, mapEventMapper, entityManager, iRawEventJpaRepository, iPublisherRepository, eventResponseMapper, iTrailJpaRepository);
+
+        AtomicReference<Event> tmpEvent = new AtomicReference<>();
+        when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
+        when(tmpJpaRepository.saveEvent(event1.getEvent_id(), event1.getRegion(), event1.getCountry(), event1.getCreateDatetime(), event1.getFromDatetime(), event1.getToDatetime(), event1.getMidLongitudeCoordinate(),
+                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), event1.getPublisherId(), event1.getUrl(), true))
+                .thenAnswer(invocationOnMock -> {
+                    tmpEvent.set(this.iEventJpaRepository.save(event1));
+                    return tmpEvent.get();
+                });
+        when(tmpJpaRepository.saveEvent(event2.getEvent_id(), event2.getRegion(), event2.getCountry(), event2.getCreateDatetime(), event2.getFromDatetime(), event2.getToDatetime(), event2.getMidLongitudeCoordinate(),
+                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), event2.getPublisherId(), event2.getUrl(), true)).thenAnswer(invocationOnMock -> {
+                    Event outputEvent = tmpEvent.get();
+                    Event tmpOutputEvent = event2;
+                    event2.setId(outputEvent.getId());
+                    return tmpOutputEvent;
+        });
+
+        repository.save(event1, true);
+        repository.save(event2, true);
+
+        List<Event> results = iEventJpaRepository.findAll();
+
+        Set<MapEvent> events = this.redisTemplate.opsForZSet().range("events", 0, -1);
+
+        assertThat(results.size() == 1, is(true));
+        assertThat(events == null, is(false));
+        assertThat(events.size() == 1, is(true));
 
         events.forEach(event -> this.redisTemplate.opsForZSet().remove("events", event));
     }

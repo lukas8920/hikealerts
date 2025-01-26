@@ -62,16 +62,18 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
-    public void save(Event event) {
+    public void save(Event event, boolean overrideData) {
         Publisher publisher = this.iPublisherRepository.findUserById(event.getPublisherId());
 
         if (publisher != null){
             try {
                 // Add to Redis
-                logger.info("Add dataset to db and redis.");
-                Event tmpEvent = this.iEventJpaRepository.save(event);
+                logger.info("Add / update dataset to db and redis.");
+                Event tmpEvent = this.iEventJpaRepository.saveEvent(event.getEvent_id(), event.getRegion(), event.getCountry(),
+                        event.getCreateDatetime(), event.getFromDatetime(), event.getToDatetime(), event.getMidLongitudeCoordinate(),
+                        event.getMidLatitudeCoordinate(), event.getTitle(), event.getDescription(), event.getPublisherId(), event.getUrl(),
+                        overrideData);
                 MapEvent mapEvent = this.mapEventMapper.map(tmpEvent, publisher);
-
 
                 synchronized (lock){
                     if (isThreadRunning){
@@ -79,6 +81,12 @@ public class EventRepository implements IEventRepository {
                         return;
                     }
                 }
+
+                if (overrideData){
+                    logger.info("Delete existing map event before adding override event");
+                    deleteExistingMapEvent(tmpEvent);
+                }
+
                 logger.info("Save mapEvent: " + mapEvent);
                 redisTemplate.opsForZSet().add(EVENTS_KEY, mapEvent, tmpEvent.getId());
             } catch (Exception e){
@@ -86,6 +94,15 @@ public class EventRepository implements IEventRepository {
             }
         } else {
             logger.error("Error saving event {} as publisher {} does not exist.", event.getEvent_id(), event.getPublisherId());
+        }
+    }
+
+    private void deleteExistingMapEvent(Event tmpEvent){
+        Set<MapEvent> events = redisTemplate.opsForZSet().rangeByScore(EVENTS_KEY, tmpEvent.getId(), tmpEvent.getId());
+        if (events != null) {
+            for (Object event : events) {
+                redisTemplate.opsForZSet().remove(EVENTS_KEY, event);
+            }
         }
     }
 

@@ -55,10 +55,14 @@ public abstract class BaseInjector {
 
         events.forEach(e -> {
             overwriteUrl(e);
-            this.iEventRepository.save(e);
+            this.saveEvent(event);
         });
         logger.info("Saved event to db.");
         return true;
+    }
+
+    protected void saveEvent(Event e){
+        this.iEventRepository.save(e, false);
     }
 
     protected NameMatcher<Trail> provideNameMatcher(){
