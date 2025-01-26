@@ -61,6 +61,7 @@ public class EventRepository implements IEventRepository {
         this.iTrailJpaRepository = iTrailJpaRepository;
     }
 
+    @Transactional
     @Override
     public void save(Event event, boolean overrideData) {
         Publisher publisher = this.iPublisherRepository.findUserById(event.getPublisherId());
