@@ -1,0 +1,34 @@
+-- [hiking-sql-db].dbo.job definition
+
+-- Drop table
+
+-- DROP TABLE [hiking-sql-db].dbo.job;
+
+CREATE TABLE [hiking-sql-db].dbo.job (
+                                         ID_JOB int NULL,
+                                         CHANNEL_ID varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    JOBNAME varchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    STATUS varchar(15) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    LINES_READ bigint NULL,
+    LINES_WRITTEN bigint NULL,
+    LINES_UPDATED bigint NULL,
+    LINES_INPUT bigint NULL,
+    LINES_OUTPUT bigint NULL,
+    LINES_REJECTED bigint NULL,
+    ERRORS bigint NULL,
+    STARTDATE datetime NULL,
+    ENDDATE datetime NULL,
+    LOGDATE datetime NULL,
+    DEPDATE datetime NULL,
+    REPLAYDATE datetime NULL,
+    LOG_FIELD text COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+    );
+CREATE NONCLUSTERED INDEX IDX_job_1 ON dbo.job (  ID_JOB ASC  )
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IDX_job_2 ON dbo.job (  ERRORS ASC  , STATUS ASC  , JOBNAME ASC  )
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX IDX_job_3 ON dbo.job (  JOBNAME ASC  , LOGDATE ASC  )
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;

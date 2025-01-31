@@ -1,0 +1,1 @@
+sed -i 's/			\*)/			aarch64) LIBPATH=$CURRENTDIR\/..\/libswt\/linux\/x86_64\/;;\n			*)/' /opt/pentaho/data-integration/spoon.sh
