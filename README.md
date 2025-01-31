@@ -5,7 +5,7 @@ When viewing and planning tracks, popular hiking apps do not display current inf
 
 This relevant information for hikers from institutions might include dangers, weather impacts, closures etc (in the following called events).
 
-Microsoft's AI and Fabric services enable to standardize the events issued by different institutions in a global context. The purpose of the website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
+Microsoft's AI service enables to standardize the events issued by different institutions in a global context. The purpose of the website and the API is to provide transparency on the accessibility of hiking tracks, making hiking safer and a more enjoyable experience!
 
 ## 1.2. Project Structure
 ### 1.2.1. System Setup
@@ -14,8 +14,8 @@ Microsoft's AI and Fabric services enable to standardize the events issued by di
 ### 1.2.2. Deployment
 
 1. Set up Azure Services (Blob Storage with queues, Openai Service, Keyvault, MS SQL Server, RSignal)
-2. Configure Fabric data gateways to access Azure services
-3. Schedule Fabric notebooks in directory
+2. Configure scheduling of Pentaho jobs in the job_schedule SQL table
+3. Run Pentaho jobs once intitially
 4. Configure Keyvault keys used in the Fabric notebooks & specified in [KeyvaultProdProvider.java](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/security/keyvault/KeyVaultProdProvider.java)
 5. Configure environment variables in [application.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application.properties) and [application-prod.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application-prod.properties)
 6. Adjust & build docker containers [Spring Boot Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/spring-boot), [Angular Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/angular) & [GPG Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/gpg)
