@@ -9,7 +9,7 @@ Microsoft's AI service enables to standardize the events issued by different ins
 
 ## 1.2. Project Structure
 ### 1.2.1. System Setup
-![Screenshot from 2024-11-23 12-57-28](https://github.com/user-attachments/assets/2bfca025-da49-47f6-90d1-b0023bc5b01f)
+![Screenshot from 2025-02-01 11-19-06](https://github.com/user-attachments/assets/f268f1e9-c6de-40e4-988c-15e5f352a58c)
 
 ### 1.2.2. Deployment
 
