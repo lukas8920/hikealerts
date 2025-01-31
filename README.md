@@ -16,7 +16,7 @@ Microsoft's AI service enables to standardize the events issued by different ins
 1. Set up Azure Services (Blob Storage with queues, Openai Service, Keyvault, MS SQL Server, RSignal)
 2. Configure scheduling of Pentaho jobs in the job_schedule SQL table
 3. Run Pentaho jobs once intitially
-4. Configure Keyvault keys used in the Fabric notebooks & specified in [KeyvaultProdProvider.java](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/security/keyvault/KeyVaultProdProvider.java)
+4. Configure Keyvault keys used in the Pentaho job & specified in [KeyvaultProdProvider.java](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/java/org/hikingdev/microsoft_hackathon/security/keyvault/KeyVaultProdProvider.java)
 5. Configure environment variables in [application.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application.properties) and [application-prod.properties](https://github.com/lukas8920/hikealerts/blob/main/spring-boot/src/main/resources/application-prod.properties)
 6. Adjust & build docker containers [Spring Boot Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/spring-boot), [Angular Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/angular) & [GPG Dockerfile](https://github.com/lukas8920/hikealerts/tree/main/gpg)
 7. Move config files to locations as specified in docker-compose.yaml
