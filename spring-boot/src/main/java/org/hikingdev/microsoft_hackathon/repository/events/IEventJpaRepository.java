@@ -37,9 +37,9 @@ public interface IEventJpaRepository extends JpaRepository<Event, Long> {
 
     @Query(value = "EXEC InsertEvents @event_id = :eventId, @region = :region, @country = :country, @create_date_time = :createDateTime, " +
             "@from_date_time = :fromDateTime, @to_date_time = :toDateTime, @mid_longitude_coordinate = :midLongitudeCoordinate, " +
-            "@mid_latitude_coordinate = :midLatitudeCoordinate, @title = :title, @description = :description, @publisher_id = :publisherId, " +
-            "@url = :url, @override_data = :overrideData", nativeQuery = true)
+            "@mid_latitude_coordinate = :midLatitudeCoordinate, @title = :title, @description = :description, @ids = :trailIds, " +
+            "@publisher_id = :publisherId, @url = :url, @override_data = :overrideData", nativeQuery = true)
     Event saveEvent(String eventId, String region, String country, LocalDateTime createDateTime, LocalDateTime fromDateTime, LocalDateTime toDateTime,
-                          double midLongitudeCoordinate, double midLatitudeCoordinate, String title, String description, Long publisherId, String url,
-                          boolean overrideData);
+                          double midLongitudeCoordinate, double midLatitudeCoordinate, String title, String description, String trailIds, Long publisherId,
+                        String url, boolean overrideData);
 }

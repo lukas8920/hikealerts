@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -95,6 +96,12 @@ public class EventRepositoryTest {
         event3.setTrailIds(List.of(1L));
     }
 
+    private String serializeTrailIds(List<Long> ids){
+        return ids.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+    }
+
     @Test
     public void testThatSavingWorks(){
         IEventJpaRepository tmpJpaRepository = mock(IEventJpaRepository.class);
@@ -102,9 +109,9 @@ public class EventRepositoryTest {
 
         when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
         when(tmpJpaRepository.saveEvent(event1.getEvent_id(), event1.getRegion(), event1.getCountry(), event1.getCreateDatetime(), event1.getFromDatetime(), event1.getToDatetime(), event1.getMidLongitudeCoordinate(),
-                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), event1.getPublisherId(), event1.getUrl(), false)).thenAnswer(invocationOnMock -> this.iEventJpaRepository.save(event1));
+                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), serializeTrailIds(event1.getTrailIds()), event1.getPublisherId(), event1.getUrl(), false)).thenAnswer(invocationOnMock -> this.iEventJpaRepository.save(event1));
         when(tmpJpaRepository.saveEvent(event2.getEvent_id(), event2.getRegion(), event2.getCountry(), event2.getCreateDatetime(), event2.getFromDatetime(), event2.getToDatetime(), event2.getMidLongitudeCoordinate(),
-                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), event2.getPublisherId(), event2.getUrl(), false)).then(invocationOnMock -> this.iEventJpaRepository.save(event2));
+                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), serializeTrailIds(event2.getTrailIds()), event2.getPublisherId(), event2.getUrl(), false)).then(invocationOnMock -> this.iEventJpaRepository.save(event2));
 
         repository.save(event1, false);
         repository.save(event2, false);
@@ -116,8 +123,9 @@ public class EventRepositoryTest {
         assertThat(results.size() == 2, is(true));
         assertThat(events == null, is(false));
         assertThat(events.size() == 2, is(true));
+        assertThat(results.get(0).getTrailIds().size() > 0, is(true));
 
-        events.forEach(event -> this.redisTemplate.opsForZSet().remove("events"));
+        events.forEach(event -> this.redisTemplate.opsForZSet().remove("events", event));
     }
 
     @Test
@@ -128,13 +136,13 @@ public class EventRepositoryTest {
         AtomicReference<Event> tmpEvent = new AtomicReference<>();
         when(this.iPublisherRepository.findUserById(any())).thenReturn(new Publisher());
         when(tmpJpaRepository.saveEvent(event1.getEvent_id(), event1.getRegion(), event1.getCountry(), event1.getCreateDatetime(), event1.getFromDatetime(), event1.getToDatetime(), event1.getMidLongitudeCoordinate(),
-                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), event1.getPublisherId(), event1.getUrl(), true))
+                event1.getMidLatitudeCoordinate(), event1.getTitle(), event1.getDescription(), serializeTrailIds(event1.getTrailIds()), event1.getPublisherId(), event1.getUrl(), true))
                 .thenAnswer(invocationOnMock -> {
                     tmpEvent.set(this.iEventJpaRepository.save(event1));
                     return tmpEvent.get();
                 });
         when(tmpJpaRepository.saveEvent(event2.getEvent_id(), event2.getRegion(), event2.getCountry(), event2.getCreateDatetime(), event2.getFromDatetime(), event2.getToDatetime(), event2.getMidLongitudeCoordinate(),
-                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), event2.getPublisherId(), event2.getUrl(), true)).thenAnswer(invocationOnMock -> {
+                event2.getMidLatitudeCoordinate(), event2.getTitle(), event2.getDescription(), serializeTrailIds(event2.getTrailIds()), event2.getPublisherId(), event2.getUrl(), true)).thenAnswer(invocationOnMock -> {
                     Event outputEvent = tmpEvent.get();
                     Event tmpOutputEvent = event2;
                     event2.setId(outputEvent.getId());
@@ -151,6 +159,7 @@ public class EventRepositoryTest {
         assertThat(results.size() == 1, is(true));
         assertThat(events == null, is(false));
         assertThat(events.size() == 1, is(true));
+        assertThat(results.get(0).getTrailIds().size() > 0, is(true));
 
         events.forEach(event -> this.redisTemplate.opsForZSet().remove("events", event));
     }

@@ -68,12 +68,17 @@ public class EventRepository implements IEventRepository {
 
         if (publisher != null){
             try {
+                // Convert ids to comma separated list
+                String trailIds = event.getTrailIds().stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.joining(","));
                 // Add to Redis
                 logger.info("Add / update dataset to db and redis.");
                 Event tmpEvent = this.iEventJpaRepository.saveEvent(event.getEvent_id(), event.getRegion(), event.getCountry(),
                         event.getCreateDatetime(), event.getFromDatetime(), event.getToDatetime(), event.getMidLongitudeCoordinate(),
-                        event.getMidLatitudeCoordinate(), event.getTitle(), event.getDescription(), event.getPublisherId(), event.getUrl(),
-                        overrideData);
+                        event.getMidLatitudeCoordinate(), event.getTitle(), event.getDescription(),trailIds,
+                        event.getPublisherId(), event.getUrl(), overrideData);
+                tmpEvent.setTrailIds(event.getTrailIds());
                 MapEvent mapEvent = this.mapEventMapper.map(tmpEvent, publisher);
 
                 synchronized (lock){
