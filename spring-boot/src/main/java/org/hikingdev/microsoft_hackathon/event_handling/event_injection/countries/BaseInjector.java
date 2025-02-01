@@ -55,6 +55,7 @@ public abstract class BaseInjector {
 
         events.forEach(e -> {
             overwriteUrl(e);
+            logger.info("List of trails for event: " + event.getTrailIds());
             this.saveEvent(event);
         });
         logger.info("Saved event to db.");

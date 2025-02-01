@@ -91,8 +91,10 @@ public class RemovalService extends ScheduledService {
 
     public void removeEvent(String trail, String country, Long publisherId) throws EventNotFoundException, InvalidationException {
         // determine trail by country
+        logger.info("Remove event: " + trail + ", " + country + ", " + publisherId);
         List<MapEvent> mapEvents = this.iEventRepository.findEventsByTrailAndCountry(trail, country);
         if (!mapEvents.isEmpty()){
+            logger.info("Size of map events: " + mapEvents.size());
             // filter on publisher
             mapEvents = mapEvents.stream()
                     .filter(mapEvent -> mapEvent.getPublisherId().equals(publisherId))
