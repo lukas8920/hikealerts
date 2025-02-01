@@ -50,17 +50,17 @@ BEGIN
 
     SET NOCOUNT ON;
 
-    DECLARE @TempTable TABLE (id BIGINT);
+    DECLARE @TempTable TABLE (id VARCHAR(MAX));
 
     INSERT INTO @TempTable (id)
-    SELECT CAST(value AS BIGINT)FROM STRING_SPLIT(@ids, ',');
+    SELECT value FROM STRING_SPLIT(@ids, ',');
 
-    IF (SELECT count(id) FROM @TempTable t1 WHERE NOT EXISTS (SELECT 1 FROM events_trail_ids t2 WHERE t2.trail_ids = t1.id AND t2.event_id = @event_id)) > 0
-      OR (SELECT count(id) FROM @TempTable) <> (SELECT count(e.trail_ids) FROM events_trail_ids e WHERE e.event_id = @event_id)
+    IF (SELECT count(id) FROM @TempTable t1 WHERE NOT EXISTS (SELECT 1 FROM events_trail_ids t2 WHERE t2.trail_ids = t1.id AND t2.event_id = (SELECT max(id) FROM @OutputTable))) > 0
+      OR (SELECT count(id) FROM @TempTable) <> (SELECT count(e.trail_ids) FROM events_trail_ids e WHERE e.event_id = (SELECT max(id) FROM @OutputTable))
     BEGIN
-        DELETE FROM events_trail_ids WHERE event_id = @event_id;
+        DELETE FROM events_trail_ids WHERE event_id = (SELECT max(id) FROM @OutputTable);
         INSERT INTO events_trail_ids (event_id, trail_ids)
-        SELECT @event_id, id FROM @TempTable;
+        SELECT (SELECT max(id) FROM @OutputTable), id FROM @TempTable;
     END
 
     SELECT * FROM @OutputTable;
