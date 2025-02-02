@@ -50,6 +50,7 @@ public class SecurityConfig {
                     if (!profile.equals("prod")) {
                         authz.requestMatchers("/v3/api-docs").permitAll();
                         authz.requestMatchers("/v3/api-docs.yaml").permitAll();
+                        authz.requestMatchers("/v1/chat/communicate").permitAll();
                     }
                     authz.requestMatchers("/v1/events/pull").permitAll();
                     authz.requestMatchers("/v1/map/layer").permitAll();
