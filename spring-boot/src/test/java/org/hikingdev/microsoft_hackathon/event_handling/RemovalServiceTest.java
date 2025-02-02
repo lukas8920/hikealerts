@@ -3,6 +3,7 @@ package org.hikingdev.microsoft_hackathon.event_handling;
 import com.azure.storage.queue.QueueClient;
 import org.hikingdev.microsoft_hackathon.event_handling.RemovalService;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
+import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.EventRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
@@ -10,6 +11,7 @@ import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
 import org.hikingdev.microsoft_hackathon.util.InvalidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.index.strtree.STRtree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +25,15 @@ import static org.mockito.Mockito.when;
 public class RemovalServiceTest {
     private RemovalService removalService;
     private EventRepository eventRepository;
+    private TileVectorService tileVectorService;
+    private TileGenerator tileGenerator;
 
     @BeforeEach
     public void setup(){
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
-        TileVectorService tileVectorService = mock(TileVectorService.class);
+        tileVectorService = mock(TileVectorService.class);
         QueueClient queueClient = mock(QueueClient.class);
+        tileGenerator = mock(TileGenerator.class);
 
         this.eventRepository = mock(EventRepository.class);
         this.removalService = new RemovalService(eventRepository, queueClient, iTrailRepository, tileVectorService);
@@ -40,6 +45,8 @@ public class RemovalServiceTest {
         mapEvent.setPublisherId(1L);
         mapEvent.setId(1L);
 
+        when(tileVectorService.getTileGenerator()).thenReturn(tileGenerator);
+        when(tileGenerator.getSpatialIndex()).thenReturn(new STRtree());
         when(eventRepository.findEventsByTrailAndCountry("dummy", "ZZ")).thenReturn(List.of(mapEvent));
         when(eventRepository.deleteByIdAndPublisher(1L, 1L)).thenReturn(true);
 
