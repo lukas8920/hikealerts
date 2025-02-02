@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.hikingdev.microsoft_hackathon.map_layer.SpatialItem;
 import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
@@ -71,14 +72,19 @@ public class RemovalService extends ScheduledService {
         if (!deletedEvents.isEmpty()){
             WKBReader wkbReader = new WKBReader();
             TileGenerator tileGenerator = this.tileVectorService.getTileGenerator();
+            logger.info("List of all trail ids.");
+            logger.info(((List<SpatialItem>) tileGenerator.getSpatialIndex().itemsTree())
+                    .stream().map(s -> s.getId().toString()).collect(Collectors.toList()).toString());
 
             logger.info("Refresh cached tiles.");
             deletedEvents.forEach(event -> {
+                logger.info("Requested trail deletion: " + event.getTrailIds());
                 List<Trail> trails = this.iTrailRepository.findAllTrailsByIds(event.getTrailIds());
                 trails.forEach(trail -> {
                     try {
                         LineString lineString = (LineString) wkbReader.read(trail.getCoordinates());
                         Set<PbfTile> pbfTiles = TileUtils.getIntersectedTiles(lineString, TileVectorService.MIN_ZOOM, TileVectorService.MAX_ZOOM);
+                        logger.info("Identified " + pbfTiles.size() + " tiles.");
                         pbfTiles.forEach(pbfTile -> this.tileVectorService.generateTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
                     } catch (ParseException e) {
                         logger.error("Error while parsing line string", e);
