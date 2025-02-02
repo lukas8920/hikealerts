@@ -72,9 +72,6 @@ public class RemovalService extends ScheduledService {
         if (!deletedEvents.isEmpty()){
             WKBReader wkbReader = new WKBReader();
             TileGenerator tileGenerator = this.tileVectorService.getTileGenerator();
-            logger.info("List of all trail ids.");
-            logger.info(((List<SpatialItem>) tileGenerator.getSpatialIndex().itemsTree())
-                    .stream().map(s -> s.getId().toString()).collect(Collectors.toList()).toString());
 
             logger.info("Refresh cached tiles.");
             deletedEvents.forEach(event -> {

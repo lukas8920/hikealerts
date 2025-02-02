@@ -25,15 +25,12 @@ import static org.mockito.Mockito.when;
 public class RemovalServiceTest {
     private RemovalService removalService;
     private EventRepository eventRepository;
-    private TileVectorService tileVectorService;
-    private TileGenerator tileGenerator;
 
     @BeforeEach
     public void setup(){
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
-        tileVectorService = mock(TileVectorService.class);
+        TileVectorService tileVectorService = mock(TileVectorService.class);
         QueueClient queueClient = mock(QueueClient.class);
-        tileGenerator = mock(TileGenerator.class);
 
         this.eventRepository = mock(EventRepository.class);
         this.removalService = new RemovalService(eventRepository, queueClient, iTrailRepository, tileVectorService);
@@ -45,8 +42,6 @@ public class RemovalServiceTest {
         mapEvent.setPublisherId(1L);
         mapEvent.setId(1L);
 
-        when(tileVectorService.getTileGenerator()).thenReturn(tileGenerator);
-        when(tileGenerator.getSpatialIndex()).thenReturn(new STRtree());
         when(eventRepository.findEventsByTrailAndCountry("dummy", "ZZ")).thenReturn(List.of(mapEvent));
         when(eventRepository.deleteByIdAndPublisher(1L, 1L)).thenReturn(true);
 

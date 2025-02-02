@@ -30,10 +30,6 @@ public class TileGenerator {
         }
     }
 
-    public STRtree getSpatialIndex(){
-        return this.spatialIndex;
-    }
-
     // Get line strings that intersect with a specific tile
     public List<SpatialItem> getLineStringsForTile(double[] bbox) {
         Envelope tileBoundingBox = new Envelope(bbox[0], bbox[2], bbox[1], bbox[3]);
