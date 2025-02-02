@@ -91,6 +91,7 @@ public class ChatService {
             return;
         }
 
+        logger.info("Handle chat input: " + text + " by user " + user);
         if (chatEvent != null && chatEvent.getType().equals("delete")){
             handleEventDeletion(chatEvent, chat, tmpUser.getPublisherId(), user);
         } else if (chatEvent != null && chatEvent.getType().equals("insert")){
