@@ -135,7 +135,7 @@ public class EventInjection implements IEventInjection {
             new Thread(() -> {
                 logger.info("Request update for the tile cache.");
                 pbfTiles.forEach(pbfTile ->
-                        this.tileVectorService.generateTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
+                        this.tileVectorService.saveSingleTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
                 logger.info("Updated the tile cache with {} tiles.", pbfTiles.size());
             }).start();
         }

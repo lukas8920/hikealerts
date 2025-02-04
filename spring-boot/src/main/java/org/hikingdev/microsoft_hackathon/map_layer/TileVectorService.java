@@ -1,6 +1,8 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.Tile;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.BadRequestException;
@@ -29,14 +31,16 @@ public class TileVectorService extends BaseScheduler {
     private final ScheduledExecutorService executorService;
     private final ITrailRepository iTrailRepository;
     private final ITileRepository iTileRepository;
+    private final VectorImportService vectorImportService;
 
     private boolean interrupted_flag = false;
 
     @Autowired
-    public TileVectorService(ITrailRepository iTrailRepository, ITileRepository iTileRepository){
+    public TileVectorService(ITrailRepository iTrailRepository, ITileRepository iTileRepository, VectorImportService vectorImportService){
         this.iTrailRepository = iTrailRepository;
         this.executorService = Executors.newScheduledThreadPool(10);
         this.iTileRepository = iTileRepository;
+        this.vectorImportService = vectorImportService;
     }
 
     public byte[] query(int z, int x, int y) throws BadRequestException {
@@ -86,7 +90,7 @@ public class TileVectorService extends BaseScheduler {
                         ListenableFutureTask<Void> task = new ListenableFutureTask<>(() -> {
                             if (!interrupted_flag){
                                 try {
-                                    this.generateTile(tileGenerator, finalX, finalY, finalZoomLevel);
+                                    this.pushGenericTile(tileGenerator, finalX, finalY, finalZoomLevel);
                                 } catch (Exception e){
                                     logger.error("Error while parsing {}, {}, {}. But resume...", finalZoomLevel, finalX, finalY, e);
                                 }
@@ -130,15 +134,27 @@ public class TileVectorService extends BaseScheduler {
         return lock;
     }
 
-    public void generateTile(TileGenerator tileGenerator, int x, int y, int z) {
+    private Tile generateTile(TileGenerator tileGenerator, int x, int y, int z) {
         Optional<byte[]> tile = tileGenerator.generateTile(x, y, z);
         // cache tile
-        if (tile.isPresent()){
-            String zoom = "zoom_" + z;
-            String tileKey = "tile:" + z + ":" + x + ":" + y;
-            Tile outputTile = new Tile(zoom, tileKey, tile.get());
-            this.iTileRepository.save(outputTile);
-        }
+        String zoom = "zoom_" + z;
+        String tileKey = "tile:" + z + ":" + x + ":" + y;
+        return tile
+                .map(bytes -> new Tile(zoom, tileKey, bytes))
+                .orElseGet(() -> new Tile(zoom, tileKey, null));
+    }
+
+    private void pushGenericTile(TileGenerator tileGenerator, int x, int y, int z){
+        this.vectorImportService.addToQueue(generateTile(tileGenerator, x, y, z));
+    }
+
+    public void saveSingleTile(TileGenerator tileGenerator, int x, int y, int z){
+        this.iTileRepository.save(generateTile(tileGenerator, x, y, z));
+    }
+
+    public void removeSingleTile(TileGenerator tileGenerator, int x, int y, int z){
+        Tile tile = generateTile(tileGenerator, x, y, z);
+        this.iTileRepository.remove(tile.getZoom(), tile.getTileKey());
     }
 
     public TileGenerator getTileGenerator(){

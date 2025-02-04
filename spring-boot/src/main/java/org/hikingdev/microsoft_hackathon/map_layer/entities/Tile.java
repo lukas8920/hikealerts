@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.map_layer;
+package org.hikingdev.microsoft_hackathon.map_layer.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

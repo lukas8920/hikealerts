@@ -3,17 +3,13 @@ package org.hikingdev.microsoft_hackathon.util;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wdtinc.mapbox_vector_tile.VectorTile;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
-import org.hikingdev.microsoft_hackathon.map_layer.SpatialItem;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 

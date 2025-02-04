@@ -6,7 +6,7 @@ import com.wdtinc.mapbox_vector_tile.build.MvtLayerBuild;
 import com.wdtinc.mapbox_vector_tile.build.MvtLayerParams;
 import com.wdtinc.mapbox_vector_tile.build.MvtLayerProps;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
-import org.hikingdev.microsoft_hackathon.map_layer.SpatialItem;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
 import org.locationtech.jts.geom.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

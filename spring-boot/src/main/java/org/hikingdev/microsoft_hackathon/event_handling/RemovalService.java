@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
-import org.hikingdev.microsoft_hackathon.map_layer.SpatialItem;
 import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
@@ -82,7 +81,7 @@ public class RemovalService extends ScheduledService {
                         LineString lineString = (LineString) wkbReader.read(trail.getCoordinates());
                         Set<PbfTile> pbfTiles = TileUtils.getIntersectedTiles(lineString, TileVectorService.MIN_ZOOM, TileVectorService.MAX_ZOOM);
                         logger.info("Identified " + pbfTiles.size() + " tiles.");
-                        pbfTiles.forEach(pbfTile -> this.tileVectorService.generateTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
+                        pbfTiles.forEach(pbfTile -> this.tileVectorService.removeSingleTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
                     } catch (ParseException e) {
                         logger.error("Error while parsing line string", e);
                     }

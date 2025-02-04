@@ -9,14 +9,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.embedded.RedisServer;
-
-import java.time.Duration;
 
 @Configuration
 public class RedisConfig {
@@ -26,29 +22,13 @@ public class RedisConfig {
     @Bean
     @Profile({"test", "mock"})
     public RedisConnectionFactory lettuceTestConnectionFactory(RedisServer redisServer) {
-        JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
-                .connectTimeout(Duration.ofSeconds(5))
-                .readTimeout(Duration.ofSeconds(5)) // Set read timeout
-                .build();
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379), jedisClientConfiguration);
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
     }
 
     @Bean
     @Profile("prod")
     public RedisConnectionFactory lettuceProdConnectionFactory() {
-        JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(128);
-        poolConfig.setMaxIdle(128);
-        poolConfig.setMinIdle(16);
-        poolConfig.setMaxWait(Duration.ofMillis(5000));
-
-        JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder()
-                .connectTimeout(Duration.ofSeconds(5))
-                .readTimeout(Duration.ofSeconds(5)) // Set read timeout
-                .usePooling()                          // Enable connection pooling
-                .poolConfig(poolConfig)
-                .build();
-        return new JedisConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379), jedisClientConfiguration);
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisHost, 6379));
     }
 
     @Bean

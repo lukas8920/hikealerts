@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
+import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
 import org.hikingdev.microsoft_hackathon.util.TileUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.LineString;
