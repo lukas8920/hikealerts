@@ -1,7 +1,7 @@
 package org.hikingdev.microsoft_hackathon.repository.tiles;
 
 import com.wdtinc.mapbox_vector_tile.VectorTile;
-import org.hikingdev.microsoft_hackathon.map_layer.entities.Tile;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.TileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class TileRepository implements ITileRepository {
     }
 
     @Override
-    public void save(Tile tile) {
+    public void save(TileHandler tile) {
         try {
             this.tileRepository.opsForHash().put(tile.getZoom(), tile.getTileKey(), tile.getTile());
             this.tileRepository.expire(tile.getZoom(), Duration.ofHours(48));
@@ -36,9 +36,9 @@ public class TileRepository implements ITileRepository {
     }
 
     @Override
-    public void save(List<Tile> tiles) {
+    public void save(List<TileHandler> tiles) {
         String zoom = tiles.get(0).getZoom();
-        Map<String, byte[]> values = tiles.stream().collect(Collectors.toMap(Tile::getTileKey, Tile::getTile));
+        Map<String, byte[]> values = tiles.stream().collect(Collectors.toMap(TileHandler::getTileKey, TileHandler::getTile));
         try {
             this.tileRepository.opsForHash().putAll(zoom, values);
         } catch (Exception e){
@@ -71,9 +71,9 @@ public class TileRepository implements ITileRepository {
     }
 
     @Override
-    public void remove(List<Tile> tiles) {
+    public void remove(List<TileHandler> tiles) {
         String zoom = tiles.get(0).getZoom();
-        List<String> keyTiles = tiles.stream().map(Tile::getTileKey).toList();
+        List<String> keyTiles = tiles.stream().map(TileHandler::getTileKey).toList();
         try {
             this.tileRepository.opsForHash().delete(zoom, keyTiles);
         } catch (Exception e){

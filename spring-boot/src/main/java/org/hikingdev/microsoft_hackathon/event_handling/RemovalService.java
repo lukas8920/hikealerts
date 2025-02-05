@@ -10,7 +10,10 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.Tile;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.TileHandler;
 import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
+import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
 import org.hikingdev.microsoft_hackathon.util.InvalidationException;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,10 +40,11 @@ public class RemovalService extends ScheduledService {
     private final IEventRepository iEventRepository;
     private final ITrailRepository iTrailRepository;
     private final TileVectorService tileVectorService;
+    private final ITileRepository iTileRepository;
 
     @Autowired
     public RemovalService(IEventRepository iEventRepository, @Qualifier("queueClient") QueueClient queueClient,
-                          ITrailRepository iTrailRepository, TileVectorService tileVectorService) {
+                          ITrailRepository iTrailRepository, TileVectorService tileVectorService, ITileRepository iTileRepository) {
         super(queueClient);
 
         this.logger = LoggerFactory.getLogger(EventListenerService.class.getName());
@@ -47,6 +52,7 @@ public class RemovalService extends ScheduledService {
         this.iEventRepository = iEventRepository;
         this.iTrailRepository = iTrailRepository;
         this.tileVectorService = tileVectorService;
+        this.iTileRepository = iTileRepository;
     }
 
     @Override
@@ -81,7 +87,11 @@ public class RemovalService extends ScheduledService {
                         LineString lineString = (LineString) wkbReader.read(trail.getCoordinates());
                         Set<PbfTile> pbfTiles = TileUtils.getIntersectedTiles(lineString, TileVectorService.MIN_ZOOM, TileVectorService.MAX_ZOOM);
                         logger.info("Identified " + pbfTiles.size() + " tiles.");
-                        pbfTiles.forEach(pbfTile -> this.tileVectorService.removeSingleTile(tileGenerator, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ()));
+                        pbfTiles.forEach(pbfTile -> {
+                            Optional<byte[]> tile = tileGenerator.generateTile(pbfTile.getX(), pbfTile.getY(), pbfTile.getY());
+                            TileHandler tileHandler = this.tileVectorService.generateTile(tile, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ());
+                            tileHandler.persist(this.iTileRepository);
+                        });
                     } catch (ParseException e) {
                         logger.error("Error while parsing line string", e);
                     }

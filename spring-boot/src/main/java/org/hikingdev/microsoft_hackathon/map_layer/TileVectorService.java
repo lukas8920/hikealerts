@@ -1,8 +1,7 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
-import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
-import org.hikingdev.microsoft_hackathon.map_layer.entities.Tile;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.*;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.BadRequestException;
@@ -134,14 +133,18 @@ public class TileVectorService extends BaseScheduler {
         return lock;
     }
 
-    private Tile generateTile(TileGenerator tileGenerator, int x, int y, int z) {
+    private TileHandler generateTile(TileGenerator tileGenerator, int x, int y, int z) {
         Optional<byte[]> tile = tileGenerator.generateTile(x, y, z);
+        return generateTile(tile, x, y, z);
+    }
+
+    public TileHandler generateTile(Optional<byte[]> tile, int x, int y, int z){
         // cache tile
         String zoom = "zoom_" + z;
         String tileKey = "tile:" + z + ":" + x + ":" + y;
-        return tile
-                .map(bytes -> new Tile(zoom, tileKey, bytes))
-                .orElseGet(() -> new Tile(zoom, tileKey, null));
+        return tile.isPresent()
+                ? new TileWithCoords(zoom, tileKey, tile.get())
+                : new TileWithoutCoords(zoom, tileKey, null);
     }
 
     private void pushGenericTile(TileGenerator tileGenerator, int x, int y, int z){
@@ -150,11 +153,6 @@ public class TileVectorService extends BaseScheduler {
 
     public void saveSingleTile(TileGenerator tileGenerator, int x, int y, int z){
         this.iTileRepository.save(generateTile(tileGenerator, x, y, z));
-    }
-
-    public void removeSingleTile(TileGenerator tileGenerator, int x, int y, int z){
-        Tile tile = generateTile(tileGenerator, x, y, z);
-        this.iTileRepository.remove(tile.getZoom(), tile.getTileKey());
     }
 
     public TileGenerator getTileGenerator(){

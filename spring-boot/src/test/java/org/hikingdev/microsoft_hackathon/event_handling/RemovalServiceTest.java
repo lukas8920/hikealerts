@@ -6,6 +6,7 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.EventRepository;
+import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
 import org.hikingdev.microsoft_hackathon.util.InvalidationException;
@@ -29,11 +30,12 @@ public class RemovalServiceTest {
     @BeforeEach
     public void setup(){
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
+        ITileRepository iTileRepository = mock(ITileRepository.class);
         TileVectorService tileVectorService = mock(TileVectorService.class);
         QueueClient queueClient = mock(QueueClient.class);
 
         this.eventRepository = mock(EventRepository.class);
-        this.removalService = new RemovalService(eventRepository, queueClient, iTrailRepository, tileVectorService);
+        this.removalService = new RemovalService(eventRepository, queueClient, iTrailRepository, tileVectorService, iTileRepository);
     }
 
     @Test

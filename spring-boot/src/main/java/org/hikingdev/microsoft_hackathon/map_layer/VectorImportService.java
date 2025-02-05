@@ -1,6 +1,6 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
-import org.hikingdev.microsoft_hackathon.map_layer.entities.Tile;
+import org.hikingdev.microsoft_hackathon.map_layer.entities.TileHandler;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.util.BaseScheduler;
 import org.slf4j.Logger;
@@ -19,9 +19,9 @@ public class VectorImportService extends BaseScheduler {
     private static final Logger logger = LoggerFactory.getLogger(VectorImportService.class);
 
     // queue size is the sum tile buffer and removal buffer threshold for persisting to db
-    private final Queue<Tile> tileQueue = new ArrayBlockingQueue<>(200000);
-    private final IPersist<Tile> tileBuffer = new TileBuffer();
-    private final IPersist<Tile> removalBuffer = new RemovalBuffer();
+    private final Queue<TileHandler> tileQueue = new ArrayBlockingQueue<>(200000);
+    private final IPersist<TileHandler> tileBuffer = new TileBuffer();
+    private final IPersist<TileHandler> removalBuffer = new RemovalBuffer();
 
     private final ITileRepository iTileRepository;
 
@@ -35,7 +35,7 @@ public class VectorImportService extends BaseScheduler {
         return logger;
     }
 
-    public void addToQueue(Tile tile){
+    public void addToQueue(TileHandler tile){
         this.tileQueue.offer(tile);
     }
 
@@ -44,12 +44,12 @@ public class VectorImportService extends BaseScheduler {
         int timeout = 5;
 
         while (running && !Thread.currentThread().isInterrupted()){
-            Tile tile = tileQueue.poll();
+            TileHandler tile = tileQueue.poll();
             if (tile != null){
                 // reset timeout incrementer
                 timeout = 5;
 
-                IPersist<Tile> tmpBuffer = tile.getTile() == null ? this.removalBuffer : this.tileBuffer;
+                IPersist<TileHandler> tmpBuffer = tile.getTile() == null ? this.removalBuffer : this.tileBuffer;
                 tmpBuffer.add(tile);
 
                 if (tmpBuffer.size() > 100000){
@@ -82,14 +82,14 @@ public class VectorImportService extends BaseScheduler {
         }
     }
 
-    class TileBuffer extends ArrayList<Tile> implements IPersist<Tile> {
+    class TileBuffer extends ArrayList<TileHandler> implements IPersist<TileHandler> {
         @Override
         public void persist() {
             VectorImportService.this.iTileRepository.save(this);
         }
     }
 
-    class RemovalBuffer extends ArrayList<Tile> implements IPersist<Tile> {
+    class RemovalBuffer extends ArrayList<TileHandler> implements IPersist<TileHandler> {
         @Override
         public void persist() {
             VectorImportService.this.iTileRepository.remove(this);
