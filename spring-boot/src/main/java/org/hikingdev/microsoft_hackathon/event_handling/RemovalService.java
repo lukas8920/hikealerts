@@ -88,7 +88,7 @@ public class RemovalService extends ScheduledService {
                         Set<PbfTile> pbfTiles = TileUtils.getIntersectedTiles(lineString, TileVectorService.MIN_ZOOM, TileVectorService.MAX_ZOOM);
                         logger.info("Identified " + pbfTiles.size() + " tiles.");
                         pbfTiles.forEach(pbfTile -> {
-                            Optional<byte[]> tile = tileGenerator.generateTile(pbfTile.getX(), pbfTile.getY(), pbfTile.getY());
+                            Optional<byte[]> tile = tileGenerator.generateTile(pbfTile.getX(), pbfTile.getY(), pbfTile.getZ());
                             TileHandler tileHandler = this.tileVectorService.generateTile(tile, pbfTile.getX(), pbfTile.getY(), pbfTile.getZ());
                             tileHandler.persist(this.iTileRepository);
                         });
