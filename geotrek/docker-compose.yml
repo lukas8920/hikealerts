@@ -1,0 +1,70 @@
+x-images:
+  django: &django
+    image: geotrek
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: dev
+      args:
+        BASE_IMAGE: ubuntu:jammy
+    user: ${UID:-1000}:${GID:-1000}
+    env_file:
+      - .env
+    volumes:
+      - .:/opt/geotrek-admin
+
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:12-3.0-3.0.0}
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - geotrek-network
+
+  convertit:
+    image: makinacorpus/convertit:latest
+    networks:
+      - geotrek-network
+
+  screamshotter:
+    image: makinacorpus/screamshotter:v2
+    networks:
+      - geotrek-network
+
+  celery:
+    <<: [ *django ]
+    depends_on:
+      - postgres
+      - redis
+    command: celery -A geotrek worker -c 1
+    networks:
+      - geotrek-network
+
+  web:
+    <<: [ *django ]
+    depends_on:
+      - postgres
+      - redis
+      - screamshotter
+      - convertit
+      - celery
+    networks:
+      - geotrek-network
+
+  sphinx:
+    <<: [ *django ]
+    working_dir: /opt/geotrek-admin/docs
+    command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
+    networks:
+      - geotrek-network
+
+networks:
+  geotrek-network:
+    external: true
+
+volumes:
+  postgres:
