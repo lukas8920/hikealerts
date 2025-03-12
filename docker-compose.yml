@@ -22,8 +22,11 @@ services:
 
   redis:
     image: redis:latest
+    volumes:
+      - redis:/data
     networks:
       - app-network
+      - geotrek-network
 
   pentaho-carte:
     image: pentaho-carte:latest
@@ -59,8 +62,11 @@ networks:
     driver: bridge
   pass-network:
     driver: bridge
+  geotrek-network:
+    external: true
 
 volumes:
   gpg_data:
   gpg_pass:
   springboot-data:
+  redis:
