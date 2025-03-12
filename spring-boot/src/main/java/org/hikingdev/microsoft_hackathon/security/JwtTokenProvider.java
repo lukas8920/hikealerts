@@ -64,7 +64,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(id.toString()) // Set the subject
                 .claim("auth", new SimpleGrantedAuthority(role.toString())) // Add custom claims
-                .claim("allowedEndpoints", List.of("/v1/user", "/v1/chat/negotiate", "/v1/chat/communicate"))
+                .claim("allowedEndpoints", List.of("/v1/user", "/v1/chat/negotiate", "/v1/chat/communicate", "/v1/auth/check"))
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key) // Sign with the Key object
