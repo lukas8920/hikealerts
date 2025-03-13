@@ -62,8 +62,16 @@ services:
     networks:
       - geotrek-network
 
+  geotrek-db-service:
+    image: geotrek-db-service
+    networks:
+      - geotrek-network
+      - pass-network
+
 networks:
   geotrek-network:
+    external: true
+  pass-network:
     external: true
 
 volumes:

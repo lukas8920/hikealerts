@@ -5,3 +5,4 @@
    SRID = int(os.getenv('SRID', '3857'))  # Lambert-93 for Metropolitan France in geotrek/settings/base.py
 3) Create external network
    docker network create geotrek-network
+   ensure that pass network has been created as necessary for external access
