@@ -16,6 +16,7 @@
         <apache.commons>1.12.0</apache.commons>
         <azure.keyvault.version>4.0.0</azure.keyvault.version>
         <azure.queue.version>12.23.0</azure.queue.version>
+        <bouncy.castle.version>1.80</bouncy.castle.version>
         <geotools.version>22.2</geotools.version>
         <h2.version>2.3.232</h2.version>
         <java.version>17</java.version>
@@ -181,6 +182,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
             <version>${apache.commons}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${bouncy.castle.version}</version>
         </dependency>
 
         <!-- Swagger Libraries -->

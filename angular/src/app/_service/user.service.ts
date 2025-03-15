@@ -56,4 +56,8 @@ export class UserService {
   getProfile(): Observable<any>{
     return this.http.get(this.prod_url + '/v1/user/profile', httpOptions);
   }
+
+  getGeotrekToken(): Observable<any> {
+    return this.http.get(this.prod_url + '/v1/geotrek/credentials', httpOptions);
+  }
 }

@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.user;
 
+import org.hikingdev.microsoft_hackathon.geotrek.GeotrekService;
 import org.hikingdev.microsoft_hackathon.repository.tokens.ITokenRepository;
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.JwtTokenProvider;
@@ -39,6 +40,7 @@ public class AuthService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final ITokenRepository iTokenRepository;
+    private final GeotrekService geotrekService;
 
     @Value("${server.host}")
     private String host;
@@ -48,7 +50,7 @@ public class AuthService {
     @Autowired
     public AuthService(Publisher publisher, AuthenticationManager authenticationManager, IUserRepository iUserRepository,
                        JwtTokenProvider jwtTokenProvider, ApplicationEventPublisher applicationEventPublisher, PasswordEncoder passwordEncoder,
-                       ITokenRepository iTokenRepository){
+                       ITokenRepository iTokenRepository, GeotrekService geotrekService){
         this.publisher = publisher;
         this.authenticationManager = authenticationManager;
         this.iUserRepository = iUserRepository;
@@ -56,6 +58,7 @@ public class AuthService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.passwordEncoder = passwordEncoder;
         this.iTokenRepository = iTokenRepository;
+        this.geotrekService = geotrekService;
     }
 
     public JwtResponse login(LoginRequest loginRequest) throws BadRequestException {
@@ -113,6 +116,14 @@ public class AuthService {
                 , roles, false, COMMUNITY_ID, null);
 
         user = this.iUserRepository.save(user);
+        try {
+            this.geotrekService.register(user);
+        } catch (Exception e){
+            logger.error("Registration of geotrek user failed");
+            this.publisher.publishRegistrationFailure();
+            return new MessageResponse("Internal server error during registration of user details.");
+        }
+
         this.applicationEventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, LocaleContextHolder.getLocale(), "/v1/auth"));
         logger.info("Registration was successful, but still increment to avoid Brute Force on registration endpoint.");
         this.publisher.publishRegistrationFailure();

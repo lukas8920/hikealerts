@@ -42,9 +42,4 @@ public class AuthController {
         redirectView.setUrl(url);
         return redirectView;
     }
-
-    @GetMapping("/check")
-    public ResponseEntity<Void> checkAuthentication(@RequestHeader(value = "X-Original-URI", required = false) String originalUri) {
-        return ResponseEntity.ok().build();
-    }
 }

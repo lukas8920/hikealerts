@@ -27,6 +27,8 @@ public class KeyTestProvider {
     private String signalrKey;
     @Value("${signalr.endpoint}")
     private String signalrEndpoint;
+    @Value("${aes.decryption.key}")
+    private String aesDecryptionKey;
 
     @Bean(name = "bearerToken")
     public String bearerToken(){
@@ -64,5 +66,10 @@ public class KeyTestProvider {
     @Bean(name = "signalrEndpoint")
     public String signalrEndpoint(){
         return this.signalrEndpoint;
+    }
+
+    @Bean(name = "aes_decryption_key")
+    public String aesDecryptionKey(){
+        return this.aesDecryptionKey;
     }
 }

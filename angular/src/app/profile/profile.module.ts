@@ -11,12 +11,14 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatDialogModule} from '@angular/material/dialog';
+import {EditorComponent} from './editor/editor.component';
 
 const routes: Routes = [
   { path: '', component: ProfileComponent, children: [
       {path:'profile', redirectTo: 'profile/(sub:overview)', pathMatch: 'full'},
       {path: 'overview', component: OverviewComponent, outlet: 'sub'},
-      {path: 'change-password', component: SavePwComponent, outlet: 'sub'}
+      {path: 'change-password', component: SavePwComponent, outlet: 'sub'},
+      {path: 'editor', component: EditorComponent, outlet: 'sub'}
     ]},
 ]
 
@@ -26,7 +28,8 @@ const routes: Routes = [
     ConfirmationComponent,
     OverviewComponent,
     ProfileNavComponent,
-    SavePwComponent
+    SavePwComponent,
+    EditorComponent
   ],
   imports: [
     CommonModule,

@@ -9,8 +9,14 @@
   flex-direction: row;
 }
 
+.navigation {
+  max-width: 250px;
+  flex-grow: 0.5;
+}
+
 .outlet {
-  flex-grow: 0.35;
+  flex-grow: 0.5;
+  display: block;
 }
 
 .subtitle {

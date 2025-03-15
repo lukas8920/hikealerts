@@ -36,6 +36,7 @@ public class KeyVaultProdProvider {
     private static final String signalRKey = "signalr-key";
     private static final String signalrEndpoint = "signalr-endpoint";
     private static final String openaiKey = "openai-api-key";
+    private static final String aesDecryptionKey = "aes-decryption-key";
 
     @Value("${db.driver}")
     private String dbDriver;
@@ -132,6 +133,9 @@ public class KeyVaultProdProvider {
     public String openaiEndpoint(){
         return this.openaiEndpoint;
     }
+
+    @Bean(name = "aes_decryption_key")
+    public String aesDecryptionKey(SecretClient secretClient) { return secretClient.getSecret(aesDecryptionKey).getValue(); }
 
     @Bean
     public DataSource dataSource(SecretClient secretClient) {
