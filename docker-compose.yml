@@ -64,7 +64,7 @@ networks:
   pass-network:
     driver: bridge
   geotrek-network:
-    external: true
+    driver: bridge
 
 volumes:
   gpg_data:

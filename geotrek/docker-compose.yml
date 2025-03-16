@@ -15,7 +15,7 @@ x-images:
 
 services:
   postgres:
-    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:12-3.0-3.0.0}
+    image: my-pgrouting:latest
     env_file:
       - .env
     volumes:
@@ -31,7 +31,7 @@ services:
       - geotrek-network
 
   screamshotter:
-    image: makinacorpus/screamshotter:v2
+    image: my-screamshotter:latest
     networks:
       - geotrek-network
 
