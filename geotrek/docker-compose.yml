@@ -23,55 +23,53 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   convertit:
-    image: makinacorpus/convertit:latest
+    image: my-convertit:latest
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   screamshotter:
     image: my-screamshotter:latest
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   celery:
     <<: [ *django ]
     depends_on:
       - postgres
-      - redis
     command: celery -A geotrek worker -c 1
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   web:
     <<: [ *django ]
     depends_on:
       - postgres
-      - redis
       - screamshotter
       - convertit
       - celery
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   sphinx:
     <<: [ *django ]
     working_dir: /opt/geotrek-admin/docs
     command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
     networks:
-      - geotrek-network
+      - hiking-alerts_geotrek-network
 
   geotrek-db-service:
     image: geotrek-db-service
     networks:
-      - geotrek-network
-      - pass-network
+      - hiking-alerts_geotrek-network
+      - hiking-alerts_pass-network
 
 networks:
-  geotrek-network:
+  hiking-alerts_geotrek-network:
     external: true
-  pass-network:
+  hiking-alerts_pass-network:
     external: true
 
 volumes:
