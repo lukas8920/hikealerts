@@ -49,14 +49,18 @@ public class VectorImportService extends BaseScheduler {
                 // reset timeout incrementer
                 timeout = 5;
 
-                IPersist<TileHandler> tmpBuffer = tile.getTile() == null ? this.removalBuffer : this.tileBuffer;
-                tmpBuffer.add(tile);
-
-                if (tmpBuffer.size() > 100000){
-                    logger.debug("persist buffer batch");
-                    tmpBuffer.persist();
-                    // then flush buffer
-                    this.tileBuffer.clear();
+                if (tile.getTile() == null){
+                    this.removalBuffer.add(tile);
+                    if (this.removalBuffer.size() > 100000){
+                        this.removalBuffer.persist();
+                        this.removalBuffer.clear();
+                    }
+                } else {
+                    this.tileBuffer.add(tile);
+                    if (this.tileBuffer.size() > 500){
+                        this.tileBuffer.persist();
+                        this.tileBuffer.clear();
+                    }
                 }
             } else {
                 // No message found, clear buffers and go to sleep
@@ -70,7 +74,6 @@ public class VectorImportService extends BaseScheduler {
                 }
 
                 try {
-                    getLogger().info("Go to sleep as no further messages.");
                     TimeUnit.SECONDS.sleep(timeout);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
