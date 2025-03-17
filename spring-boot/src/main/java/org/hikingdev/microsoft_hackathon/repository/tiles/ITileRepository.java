@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface ITileRepository {
     void save(TileHandler tile);
-    void save(List<TileHandler> tiles);
+    void save(List<TileHandler> tiles, String zoom);
     byte[] query(int z, int x, int y);
     void remove(String zoom, String keyTile);
-    void remove(List<TileHandler> tiles);
+    void remove(List<TileHandler> tiles, String zoom);
 }

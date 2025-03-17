@@ -148,7 +148,11 @@ public class TileVectorService extends BaseScheduler {
     }
 
     private void pushGenericTile(TileGenerator tileGenerator, int x, int y, int z){
-        this.vectorImportService.addToQueue(generateTile(tileGenerator, x, y, z));
+        try {
+            this.vectorImportService.addToQueue(generateTile(tileGenerator, x, y, z));
+        } catch (InterruptedException e) {
+            logger.error("Interrupted VectorImportService.");
+        }
     }
 
     public void saveSingleTile(TileGenerator tileGenerator, int x, int y, int z){

@@ -36,8 +36,7 @@ public class TileRepository implements ITileRepository {
     }
 
     @Override
-    public void save(List<TileHandler> tiles) {
-        String zoom = tiles.get(0).getZoom();
+    public void save(List<TileHandler> tiles, String zoom) {
         Map<String, byte[]> values = tiles.stream().collect(Collectors.toMap(TileHandler::getTileKey, TileHandler::getTile));
         try {
             this.tileRepository.opsForHash().putAll(zoom, values);
@@ -71,8 +70,7 @@ public class TileRepository implements ITileRepository {
     }
 
     @Override
-    public void remove(List<TileHandler> tiles) {
-        String zoom = tiles.get(0).getZoom();
+    public void remove(List<TileHandler> tiles, String zoom) {
         List<String> keyTiles = tiles.stream().map(TileHandler::getTileKey).toList();
         try {
             this.tileRepository.opsForHash().delete(zoom, keyTiles);
