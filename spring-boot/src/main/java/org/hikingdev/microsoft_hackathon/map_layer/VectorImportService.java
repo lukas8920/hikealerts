@@ -19,7 +19,7 @@ public class VectorImportService extends BaseScheduler {
     private static final Logger logger = LoggerFactory.getLogger(VectorImportService.class);
 
     // queue size is the sum tile buffer and removal buffer threshold for persisting to db
-    private final BlockingQueue<TileHandler> tileQueue = new ArrayBlockingQueue<>(200000);
+    private final BlockingQueue<TileHandler> tileQueue = new ArrayBlockingQueue<>(100000);
 
     final IPersist<TileHandler> tileBuffer = new TileBuffer();
     final IPersist<TileHandler> removalBuffer = new RemovalBuffer();
@@ -64,7 +64,7 @@ public class VectorImportService extends BaseScheduler {
 
             if (tile.getTile() == null){
                 this.removalBuffer.add(tile);
-                if (this.removalBuffer.size() > 100000){
+                if (this.removalBuffer.size() > 50000){
                     this.removalBuffer.persist(zoom);
                     this.removalBuffer.clear();
                 }
