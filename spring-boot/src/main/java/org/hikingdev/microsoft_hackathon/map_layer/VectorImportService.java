@@ -112,7 +112,7 @@ public class VectorImportService extends BaseScheduler {
     }
 
     void sleep() throws InterruptedException {
-        logger.info("Sleeping VectorImportService for {} seconds", timeout);
+        logger.debug("Sleeping VectorImportService for {} seconds", timeout);
         TimeUnit.SECONDS.sleep(timeout);
     }
 
