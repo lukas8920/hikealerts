@@ -11,4 +11,4 @@ COPY /target/microsoft-hackathon-1.0.0.jar /app/hiking-alerts.jar
 EXPOSE 8080
 
 # Define the command to run the application
-ENTRYPOINT ["java", "-Xmx8g", "-Xms512m", "-jar", "/app/hiking-alerts.jar"]
+ENTRYPOINT ["java", "-Xmx4g", "-Xms512m", "-jar", "/app/hiking-alerts.jar"]
