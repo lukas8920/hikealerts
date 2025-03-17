@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/geotrek")
-@CrossOrigin
 @Hidden
 public class GeotrekController {
     private final GeotrekService geotrekService;
@@ -19,12 +18,14 @@ public class GeotrekController {
         this.geotrekService = geotrekService;
     }
 
+    @CrossOrigin
     @GetMapping("/credentials")
     public ResponseEntity<GeotrekToken> credentials() throws BadRequestException {
         GeotrekToken geotrekToken = this.geotrekService.findToken();
         return ResponseEntity.ok(geotrekToken);
     }
 
+    @CrossOrigin
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuthentication(@RequestHeader(value = "X-Original-URI", required = false) String originalUri) {
         return ResponseEntity.ok().build();
