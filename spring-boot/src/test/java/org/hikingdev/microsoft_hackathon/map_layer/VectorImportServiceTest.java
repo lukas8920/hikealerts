@@ -58,9 +58,8 @@ public class VectorImportServiceTest {
 
     @Test
     public void testThatHandleTileHandlesNullTile() throws InterruptedException {
-        doNothing().when(this.vectorImportService).sleep();
+        doReturn(null).doThrow(new RuntimeException()).when(this.vectorImportService).blockQueue();
         vectorImportService.zoom = "0";
-        vectorImportService.timeout = 300;
         TileHandler tile = null;
         TileHandler tileHandler = mock(TileHandler.class);
         vectorImportService.tileBuffer.add(tileHandler);
@@ -71,6 +70,5 @@ public class VectorImportServiceTest {
         assertThat(vectorImportService.tileBuffer.size(), is(0));
         assertThat(vectorImportService.removalBuffer.size(), is(0));
         assertThat(vectorImportService.zoom, is("0"));
-        assertThat(vectorImportService.timeout, is(300));
     }
 }

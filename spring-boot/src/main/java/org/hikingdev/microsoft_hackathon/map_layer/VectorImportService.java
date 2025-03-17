@@ -12,21 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class VectorImportService extends BaseScheduler {
     private static final Logger logger = LoggerFactory.getLogger(VectorImportService.class);
 
     // queue size is the sum tile buffer and removal buffer threshold for persisting to db
-    private final BlockingQueue<TileHandler> tileQueue = new ArrayBlockingQueue<>(100000);
+    private final BlockingQueue<TileHandler> tileQueue = new ArrayBlockingQueue<>(1000);
 
     final IPersist<TileHandler> tileBuffer = new TileBuffer();
     final IPersist<TileHandler> removalBuffer = new RemovalBuffer();
 
     private final ITileRepository iTileRepository;
 
-    int timeout = 5;
     String zoom = "intital";
 
     @Autowired
@@ -45,11 +43,11 @@ public class VectorImportService extends BaseScheduler {
 
     @Override
     protected void runProcedure() {
+        TileHandler tile = null;
         while (running && !Thread.currentThread().isInterrupted()){
-            TileHandler tile = tileQueue.poll();
-
+            tile = tile == null ? tileQueue.poll() : tile;
             try {
-                this.handleTile(tile);
+                tile = this.handleTile(tile);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break; // Exit the loop if interrupted
@@ -57,20 +55,18 @@ public class VectorImportService extends BaseScheduler {
         }
     }
 
-    public void handleTile(TileHandler tile) throws InterruptedException {
+    public TileHandler handleTile(TileHandler tile) throws InterruptedException {
         if (tile != null && zoom.equals(tile.getZoom())){
             // reset timeout incrementer
-            timeout = 5;
-
             if (tile.getTile() == null){
                 this.removalBuffer.add(tile);
-                if (this.removalBuffer.size() > 50000){
+                if (this.removalBuffer.size() > 100){
                     this.removalBuffer.persist(zoom);
                     this.removalBuffer.clear();
                 }
             } else {
                 this.tileBuffer.add(tile);
-                if (this.tileBuffer.size() > 500){
+                if (this.tileBuffer.size() > 50){
                     this.tileBuffer.persist(zoom);
                     this.tileBuffer.clear();
                 }
@@ -80,11 +76,11 @@ public class VectorImportService extends BaseScheduler {
             logger.debug("Next zoom level in tile handler: " + hasChangedZoomLevel);
 
             // No message found, clear buffers and go to sleep
-            if (hasChangedZoomLevel || (timeout == 300 && tileBuffer.size() > 0)){
+            if (hasChangedZoomLevel || (tile == null && tileBuffer.size() > 0)){
                 this.tileBuffer.persist(zoom);
                 this.tileBuffer.clear();
             }
-            if (hasChangedZoomLevel || (timeout == 300 && removalBuffer.size() > 0)){
+            if (hasChangedZoomLevel || (tile == null && removalBuffer.size() > 0)){
                 this.removalBuffer.persist(zoom);
                 this.removalBuffer.clear();
             }
@@ -101,19 +97,17 @@ public class VectorImportService extends BaseScheduler {
 
             if (!hasChangedZoomLevel){
                 try {
-                    this.sleep();
+                    return this.blockQueue();
                 } catch (InterruptedException e) {
                     throw new InterruptedException();
                 }
-
-                timeout = timeout == 5 ? 10 : 300;
             }
         }
+        return null;
     }
 
-    void sleep() throws InterruptedException {
-        logger.debug("Sleeping VectorImportService for {} seconds", timeout);
-        TimeUnit.SECONDS.sleep(timeout);
+    public TileHandler blockQueue() throws InterruptedException {
+        return tileQueue.take();
     }
 
     class TileBuffer extends ArrayList<TileHandler> implements IPersist<TileHandler> {
