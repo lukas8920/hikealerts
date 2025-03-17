@@ -119,7 +119,7 @@ public class AuthService {
         try {
             this.geotrekService.register(user);
         } catch (Exception e){
-            logger.error("Registration of geotrek user failed");
+            logger.error("Registration of geotrek user failed", e);
             this.publisher.publishRegistrationFailure();
             return new MessageResponse("Internal server error during registration of user details.");
         }
