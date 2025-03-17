@@ -2,7 +2,7 @@ package org.hikingdev.microsoft_hackathon.map_layer;
 
 import org.hikingdev.microsoft_hackathon.map_layer.entities.TileHandler;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
-import org.hikingdev.microsoft_hackathon.util.BaseScheduler;
+import org.hikingdev.microsoft_hackathon.util.threading.BaseScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

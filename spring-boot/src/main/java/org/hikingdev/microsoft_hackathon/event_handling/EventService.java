@@ -9,8 +9,8 @@ import org.hikingdev.microsoft_hackathon.repository.raw_events.RawEventRepositor
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.User;
-import org.hikingdev.microsoft_hackathon.util.AiException;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

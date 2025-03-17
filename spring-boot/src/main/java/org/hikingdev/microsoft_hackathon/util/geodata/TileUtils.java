@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.geodata;
 
 import com.wdtinc.mapbox_vector_tile.VectorTile;
 import com.wdtinc.mapbox_vector_tile.adapt.jts.*;

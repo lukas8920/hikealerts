@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.threading;
 
 import com.azure.storage.queue.QueueClient;
 import com.azure.storage.queue.models.QueueMessageItem;

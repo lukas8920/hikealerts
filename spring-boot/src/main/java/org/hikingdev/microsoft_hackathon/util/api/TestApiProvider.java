@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.api;
 
 import okhttp3.OkHttpClient;
 import org.hikingdev.microsoft_hackathon.geotrek.GeotrekDbService;

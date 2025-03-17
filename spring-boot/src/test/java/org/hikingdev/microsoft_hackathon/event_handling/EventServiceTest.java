@@ -9,8 +9,8 @@ import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.raw_events.RawEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
-import org.hikingdev.microsoft_hackathon.util.AiException;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

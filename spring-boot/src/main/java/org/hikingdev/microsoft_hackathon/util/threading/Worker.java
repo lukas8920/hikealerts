@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.threading;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

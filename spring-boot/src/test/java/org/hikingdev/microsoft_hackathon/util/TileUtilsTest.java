@@ -4,6 +4,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.wdtinc.mapbox_vector_tile.VectorTile;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.PbfTile;
 import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
+import org.hikingdev.microsoft_hackathon.util.geodata.TileUtils;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

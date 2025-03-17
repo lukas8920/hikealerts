@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hikingdev.microsoft_hackathon.chat.entities.ChatEvent;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
-import org.hikingdev.microsoft_hackathon.util.AiException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
 import io.swagger.v3.oas.annotations.Hidden;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

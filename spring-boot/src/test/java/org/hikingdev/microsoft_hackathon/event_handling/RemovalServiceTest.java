@@ -1,18 +1,15 @@
 package org.hikingdev.microsoft_hackathon.event_handling;
 
 import com.azure.storage.queue.QueueClient;
-import org.hikingdev.microsoft_hackathon.event_handling.RemovalService;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MapEvent;
-import org.hikingdev.microsoft_hackathon.map_layer.TileGenerator;
 import org.hikingdev.microsoft_hackathon.map_layer.TileVectorService;
 import org.hikingdev.microsoft_hackathon.repository.events.EventRepository;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
-import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
-import org.hikingdev.microsoft_hackathon.util.InvalidationException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.EventNotFoundException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.locationtech.jts.index.strtree.STRtree;
 
 import java.util.ArrayList;
 import java.util.List;

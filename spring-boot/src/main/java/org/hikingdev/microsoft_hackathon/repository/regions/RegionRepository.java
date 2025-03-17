@@ -3,7 +3,7 @@ package org.hikingdev.microsoft_hackathon.repository.regions;
 import lombok.Getter;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Region;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
-import org.hikingdev.microsoft_hackathon.util.Worker;
+import org.hikingdev.microsoft_hackathon.util.threading.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

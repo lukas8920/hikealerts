@@ -4,8 +4,8 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities
 import org.hikingdev.microsoft_hackathon.map_layer.entities.*;
 import org.hikingdev.microsoft_hackathon.repository.tiles.ITileRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
-import org.hikingdev.microsoft_hackathon.util.BaseScheduler;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.threading.BaseScheduler;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.slf4j.Logger;

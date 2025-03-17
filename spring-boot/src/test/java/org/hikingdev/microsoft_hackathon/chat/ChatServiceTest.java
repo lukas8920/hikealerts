@@ -9,7 +9,7 @@ import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventReposito
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.UserDetailsImpl;
 import org.hikingdev.microsoft_hackathon.user.entities.User;
-import org.hikingdev.microsoft_hackathon.util.AiException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

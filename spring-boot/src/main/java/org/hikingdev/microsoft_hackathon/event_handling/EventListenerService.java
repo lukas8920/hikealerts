@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.IEventInjection;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Message;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.OpenAiEvent;
-import org.hikingdev.microsoft_hackathon.util.ScheduledService;
+import org.hikingdev.microsoft_hackathon.util.threading.ScheduledService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

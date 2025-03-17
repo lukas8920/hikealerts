@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.PasswordChange;
 import org.hikingdev.microsoft_hackathon.user.entities.Profile;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

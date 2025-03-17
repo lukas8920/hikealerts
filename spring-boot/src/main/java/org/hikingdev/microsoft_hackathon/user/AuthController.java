@@ -5,7 +5,7 @@ import org.hikingdev.microsoft_hackathon.user.entities.JwtResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.LoginRequest;
 import org.hikingdev.microsoft_hackathon.user.entities.MessageResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.SignupRequest;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

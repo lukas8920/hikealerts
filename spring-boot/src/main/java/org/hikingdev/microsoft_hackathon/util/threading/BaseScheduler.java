@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.threading;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;

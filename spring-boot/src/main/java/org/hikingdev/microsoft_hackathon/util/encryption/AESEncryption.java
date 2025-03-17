@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.encryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

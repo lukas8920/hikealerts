@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

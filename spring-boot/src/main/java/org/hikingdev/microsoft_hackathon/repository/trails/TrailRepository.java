@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
-import org.hikingdev.microsoft_hackathon.util.Worker;
+import org.hikingdev.microsoft_hackathon.util.threading.Worker;
 import org.locationtech.jts.geom.Polygon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

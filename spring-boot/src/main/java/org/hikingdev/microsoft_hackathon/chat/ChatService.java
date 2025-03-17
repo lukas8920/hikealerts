@@ -13,9 +13,9 @@ import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventReposito
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.UserDetailsImpl;
 import org.hikingdev.microsoft_hackathon.user.entities.User;
-import org.hikingdev.microsoft_hackathon.util.AiException;
-import org.hikingdev.microsoft_hackathon.util.EventNotFoundException;
-import org.hikingdev.microsoft_hackathon.util.InvalidationException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.EventNotFoundException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

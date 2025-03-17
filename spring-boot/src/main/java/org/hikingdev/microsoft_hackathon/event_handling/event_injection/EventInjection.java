@@ -11,7 +11,7 @@ import org.hikingdev.microsoft_hackathon.repository.events.IEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.raw_events.IRawEventRepository;
 import org.hikingdev.microsoft_hackathon.repository.regions.IRegionRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
-import org.hikingdev.microsoft_hackathon.util.TileUtils;
+import org.hikingdev.microsoft_hackathon.util.geodata.TileUtils;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;

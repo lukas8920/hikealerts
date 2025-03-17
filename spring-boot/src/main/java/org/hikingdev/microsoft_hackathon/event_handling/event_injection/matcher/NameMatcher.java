@@ -2,12 +2,11 @@ package org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher
 
 import lombok.Getter;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.MatchProvider;
-import org.hikingdev.microsoft_hackathon.util.Jaccard;
-import org.hikingdev.microsoft_hackathon.util.Levenshtein;
+import org.hikingdev.microsoft_hackathon.util.geodata.Jaccard;
+import org.hikingdev.microsoft_hackathon.util.geodata.Levenshtein;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 

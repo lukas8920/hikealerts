@@ -5,7 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.hikingdev.microsoft_hackathon.user.entities.Role;
-import org.hikingdev.microsoft_hackathon.util.InvalidationException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,6 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
 @Component
 public class JwtTokenProvider {

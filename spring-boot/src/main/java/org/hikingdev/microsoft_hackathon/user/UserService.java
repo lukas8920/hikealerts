@@ -5,7 +5,7 @@ import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.JwtTokenProvider;
 import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.user.entities.*;
-import org.hikingdev.microsoft_hackathon.util.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
