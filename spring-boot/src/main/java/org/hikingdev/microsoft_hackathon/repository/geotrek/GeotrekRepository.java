@@ -22,7 +22,7 @@ public class GeotrekRepository implements IGeotrekRepository {
 
     @Override
     public GeotrekToken find(Long userId) {
-        Optional<GeotrekToken> optToken = this.iGeotrekJpaRepository.findById(userId);
+        Optional<GeotrekToken> optToken = this.iGeotrekJpaRepository.findFirstByUserId(userId);
         return optToken.orElse(null);
     }
 }
