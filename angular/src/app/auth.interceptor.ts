@@ -15,7 +15,8 @@ export class AuthInterceptor implements HttpInterceptor {
     '/v1/user/savePassword',
     '/v1/user/deleteAccount',
     '/v1/chat/negotiate',
-    '/v1/chat/communicate'
+    '/v1/chat/communicate',
+    '/v1/geotrek/credentials'
   ];
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
