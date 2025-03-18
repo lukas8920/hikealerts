@@ -84,6 +84,8 @@ public class GeotrekService {
                                 logger.error("Error while posting user to geotrek db.");
                             }
                         });
+                    } else {
+                        logger.info("Did not receive a salt.");
                     }
                 } catch (Exception e){
                     logger.error("Error while generating the geotrek token", e);
