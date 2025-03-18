@@ -9,10 +9,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class PBKDF2Hasher {
+    private static final String PBKDF2_PREFIX = "pbkdf2_sha256$600000$";
+
     public static String generateKey(String password, String salt) throws UnsupportedEncodingException {
         PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
         gen.init(password.getBytes(StandardCharsets.UTF_8), salt.getBytes(), 600000);
         byte[] dk = ((KeyParameter) gen.generateDerivedParameters(256)).getKey();
-        return Base64.getEncoder().encodeToString(dk);
+        String encodedPw = Base64.getEncoder().encodeToString(dk);
+        return buildKey(encodedPw, salt);
+    }
+
+    private static String buildKey(String rawKey, String salt){
+        return PBKDF2_PREFIX + salt + "$" + rawKey;
     }
 }
