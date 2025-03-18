@@ -15,7 +15,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   constructor(private sanitizer: DomSanitizer, private userService: UserService,
               private storage: TokenStorageService) {
-    const initialUrl = "https://geotrek.v220241074781291394.goodsrv.de"
+    const initialUrl = "https://hiking-alerts.org:6000"
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(initialUrl);
   }
 
