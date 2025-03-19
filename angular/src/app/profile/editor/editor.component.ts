@@ -24,7 +24,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private messageListener = (event: any) => {
-    console.log("received message");
+    if (event.origin !== "https://hiking-alerts.org") return;
     const {type} = event.data
 
     if (type == "LOGIN"){
