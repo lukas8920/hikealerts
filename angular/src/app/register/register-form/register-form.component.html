@@ -36,6 +36,7 @@
       </button>
     </div>
   </form>
+  <div class="loading" [ngStyle]="{ 'display': isLoading ? 'block' : 'none' }">Creating Profile...<br/>Please wait.</div>
 
   <div *ngIf="isError && isSubmitted" class="response">
     <div>Your Sign Up failed!</div>

@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {UserService} from '../../_service/user.service';
+import {SharedAppService} from '../../shared-app.service';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -41,11 +42,12 @@ export class RegisterFormComponent {
   errorMessage: String = "";
   responseMessage: String = "";
   isSubmitted = false;
+  isLoading = false;
 
   form!: FormGroup;
   matcher: ErrorStateMatcher;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private sharedAppService: SharedAppService) {
     this.matcher = new MyErrorStateMatcher();
   }
 
@@ -62,15 +64,21 @@ export class RegisterFormComponent {
 
   onSubmit(form: FormGroup) {
     this.isSubmitted = true;
+    this.isLoading = true;
+    this.sharedAppService.updateIsNavigating(true);
     this.userService.register(form.get('email')?.value, form.get('password')?.value)
       .subscribe(
         data => {
           console.log(data);
+          this.sharedAppService.updateIsNavigating(false);
+          this.isLoading = false;
           this.isSuccessful = true;
           this.responseMessage = data.message;
         },
         err => {
+          this.sharedAppService.updateIsNavigating(false);
           this.errorMessage = err.error;
+          this.isLoading = false;
           this.isError = true;
         }
       )
