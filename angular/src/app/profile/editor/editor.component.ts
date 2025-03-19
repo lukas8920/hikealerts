@@ -45,13 +45,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   requestLogin(): void {
     this.userService.getGeotrekToken().subscribe(o => {
-      console.log(document);
       const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
-      console.log(iframe);
-      iframe.onload = () => {
-        console.log("send login request");
-        iframe?.contentWindow?.postMessage({type: "LOGIN", token: this.storage.getToken(), username: o.userName, password: o.password}, "*")
-      };
+      iframe?.contentWindow?.postMessage({type: "LOGIN", token: this.storage.getToken(), username: o.userName, password: o.password}, "*")
     }, error => {
       console.log(error);
     })
