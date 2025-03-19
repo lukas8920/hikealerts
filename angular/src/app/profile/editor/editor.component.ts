@@ -24,7 +24,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   private messageListener = (event: any) => {
+    console.log("Received post message from: " + event.origin);
     if (event.origin !== "https://hiking-alerts.org:4200") return;
+    console.log("check return tokens");
     const {type} = event.data;
 
     if (type == "LOGIN"){
@@ -43,10 +45,10 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   };
 
   requestLogin(): void {
-    const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
     this.userService.getGeotrekToken().subscribe(o => {
       const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
       iframe.onload = () => {
+        console.log("send login request");
         iframe?.contentWindow?.postMessage({type: "LOGIN", token: this.storage.getToken(), username: o.userName, password: o.password}, "*")
       };
     })
