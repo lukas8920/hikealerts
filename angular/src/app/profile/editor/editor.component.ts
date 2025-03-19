@@ -11,7 +11,7 @@ import {SharedAppService} from '../../shared-app.service';
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   initialUrl = "https://hiking-alerts.org:4200";
-  pathUrl = "http://hiking-alerts.org:4200/path/list/";
+  pathUrl = "https://hiking-alerts.org:4200/path/list/";
 
   safeUrl: SafeResourceUrl;
   isLoaded = false;
