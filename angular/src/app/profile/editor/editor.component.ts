@@ -44,9 +44,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
 
   requestLogin(): void {
     const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
-    if (!this.isIframeVisible){
-      this.sharedAppService.updateIsNavigating(true);
-    }
     this.userService.getGeotrekToken().subscribe(o => {
       const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
       iframe.onload = () => {
@@ -62,6 +59,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       console.log("send init request");
       if (!this.isIframeVisible){
         this.isLoading = true;
+        if (!this.isIframeVisible){
+          this.sharedAppService.updateIsNavigating(true);
+        }
         iframe?.contentWindow?.postMessage({type: "INIT"}, "*");
       }
     }
