@@ -6,3 +6,9 @@ iframe {
   margin-top: 0;
   justify-content: center;
 }
+
+.loading {
+  font-size: 18px;
+  line-height: 2;
+  padding-top: 40px;
+}
