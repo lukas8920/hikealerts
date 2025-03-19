@@ -60,9 +60,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!this.isIframeVisible){
       this.isLoading = true;
-      if (!this.isIframeVisible){
-        this.sharedAppService.updateIsNavigating(true);
-      }
+      this.sharedAppService.updateIsNavigating(true);
     }
 
     window.addEventListener('message', this.messageListener);
