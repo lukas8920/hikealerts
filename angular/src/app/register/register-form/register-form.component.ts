@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -36,7 +36,7 @@ export const equivalentValidator = (firstControlName: string, secondControlName:
   templateUrl: './register-form.component.html',
   styleUrl: './register-form.component.css'
 })
-export class RegisterFormComponent {
+export class RegisterFormComponent implements OnDestroy {
   isSuccessful: boolean = false;
   isError: boolean = false;
   errorMessage: String = "";
@@ -107,5 +107,9 @@ export class RegisterFormComponent {
     }
     control.setErrors(null);
     return null;
+  }
+
+  ngOnDestroy(): void {
+    this.sharedAppService.updateIsNavigating(false);
   }
 }
