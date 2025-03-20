@@ -1,11 +1,13 @@
 package org.hikingdev.microsoft_hackathon.user;
 
+import io.jsonwebtoken.Claims;
 import org.hikingdev.microsoft_hackathon.repository.tokens.ITokenRepository;
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.JwtTokenProvider;
 import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.user.entities.*;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +156,15 @@ public class UserService {
         this.iUserRepository.deleteById(user);
         logger.info("Deleted user.");
         return new MessageResponse("Successful deletion.");
+    }
+
+    public void authenticate(String tokenHeader) throws InvalidationException {
+        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
+            String token = tokenHeader.substring(7);
+            jwtTokenProvider.getClaims(token);
+        } else {
+            throw new InvalidationException("No token provided");
+        }
     }
 
     private void createPasswordResetTokenForUser(User user, String token) {

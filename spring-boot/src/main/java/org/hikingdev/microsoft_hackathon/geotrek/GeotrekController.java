@@ -2,7 +2,11 @@ package org.hikingdev.microsoft_hackathon.geotrek;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekToken;
+import org.hikingdev.microsoft_hackathon.user.UserService;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/geotrek")
 @Hidden
 public class GeotrekController {
+    private static final Logger logger = LoggerFactory.getLogger(GeotrekController.class);
+
     private final GeotrekService geotrekService;
+    private final UserService userService;
 
     @Autowired
-    public GeotrekController(GeotrekService geotrekService){
+    public GeotrekController(GeotrekService geotrekService, UserService userService){
+        this.userService = userService;
         this.geotrekService = geotrekService;
     }
 
@@ -27,7 +35,11 @@ public class GeotrekController {
 
     @CrossOrigin
     @GetMapping("/check")
-    public ResponseEntity<Void> checkAuthentication(@RequestHeader(value = "X-Original-URI", required = false) String originalUri) {
+    public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader("Authorization") String authorizationHeader) throws InvalidationException {
+        logger.info("Check authentication for {}", method);
+        if ("POST".equalsIgnoreCase(method)) {
+            this.userService.authenticate(authorizationHeader);
+        }
         return ResponseEntity.ok().build();
     }
 }

@@ -97,8 +97,6 @@ public class GeotrekService {
                 logger.error("Error when querying salt.");
             }
         });
-
-
     }
 
     public GeotrekToken findToken() throws BadRequestException {
