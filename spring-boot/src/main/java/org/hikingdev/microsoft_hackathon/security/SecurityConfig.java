@@ -61,6 +61,7 @@ public class SecurityConfig {
                     authz.requestMatchers("/v1/user/resetPassword").permitAll();
                     authz.requestMatchers("/v1/user/changePassword").permitAll();
                     authz.requestMatchers("/v1/chat/init").permitAll();
+                    authz.requestMatchers("/v1/geotrek/check").permitAll();
                     authz.anyRequest().authenticated();
                 });
 
