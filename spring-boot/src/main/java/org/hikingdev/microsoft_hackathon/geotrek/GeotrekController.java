@@ -35,7 +35,7 @@ public class GeotrekController {
 
     @CrossOrigin
     @GetMapping("/check")
-    public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader("Authorization") String authorizationHeader) throws InvalidationException {
+    public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
         logger.info("Check authentication for {}", method);
         if ("POST".equalsIgnoreCase(method)) {
             this.userService.authenticate(authorizationHeader);
