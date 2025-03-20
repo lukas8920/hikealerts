@@ -35,7 +35,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.requestLogin();
     } else if (type == "LOADED"){
       console.log("log in completed");
-      this.loading_text = "Waiting for UI to load.\nPlease be patient...";
       this.isLoading = false;
       this.isIframeVisible = true;
       this.sharedAppService.updateIsNavigating(false);
@@ -51,7 +50,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.loading_text = "Requesting authentication credentials\nPlease be patient...";
     this.userService.getGeotrekToken().subscribe(o => {
       const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
-      this.loading_text = "Authenticate with credentials\nPlease be patient...";
+      this.loading_text = "Waiting for UI to load.\nPlease be patient...";
       iframe?.contentWindow?.postMessage({type: "LOGIN", token: this.storage.getToken(), username: o.userName, password: o.password}, "*")
     }, error => {
       this.loading_text = "Intitialising editor failed."
