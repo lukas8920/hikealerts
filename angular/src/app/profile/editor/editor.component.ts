@@ -18,6 +18,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   isIframeVisible = false;
   isLoading = false;
 
+  initial_loading_text = "Initialising editor.\nThis can take a bit. Please be patient...";
+  loading_text = "";
+
   constructor(private sanitizer: DomSanitizer, private userService: UserService,
               private storage: TokenStorageService, private sharedAppService: SharedAppService) {
     this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.initialUrl);
@@ -32,6 +35,7 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
       this.requestLogin();
     } else if (type == "LOADED"){
       console.log("log in completed");
+      this.loading_text = "Waiting for UI to load.\nPlease be patient...";
       this.isLoading = false;
       this.isIframeVisible = true;
       this.sharedAppService.updateIsNavigating(false);
@@ -44,10 +48,13 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   };
 
   requestLogin(): void {
+    this.loading_text = "Requesting authentication credentials\nPlease be patient...";
     this.userService.getGeotrekToken().subscribe(o => {
       const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
+      this.loading_text = "Authenticate with credentials\nPlease be patient...";
       iframe?.contentWindow?.postMessage({type: "LOGIN", token: this.storage.getToken(), username: o.userName, password: o.password}, "*")
     }, error => {
+      this.loading_text = "Intitialising editor failed."
       console.log(error);
     })
   }
@@ -55,7 +62,8 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     if (!this.isIframeVisible){
       this.isLoading = true;
-      this.sharedAppService.updateIsNavigating(true);
+      this.loading_text = this.initial_loading_text;
+      setTimeout(() => (this.sharedAppService.updateIsNavigating(true)), 5);
     }
 
     window.addEventListener('message', this.messageListener);

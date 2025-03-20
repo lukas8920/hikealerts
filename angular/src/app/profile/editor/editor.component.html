@@ -1,6 +1,6 @@
 <div>
   <iframe id="geotrek-iframe"  [ngStyle]="{ 'display': isIframeVisible ? 'block' : 'none' }" [src]="safeUrl"></iframe>
-  <div class="loading" [ngStyle]="{ 'display': isLoading ? 'block' : 'none' }">Loading editor...<br/>Please wait.</div>
+  <div class="loading" [ngStyle]="{ 'display': isLoading ? 'block' : 'none' }">{{loading_text}}</div>
 </div>
 
 
