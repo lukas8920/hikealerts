@@ -34,12 +34,9 @@ public class GeotrekController {
         return ResponseEntity.ok(geotrekToken);
     }
 
-    @CrossOrigin()
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org", "https://hiking-alerts.org:4200", "https://www.hiking-alerts.org:4200"})
     @GetMapping("/check")
-    public ResponseEntity<Void> checkAuthentication(HttpServletRequest request, @RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
-        String origin = request.getHeader("Origin");
-        logger.info("Received request from: " + origin);
-
+    public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
         logger.info("Check authentication for {}", method);
         if ("POST".equalsIgnoreCase(method)) {
             this.userService.authenticate(authorizationHeader);
