@@ -10,7 +10,7 @@ import {SharedAppService} from '../../shared-app.service';
   styleUrl: './editor.component.css',
   host: {class: 'closeToTop'}
 })
-export class EditorComponent implements AfterViewInit, OnDestroy {
+export class EditorComponent implements AfterViewInit, OnDestroy, OnInit {
   initialUrl = "https://hiking-alerts.org:4200";
   pathUrl = "https://hiking-alerts.org:4200/path/list/";
 
@@ -69,7 +69,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     }, 5);
 
 
-    window.addEventListener('message', this.messageListener);
     const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
     iframe.onload = () => {
       if (!this.isIframeVisible){
@@ -84,5 +83,9 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
     this.isLoading = false;
     window.removeEventListener('message', this.messageListener);
     this.sharedAppService.updateIsNavigating(false);
+  }
+
+  ngOnInit(): void {
+    setTimeout(() => window.addEventListener('message', this.messageListener),2);
   }
 }
