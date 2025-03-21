@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
 import {equivalentValidator} from '../../register/register-form/register-form.component';
 import {UserService} from '../../_service/user.service';
+import {SharedAppService} from '../../shared-app.service';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -16,13 +17,13 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   styleUrl: './save-pw.component.css',
   host: {class: 'closeToTop'}
 })
-export class SavePwComponent {
+export class SavePwComponent implements OnDestroy {
   form: FormGroup;
   matcher: MyErrorStateMatcher;
   message: string = "";
   isValid: boolean = true;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private sharedAppService: SharedAppService) {
     this.matcher = new MyErrorStateMatcher();
     this.form = fb.group({
       password: ['', [this.validatePwLength]],
@@ -41,15 +42,18 @@ export class SavePwComponent {
   }
 
   onSubmit(form: FormGroup): void {
+    this.sharedAppService.updateIsNavigating(true);
     this.userService.savePw(form.get('password')?.value, "").subscribe(
       data => {
         this.message = data.message;
         this.form.reset();
+        this.sharedAppService.updateIsNavigating(false);
       },
       error => {
         this.message = error.error;
         this.isValid = false;
         this.form.reset();
+        this.sharedAppService.updateIsNavigating(false);
       }
     )
   }
@@ -73,5 +77,9 @@ export class SavePwComponent {
     }
     control.setErrors(null);
     return null;
+  }
+
+  ngOnDestroy(): void {
+    this.sharedAppService.updateIsNavigating(false);
   }
 }
