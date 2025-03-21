@@ -1,4 +1,4 @@
-import {Component, Inject, Input, PLATFORM_ID} from '@angular/core';
+import {AfterViewInit, Component, Inject, Input, OnDestroy, PLATFORM_ID} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationComponent} from '../confirmation/confirmation.component';
 import {UserService} from '../../_service/user.service';
@@ -11,19 +11,13 @@ import {SharedAppService} from '../../shared-app.service';
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.css'
 })
-export class OverviewComponent {
+export class OverviewComponent implements AfterViewInit, OnDestroy{
   profile: any;
 
   isApiKeyVisible: boolean = false;
 
   constructor(private dialog: MatDialog, private userService: UserService, private sharedDataService: SharedProfileService,
               private router: Router, @Inject(PLATFORM_ID) private platformId: any, private sharedAppService: SharedAppService) {
-  }
-
-  ngOnInit() {
-    this.sharedDataService.data$.subscribe((data) => {
-      this.profile = data;
-    });
   }
 
   openConfirmationDialog(): void {
@@ -59,5 +53,21 @@ export class OverviewComponent {
 
   isKeyVisible(): boolean {
     return this.profile?.api_key.length > 35;
+  }
+
+  ngOnDestroy(): void {
+    this.sharedAppService.updateIsNavigating(false);
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.profile == null) {
+        this.sharedAppService.updateIsNavigating(true);
+      }
+    }, 5);
+    this.sharedDataService.data$.subscribe((data) => {
+      setTimeout(() => this.profile = data);
+      this.sharedAppService.updateIsNavigating(false);
+    });
   }
 }
