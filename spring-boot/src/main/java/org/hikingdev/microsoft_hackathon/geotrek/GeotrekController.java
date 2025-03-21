@@ -26,14 +26,14 @@ public class GeotrekController {
         this.geotrekService = geotrekService;
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/credentials")
     public ResponseEntity<GeotrekToken> credentials() throws BadRequestException {
         GeotrekToken geotrekToken = this.geotrekService.findToken();
         return ResponseEntity.ok(geotrekToken);
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
         logger.info("Check authentication for {}", method);
