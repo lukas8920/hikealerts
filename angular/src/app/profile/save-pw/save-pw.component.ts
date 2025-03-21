@@ -13,7 +13,8 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 @Component({
   selector: 'app-save-pw',
   templateUrl: './save-pw.component.html',
-  styleUrl: './save-pw.component.css'
+  styleUrl: './save-pw.component.css',
+  host: {class: 'closeToTop'}
 })
 export class SavePwComponent {
   form: FormGroup;

@@ -6,17 +6,23 @@
 .content {
   width: 100%;
   display: flex;
-  flex-direction: row;
 }
 
 .navigation {
-  max-width: 250px;
-  flex-grow: 0.5;
+  max-width: 266px;
+  flex: 1 0 auto;
+  min-width: 100px;
+}
+
+.router-container {
+  flex: 1 1 auto; /* Take up the remaining space */
+  display: flex; /* Ensures it stretches */
+  flex-direction: column;
 }
 
 .outlet {
-  flex-grow: 0.5;
-  display: block;
+  flex-grow: 1;
+  display: flex;
 }
 
 .subtitle {

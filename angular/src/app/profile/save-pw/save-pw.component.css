@@ -4,7 +4,13 @@
 
 .container {
   width: 100%;
-  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.sub-container {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .elements {
@@ -64,7 +70,7 @@ h2 {
 
 @media screen and (max-width: 768px) {
   .container {
-    padding-left: 22px;
+    padding-left: 0;
     padding-right: 20px;
   }
 }

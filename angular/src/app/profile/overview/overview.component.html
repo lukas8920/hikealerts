@@ -1,54 +1,56 @@
 <div class="container">
-  <div class="body">
-    <h2>Overview</h2>
+  <div class="sub-container">
+    <div class="body">
+      <h2>Overview</h2>
+      <div class="row">
+        <div class="col1">
+          <div class="line">
+            <div>User:</div>
+          </div>
+          <div class="line">
+            <div>Organisation:</div>
+          </div>
+          <div class="line">
+            <div>Status:</div>
+          </div>
+        </div>
+        <div>
+          <div class="line">
+            <div>{{profile?.mail}}</div>
+          </div>
+          <div class="line">
+            <div>{{profile?.organisation}}</div>
+          </div>
+          <div class="line">
+            <div>{{profile?.status}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info">
+      Contact us via mail, if you would like to join / create an organisation.<br/>
+      Organisation alerts have the 'Official' tag in the API / Map.<br/>
+      Only members of the organisation can adjust + delete events from the respective organisation.
+    </div>
     <div class="row">
-      <div class="col1">
-        <div class="line">
-          <div>User:</div>
-        </div>
-        <div class="line">
-          <div>Organisation:</div>
-        </div>
-        <div class="line">
-          <div>Status:</div>
-        </div>
+      <div [ngClass]="{'col1': !isKeyVisible(), 'api-col1': isKeyVisible()}">
+        <div *ngIf="!isKeyVisible()" class="line">API Key:</div>
+        <div *ngIf="isKeyVisible()" class="scalable-line">API Key:</div>
       </div>
-      <div>
-        <div class="line">
-          <div>{{profile?.mail}}</div>
-        </div>
-        <div class="line">
-          <div>{{profile?.organisation}}</div>
-        </div>
-        <div class="line">
-          <div>{{profile?.status}}</div>
-        </div>
+      <div class="api-key">
+        <div>{{profile?.api_key}}</div>
       </div>
     </div>
-  </div>
-  <div class="info">
-    Contact us via mail, if you would like to join / create an organisation.<br/>
-    Organisation alerts have the 'Official' tag in the API / Map.<br/>
-    Only members of the organisation can adjust + delete events from the respective organisation.
-  </div>
-  <div class="row">
-    <div [ngClass]="{'col1': !isKeyVisible(), 'api-col1': isKeyVisible()}">
-      <div *ngIf="!isKeyVisible()" class="line">API Key:</div>
-      <div *ngIf="isKeyVisible()" class="scalable-line">API Key:</div>
+    <div class="info" *ngIf="isApiKeyVisible">
+      Please copy the api-key. It will not be visible again!
     </div>
-    <div class="api-key">
-      <div>{{profile?.api_key}}</div>
+    <div>
+      <button mat-raised-button class="button" (click)="openConfirmationDialog()">
+        Delete Account
+      </button>
+      <button mat-raised-button class="button" (click)="refreshApiKey()">
+        Refresh API Key
+      </button>
     </div>
-  </div>
-  <div class="info" *ngIf="isApiKeyVisible">
-    Please copy the api-key. It will not be visible again!
-  </div>
-  <div>
-    <button mat-raised-button class="button" (click)="openConfirmationDialog()">
-      Delete Account
-    </button>
-    <button mat-raised-button class="button" (click)="refreshApiKey()">
-      Refresh API Key
-    </button>
   </div>
 </div>

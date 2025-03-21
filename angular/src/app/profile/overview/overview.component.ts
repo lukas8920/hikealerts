@@ -9,7 +9,8 @@ import {SharedAppService} from '../../shared-app.service';
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
-  styleUrl: './overview.component.css'
+  styleUrl: './overview.component.css',
+  host: {class: 'closeToTop'}
 })
 export class OverviewComponent implements AfterViewInit, OnDestroy{
   profile: any;

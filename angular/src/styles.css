@@ -1,2 +1,8 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.closeToTop {
+  flex: 4 1 auto;
+  display: flex;
+  flex-direction: column;
+}

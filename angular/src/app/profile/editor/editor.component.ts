@@ -7,7 +7,8 @@ import {SharedAppService} from '../../shared-app.service';
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
-  styleUrl: './editor.component.css'
+  styleUrl: './editor.component.css',
+  host: {class: 'closeToTop'}
 })
 export class EditorComponent implements AfterViewInit, OnDestroy {
   initialUrl = "https://hiking-alerts.org:4200";
