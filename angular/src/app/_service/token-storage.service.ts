@@ -31,7 +31,6 @@ export class TokenStorageService {
   }
 
   public saveUser(user: any): void {
-    console.log(user);
     if (isPlatformBrowser(this.platformId)){
       window.sessionStorage.removeItem(USER_KEY);
       window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
