@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.geotrek;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.http.HttpServletRequest;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekToken;
 import org.hikingdev.microsoft_hackathon.user.UserService;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
@@ -33,9 +34,12 @@ public class GeotrekController {
         return ResponseEntity.ok(geotrekToken);
     }
 
-    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
+    @CrossOrigin()
     @GetMapping("/check")
-    public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
+    public ResponseEntity<Void> checkAuthentication(HttpServletRequest request, @RequestHeader("X-Original-Method") String method, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
+        String origin = request.getHeader("Origin");
+        logger.info("Received request from: " + origin);
+
         logger.info("Check authentication for {}", method);
         if ("POST".equalsIgnoreCase(method)) {
             this.userService.authenticate(authorizationHeader);
