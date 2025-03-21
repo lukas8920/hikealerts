@@ -60,11 +60,14 @@ export class EditorComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    if (!this.isIframeVisible){
-      this.isLoading = true;
-      this.loading_text = this.initial_loading_text;
-      setTimeout(() => (this.sharedAppService.updateIsNavigating(true)), 5);
-    }
+    setTimeout(() => {
+      if (!this.isIframeVisible){
+        this.isLoading = true;
+        this.loading_text = this.initial_loading_text;
+        this.sharedAppService.updateIsNavigating(true);
+      }
+    }, 5);
+
 
     window.addEventListener('message', this.messageListener);
     const iframe = document.getElementById('geotrek-iframe') as HTMLIFrameElement;
