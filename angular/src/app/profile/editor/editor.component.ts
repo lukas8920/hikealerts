@@ -86,6 +86,6 @@ export class EditorComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    setTimeout(() => window.addEventListener('message', this.messageListener),2);
+    window.addEventListener('message', this.messageListener);
   }
 }
