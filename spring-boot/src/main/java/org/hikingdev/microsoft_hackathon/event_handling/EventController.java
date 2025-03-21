@@ -35,7 +35,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/pull")
     @Hidden
     public ResponseEntity<List<MapEvent>> getEventData(@RequestParam int offset, @RequestParam int limit) throws BadRequestException {

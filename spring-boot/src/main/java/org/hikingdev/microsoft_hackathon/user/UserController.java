@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
+@CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
 @RestController
 @RequestMapping("/v1/user")
 @Hidden

@@ -13,7 +13,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/v1/auth")
-@CrossOrigin
+@CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
 @Hidden
 public class AuthController {
     private final AuthService authService;

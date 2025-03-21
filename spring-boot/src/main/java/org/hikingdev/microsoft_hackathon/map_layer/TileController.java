@@ -26,7 +26,7 @@ public class TileController {
         this.tileVectorService = tileVectorService;
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/{z}/{x}/{y}.pbf")
     public ResponseEntity<InputStreamResource> getTile(@PathVariable("z") int z, @PathVariable("x") int x, @PathVariable("y") int y) throws BadRequestException {
         byte[] tileData = this.tileVectorService.query(z, x, y);

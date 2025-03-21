@@ -25,7 +25,7 @@ public class ChatController {
         this.signalRService = signalRService;
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @PostMapping("/communicate")
     public ResponseEntity<String> chat(@RequestBody String message){
         this.chatService.chat(message);
@@ -33,14 +33,14 @@ public class ChatController {
     }
 
     // for test purposes, add "http://localhost:8081", "http://localhost:4200"
-    @CrossOrigin(origins = {"https://hiking-alerts.org"}, allowCredentials = "true")
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"}, allowCredentials = "true")
     @PostMapping("/negotiate")
     public ResponseEntity<SignalRConnectionInfo> negotiate(){
         SignalRConnectionInfo signalRConnectionInfo = this.signalRService.getConnectionInfo();
         return ResponseEntity.ok(signalRConnectionInfo);
     }
 
-    @CrossOrigin
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/init")
     public ResponseEntity<ChatInit> init(){
         ChatInit chatInit = this.chatService.init();
