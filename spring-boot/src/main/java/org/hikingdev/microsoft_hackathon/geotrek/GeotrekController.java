@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/geotrek")
 @Hidden
 public class GeotrekController {
+    private static final String LOGIN_PATH = "/login/?next=/";
+
     private static final Logger logger = LoggerFactory.getLogger(GeotrekController.class);
 
     private final GeotrekService geotrekService;
@@ -38,7 +40,7 @@ public class GeotrekController {
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuthentication(@RequestHeader("X-Original-Method") String method, @RequestHeader("X-Original-URI") String uri, @RequestHeader(value = "Authorization", required = false) String authorizationHeader) throws InvalidationException {
         logger.info("Check authentication for {} to {}", method, uri);
-        if ("POST".equalsIgnoreCase(method)) {
+        if ("POST".equalsIgnoreCase(method) || !uri.equals(LOGIN_PATH)) {
             this.userService.authenticate(authorizationHeader);
         }
         return ResponseEntity.ok().build();
