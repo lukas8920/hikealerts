@@ -88,7 +88,8 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        String jwt = jwtTokenProvider.createUserToken(Long.valueOf(userDetails.getUsername()), Role.USER);
+        logger.info("Generating token for roles {}", user.getRoles());
+        String jwt = jwtTokenProvider.createUserToken(Long.valueOf(userDetails.getUsername()), user.getRoles());
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
@@ -111,7 +112,7 @@ public class AuthService {
             throw new BadRequestException("Error: User Mail is already assigned to an account.");
         }
 
-        List<Role> roles = List.of(Role.USER);
+        List<Role> roles = List.of(Role.UI_USER);
         User user = new User(null, signupRequest.getMail(), this.passwordEncoder.encode(signupRequest.getPassword())
                 , roles, false, COMMUNITY_ID, null);
 

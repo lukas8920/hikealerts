@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.hikingdev.microsoft_hackathon.security.failures.Publisher;
 import org.hikingdev.microsoft_hackathon.security.failures.service.LoginAttemptService;
 import org.hikingdev.microsoft_hackathon.security.failures.service.RegisterAttemptService;
+import org.hikingdev.microsoft_hackathon.user.entities.Role;
 import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class.getName());
@@ -26,12 +30,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final Publisher publisher;
     private final LoginAttemptService loginAttemptService;
     private final RegisterAttemptService registerAttemptService;
+    private final RoleRegister roleRegister;
 
-    public JwtTokenFilter(RegisterAttemptService registerAttemptService, JwtTokenProvider jwtTokenProvider, Publisher publisher, LoginAttemptService service){
+    public JwtTokenFilter(RegisterAttemptService registerAttemptService, JwtTokenProvider jwtTokenProvider, Publisher publisher, LoginAttemptService service,
+                          RoleRegister roleRegister){
         this.jwtTokenProvider = jwtTokenProvider;
         this.publisher = publisher;
         this.loginAttemptService = service;
         this.registerAttemptService = registerAttemptService;
+        this.roleRegister = roleRegister;
     }
 
     @Override
@@ -49,11 +56,20 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             if (token != null) {
                 Claims claims = jwtTokenProvider.getClaims(token);
                 Authentication auth = jwtTokenProvider.getAuthentication(claims);
-                List<String> allowedEndpoints = (List<String>) claims.get("allowedEndpoints");
+
+                List<Role> roles = (List<Role>) claims.get("roles", List.class);
+                List<String> allowedEndpoints = new ArrayList<>();
+                if (roles != null){
+                    allowedEndpoints.addAll(roles.stream()
+                            .map(roleRegister.getRoles()::get)
+                            .filter(Objects::nonNull)
+                            .flatMap(List::stream)
+                            .distinct().toList());
+                }
 
                 String requestPath = httpServletRequest.getRequestURI();
                 logger.info("Trying to access " + requestPath);
-                if (allowedEndpoints == null || !this.isPathAllowed(requestPath, allowedEndpoints)) {
+                if (allowedEndpoints.size() == 0 || !this.isPathAllowed(requestPath, allowedEndpoints)) {
                     httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                     httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");
                     return;

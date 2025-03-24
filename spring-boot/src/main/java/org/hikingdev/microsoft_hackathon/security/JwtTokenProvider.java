@@ -50,22 +50,18 @@ public class JwtTokenProvider {
         encoderKey = Base64.getEncoder().encodeToString(encoderKey.getBytes());
     }
 
-    public String createUserToken(Long id, Role role){
+    public String createUserToken(Long id, List<Role> roles){
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + validityInMilliseconds);
 
-        // Create a Key instance from the encoderKey
         Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
 
-        // Build the token directly using JwtBuilder
-
         return Jwts.builder()
-                .subject(id.toString()) // Set the subject
-                .claim("auth", new SimpleGrantedAuthority(role.toString())) // Add custom claims
-                .claim("allowedEndpoints", List.of("/v1/user", "/v1/chat/negotiate", "/v1/chat/communicate", "/v1/geotrek/check", "/v1/geotrek/credentials"))
+                .subject(id.toString())
+                .claim("roles", roles)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(key) // Sign with the Key object
+                .signWith(key)
                 .compact();
     }
 
@@ -95,15 +91,13 @@ public class JwtTokenProvider {
 
 
     public String generateApiToken(Long id){
-        // Create a Key instance from the encoderKey
         Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
 
-        // Build the token directly using JwtBuilder
         return Jwts.builder()
-                .subject(id.toString()) // Set the subject
-                .claim("allowedEndpoints", List.of("/v1/events"))
+                .subject(id.toString())
+                .claim("roles", Role.API_USER)
                 .issuedAt(new Date())
-                .signWith(key) // Sign with the Key object
+                .signWith(key)
                 .compact();
     }
 
