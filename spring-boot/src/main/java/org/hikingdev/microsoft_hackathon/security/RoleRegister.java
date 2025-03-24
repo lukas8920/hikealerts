@@ -24,8 +24,13 @@ public class RoleRegister {
             "/v1/events"
     );
 
+    private List<String> GEOTREK_ENDPOINTS = List.of(
+            "/v1/geotrek/trail"
+    );
+
     private Map<Role, List<String>> roles = Map.of(
             Role.UI_USER, UI_USER_ENDPOINTS,
-            Role.API_USER, API_USER_ENDPOINTS
+            Role.API_USER, API_USER_ENDPOINTS,
+            Role.GEOTREK, GEOTREK_ENDPOINTS
     );
 }

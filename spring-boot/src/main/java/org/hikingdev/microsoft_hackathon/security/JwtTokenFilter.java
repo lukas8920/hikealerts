@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class JwtTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenFilter.class.getName());
@@ -68,7 +67,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 }
 
                 String requestPath = httpServletRequest.getRequestURI();
-                logger.info("Trying to access " + requestPath);
+                logger.info("{} is trying to access {}", ip, requestPath);
+                logger.info("User {} is allowed to access {}", ip, allowedEndpoints);
                 if (allowedEndpoints.size() == 0 || !this.isPathAllowed(requestPath, allowedEndpoints)) {
                     httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                     httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");

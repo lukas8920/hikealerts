@@ -29,19 +29,21 @@ public class SecurityConfig {
     private final Publisher publisher;
     private final LoginAttemptService service;
     private final RegisterAttemptService registerAttemptService;
+    private final RoleRegister roleRegister;
 
     @Autowired
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider, Publisher publisher,
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider, Publisher publisher, RoleRegister roleRegister,
                           LoginAttemptService service, RegisterAttemptService registerAttemptService){
         this.jwtTokenProvider = jwtTokenProvider;
         this.publisher = publisher;
         this.service = service;
         this.registerAttemptService = registerAttemptService;
+        this.roleRegister = roleRegister;
     }
 
     @Bean
     public SecurityFilterChain constantTokenSecurityFilterChain(HttpSecurity http) throws Exception {
-        JwtTokenFilter filter = new JwtTokenFilter(registerAttemptService, jwtTokenProvider, publisher, service);
+        JwtTokenFilter filter = new JwtTokenFilter(registerAttemptService, jwtTokenProvider, publisher, service, roleRegister);
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
