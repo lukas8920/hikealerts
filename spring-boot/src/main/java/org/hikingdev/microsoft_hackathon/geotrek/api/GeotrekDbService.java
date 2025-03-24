@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.geotrek;
+package org.hikingdev.microsoft_hackathon.geotrek.api;
 
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekUser;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.Salt;

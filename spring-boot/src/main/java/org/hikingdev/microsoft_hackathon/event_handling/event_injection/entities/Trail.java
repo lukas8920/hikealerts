@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hikingdev.microsoft_hackathon.util.geodata.Math;
+import org.locationtech.jts.io.ParseException;
 
 @Entity
 @Getter
@@ -25,5 +27,9 @@ public class Trail extends MatchProvider {
 
     public String[] getCandidateStrings(){
         return new String[]{trailname, maplabel};
+    }
+
+    public String convertBytesToString() throws ParseException {
+        return Math.convertByteArrayToString(this.coordinates);
     }
 }

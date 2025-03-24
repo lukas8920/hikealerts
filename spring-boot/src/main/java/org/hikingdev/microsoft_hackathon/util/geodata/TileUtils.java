@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
+import java.lang.Math;
 
 public class TileUtils {
     private static final Logger logger = LoggerFactory.getLogger(TileUtils.class);
@@ -101,32 +102,6 @@ public class TileUtils {
         return featureBuilder.build();
     }
 
-    public static LineString transformLineString(Geometry geometry){
-        List<Coordinate> transformedCoords = new ArrayList<>();
-        for (Coordinate coord : geometry.getCoordinates()) {
-            Coordinate transformedCoordinate = transformCoordinate(coord);
-            transformedCoords.add(transformedCoordinate);
-        }
-        return new GeometryFactory().createLineString(transformedCoords.toArray(new Coordinate[0]));
-    }
-
-    public static Coordinate transformCoordinate(Coordinate coordinate){
-        double x;
-        double y;
-        x = lonToMerc(coordinate.x);
-        y = latToMerc(coordinate.y);
-        return new Coordinate(x, y);
-    }
-
-    public static double[] transformBbox(double[] bbox){
-        return new double[]{
-          lonToMerc(bbox[0]),
-          latToMerc(bbox[1]),
-          lonToMerc(bbox[2]),
-          latToMerc(bbox[3])
-        };
-    }
-
     public static double[] tileToBBox(int x, int y, int z) {
         // Number of tiles per zoom level
         double n = Math.pow(2, z);
@@ -141,17 +116,6 @@ public class TileUtils {
 
         // Return the bounding box as [lon_w, lat_s, lon_e, lat_n]
         return new double[] { lon_w, lat_s, lon_e, lat_n };
-    }
-
-    // Convert longitude to EPSG:3857
-    private static double lonToMerc(double lon) {
-        return lon * 20037508.34 / 180;
-    }
-
-    // Convert latitude to EPSG:3857
-    private static double latToMerc(double lat) {
-        double rad = Math.toRadians(lat);
-        return Math.log(Math.tan(Math.PI / 4 + rad / 2)) * 6378137;
     }
 
     public static Set<PbfTile> getIntersectedTiles(LineString lineString, int zoomMin, int zoomMax) {

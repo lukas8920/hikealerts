@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("test")
 public class KeyTestProvider {
+    @Value("${geonames.username}")
+    private String geonamesUsername;
     @Value("${event.endpoint.bearer.token:default}")
     private String bearerToken;
     @Value("${queue.connection.string:default}")
@@ -71,5 +73,10 @@ public class KeyTestProvider {
     @Bean(name = "aes_decryption_key")
     public String aesDecryptionKey(){
         return this.aesDecryptionKey;
+    }
+
+    @Bean(name = "geonamesUsername")
+    public String geonamesUsername() {
+        return this.geonamesUsername;
     }
 }

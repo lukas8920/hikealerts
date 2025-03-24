@@ -6,6 +6,7 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.NameMatcher;
 import org.hikingdev.microsoft_hackathon.util.threading.Worker;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,5 +139,15 @@ public class TrailRepository implements ITrailRepository {
 
     public List<Trail> findTrailsByEventIdAndCountry(String eventId, String country){
         return this.iTrailJpaRepository.findTrailsByEventIdAndCountry(eventId, country);
+    }
+
+    @Override
+    public void save(Trail trail) {
+        try {
+            String wktCoordinates = trail.convertBytesToString();
+            this.iTrailJpaRepository.save(trail.getTrailId(), trail.getCountry(), trail.getTrailname(), trail.getMaintainer(), wktCoordinates);
+        } catch (ParseException e) {
+            logger.error("Error while parsing wkt String for trail {}", trail.getTrailId());
+        }
     }
 }

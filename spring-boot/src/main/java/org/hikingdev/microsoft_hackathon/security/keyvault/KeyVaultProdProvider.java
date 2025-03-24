@@ -37,6 +37,7 @@ public class KeyVaultProdProvider {
     private static final String signalrEndpoint = "signalr-endpoint";
     private static final String openaiKey = "openai-api-key";
     private static final String aesDecryptionKey = "aes-decryption-key";
+    private static final String geonamesUsername = "geonames-username";
 
     @Value("${db.driver}")
     private String dbDriver;
@@ -136,6 +137,11 @@ public class KeyVaultProdProvider {
 
     @Bean(name = "aes_decryption_key")
     public String aesDecryptionKey(SecretClient secretClient) { return secretClient.getSecret(aesDecryptionKey).getValue(); }
+
+    @Bean(name = "geonamesUsername")
+    public String geonamesUsername(SecretClient secretClient){
+        return secretClient.getSecret(geonamesUsername).getValue();
+    }
 
     @Bean
     public DataSource dataSource(SecretClient secretClient) {

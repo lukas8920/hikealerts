@@ -1,4 +1,4 @@
-package org.hikingdev.microsoft_hackathon.util;
+package org.hikingdev.microsoft_hackathon.util.geodata;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.wdtinc.mapbox_vector_tile.VectorTile;
@@ -113,30 +113,6 @@ public class TileUtilsTest {
 
         double[] expectedBBox5 = {-123.75, 79.17133464081945, -112.5, 81.09321385260839};
         assertThat(bbox5, is(expectedBBox5));
-    }
-
-    @Test
-    public void testTransformCoordinate(){
-        Coordinate coordinate1 = new Coordinate(-74.006, 40.7128);
-
-        Coordinate transformedCoordinate1 = TileUtils.transformCoordinate(coordinate1);
-
-        assertThat(transformedCoordinate1.x, is(-8238310.234500223));
-        assertThat(transformedCoordinate1.y, is(4970071.579142425));
-
-        Coordinate coordinate2 = new Coordinate(90, 0);
-
-        Coordinate transformedCoordinate2 = TileUtils.transformCoordinate(coordinate2);
-
-        assertThat(transformedCoordinate2.x, is(1.001875417E7));
-        assertThat(transformedCoordinate2.y, is(-7.081154551613622E-10));
-
-        Coordinate coordinate3 = new Coordinate(0, 51.5074);
-
-        Coordinate transformedCoordinate3 = TileUtils.transformCoordinate(coordinate3);
-
-        assertThat(transformedCoordinate3.x, is(0.0));
-        assertThat(transformedCoordinate3.y, is(6711542.475587636));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.map_layer;
 
 import org.hikingdev.microsoft_hackathon.map_layer.entities.SpatialItem;
+import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.hikingdev.microsoft_hackathon.util.geodata.TileUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.LineString;
@@ -25,7 +26,7 @@ public class TileGenerator {
         // Build spatial index
         for (SpatialItem spatialItem : spatialItems) {
             spatialItem.setLineString(simplifyLineString((LineString) spatialItem.getLineString()));
-            spatialItem.setLineString(TileUtils.transformLineString(spatialItem.getLineString()));
+            spatialItem.setLineString(Math.convertLinestringToEPSG3857(spatialItem.getLineString()));
             Envelope envelope = spatialItem.getLineString().getEnvelopeInternal();
             spatialIndex.insert(envelope, spatialItem);
         }
@@ -46,7 +47,7 @@ public class TileGenerator {
 
     // Generate a vector tile based on line strings
     public Optional<byte[]> generateTile(int x, int y, int zoom) {
-        double[] bbox = TileUtils.transformBbox(TileUtils.tileToBBox(x, y, zoom));
+        double[] bbox = Math.transformBbox(TileUtils.tileToBBox(x, y, zoom));
 
         List<SpatialItem> geometriesInTile = getLineStringsForTile(bbox);
         if (geometriesInTile.isEmpty()){

@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.geotrek;
 
+import org.hikingdev.microsoft_hackathon.geotrek.api.GeotrekDbService;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekToken;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekUser;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.Salt;
@@ -23,8 +24,8 @@ import javax.crypto.SecretKey;
 import java.util.UUID;
 
 @Service
-public class GeotrekService {
-    private static final Logger logger = LoggerFactory.getLogger(GeotrekService.class);
+public class GeotrekUserService {
+    private static final Logger logger = LoggerFactory.getLogger(GeotrekUserService.class);
 
     private final IGeotrekRepository iGeotrekRepository;
     private final UserDetailsImpl userDetails;
@@ -33,8 +34,8 @@ public class GeotrekService {
     private SecretKey key;
 
     @Autowired
-    public GeotrekService(IGeotrekRepository iGeotrekRepository, UserDetailsImpl userDetails, @Qualifier("aes_decryption_key") String aesDecryptionKey,
-                          @Qualifier("GeotrekDbService") GeotrekDbService geotrekDbService){
+    public GeotrekUserService(IGeotrekRepository iGeotrekRepository, UserDetailsImpl userDetails, @Qualifier("aes_decryption_key") String aesDecryptionKey,
+                              @Qualifier("GeotrekDbService") GeotrekDbService geotrekDbService){
         this.iGeotrekRepository = iGeotrekRepository;
         this.userDetails = userDetails;
         this.geotrekDbService = geotrekDbService;
@@ -72,11 +73,11 @@ public class GeotrekService {
                         geotrekUser.setStaff(true);
                         geotrekUser.setSuperuser(false);
 
-                        GeotrekService.this.geotrekDbService.postUser(geotrekUser).enqueue(new Callback<>() {
+                        GeotrekUserService.this.geotrekDbService.postUser(geotrekUser).enqueue(new Callback<>() {
                             @Override
                             public void onResponse(Call<Void> call, Response<Void> response) {
                                 logger.info("Successful creation of user in geotrek db.");
-                                GeotrekService.this.iGeotrekRepository.save(geotrekToken);
+                                GeotrekUserService.this.iGeotrekRepository.save(geotrekToken);
                             }
 
                             @Override

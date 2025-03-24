@@ -3,7 +3,8 @@ package org.hikingdev.microsoft_hackathon.util.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
-import org.hikingdev.microsoft_hackathon.geotrek.GeotrekDbService;
+import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
+import org.hikingdev.microsoft_hackathon.geotrek.api.GeotrekDbService;
 import org.hikingdev.microsoft_hackathon.security.gpg.GpgService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 
 @Configuration
 @Profile("prod")
-public class ApiProvider {
+public class ProdApiProvider {
     @Value("${gpg.service.url}")
     private String gpgUrl;
 

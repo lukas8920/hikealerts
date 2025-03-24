@@ -1,9 +1,10 @@
 package org.hikingdev.microsoft_hackathon.geotrek;
 
 import io.swagger.v3.oas.annotations.Hidden;
-import jakarta.servlet.http.HttpServletRequest;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekToken;
+import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
 import org.hikingdev.microsoft_hackathon.user.UserService;
+import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
@@ -20,19 +21,21 @@ public class GeotrekController {
 
     private static final Logger logger = LoggerFactory.getLogger(GeotrekController.class);
 
-    private final GeotrekService geotrekService;
+    private final GeotrekUserService geotrekUserService;
+    private final GeotrekTrailService geotrekTrailService;
     private final UserService userService;
 
     @Autowired
-    public GeotrekController(GeotrekService geotrekService, UserService userService){
+    public GeotrekController(GeotrekUserService geotrekUserService, GeotrekTrailService geotrekTrailService, UserService userService){
         this.userService = userService;
-        this.geotrekService = geotrekService;
+        this.geotrekUserService = geotrekUserService;
+        this.geotrekTrailService = geotrekTrailService;
     }
 
     @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
     @GetMapping("/credentials")
     public ResponseEntity<GeotrekToken> credentials() throws BadRequestException {
-        GeotrekToken geotrekToken = this.geotrekService.findToken();
+        GeotrekToken geotrekToken = this.geotrekUserService.findToken();
         return ResponseEntity.ok(geotrekToken);
     }
 
@@ -43,6 +46,13 @@ public class GeotrekController {
         if ("POST".equalsIgnoreCase(method) || !uri.equals(LOGIN_PATH)) {
             this.userService.authenticate(authorizationHeader);
         }
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org", "https://hiking-alerts.org:4200", "https://www.hiking-alerts.org:4200"})
+    @PostMapping("/trail")
+    public ResponseEntity<Void> persistTrail(@RequestBody GeotrekTrail geotrekTrail) throws BadRequestException {
+        this.geotrekTrailService.persistEditorData(geotrekTrail);
         return ResponseEntity.ok().build();
     }
 }

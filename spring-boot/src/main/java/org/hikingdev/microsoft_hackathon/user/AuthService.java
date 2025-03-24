@@ -1,6 +1,6 @@
 package org.hikingdev.microsoft_hackathon.user;
 
-import org.hikingdev.microsoft_hackathon.geotrek.GeotrekService;
+import org.hikingdev.microsoft_hackathon.geotrek.GeotrekUserService;
 import org.hikingdev.microsoft_hackathon.repository.tokens.ITokenRepository;
 import org.hikingdev.microsoft_hackathon.repository.users.IUserRepository;
 import org.hikingdev.microsoft_hackathon.security.JwtTokenProvider;
@@ -40,7 +40,7 @@ public class AuthService {
     private final ApplicationEventPublisher applicationEventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final ITokenRepository iTokenRepository;
-    private final GeotrekService geotrekService;
+    private final GeotrekUserService geotrekUserService;
 
     @Value("${server.host}")
     private String host;
@@ -50,7 +50,7 @@ public class AuthService {
     @Autowired
     public AuthService(Publisher publisher, AuthenticationManager authenticationManager, IUserRepository iUserRepository,
                        JwtTokenProvider jwtTokenProvider, ApplicationEventPublisher applicationEventPublisher, PasswordEncoder passwordEncoder,
-                       ITokenRepository iTokenRepository, GeotrekService geotrekService){
+                       ITokenRepository iTokenRepository, GeotrekUserService geotrekUserService){
         this.publisher = publisher;
         this.authenticationManager = authenticationManager;
         this.iUserRepository = iUserRepository;
@@ -58,7 +58,7 @@ public class AuthService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.passwordEncoder = passwordEncoder;
         this.iTokenRepository = iTokenRepository;
-        this.geotrekService = geotrekService;
+        this.geotrekUserService = geotrekUserService;
     }
 
     public JwtResponse login(LoginRequest loginRequest) throws BadRequestException {
@@ -117,7 +117,7 @@ public class AuthService {
 
         user = this.iUserRepository.save(user);
         try {
-            this.geotrekService.register(user);
+            this.geotrekUserService.register(user);
         } catch (Exception e){
             logger.error("Registration of geotrek user failed", e);
             this.publisher.publishRegistrationFailure();
