@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hikingdev.microsoft_hackathon.user.entities.JwtResponse;
 import org.hikingdev.microsoft_hackathon.user.entities.Role;
 import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
@@ -50,19 +52,22 @@ public class JwtTokenProvider {
         encoderKey = Base64.getEncoder().encodeToString(encoderKey.getBytes());
     }
 
-    public String createUserToken(Long id, List<Role> roles){
+    public JwtResponse createUserToken(Long id, List<Role> roles){
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + validityInMilliseconds);
 
         Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
 
-        return Jwts.builder()
+        String jwt = Jwts.builder()
                 .subject(id.toString())
                 .claim("roles", roles)
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
                 .compact();
+
+        List<String> serializedRoles = roles.stream().map(Enum::toString).toList();
+        return new JwtResponse(jwt, null, serializedRoles, expiryDate.getTime());
     }
 
     public String generateSignalRToken(String audience, String userId) {

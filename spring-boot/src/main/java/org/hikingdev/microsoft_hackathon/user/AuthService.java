@@ -89,15 +89,11 @@ public class AuthService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         logger.info("Generating token for roles {}", user.getRoles());
-        String jwt = jwtTokenProvider.createUserToken(Long.valueOf(userDetails.getUsername()), user.getRoles());
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        JwtResponse jwt = jwtTokenProvider.createUserToken(Long.valueOf(userDetails.getUsername()), user.getRoles());
 
         this.publisher.publishAuthorizationSuccess();
-        return new JwtResponse(jwt,
-                user.getMail(),
-                roles);
+        jwt.setEmail(user.getMail());
+        return jwt;
     }
 
     public MessageResponse register(SignupRequest signupRequest) throws BadRequestException {
