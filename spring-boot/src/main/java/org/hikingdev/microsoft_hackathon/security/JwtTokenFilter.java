@@ -57,19 +57,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Authentication auth = jwtTokenProvider.getAuthentication(claims);
 
                 List<Role> roles = (List<Role>) claims.get("roles", List.class);
-                List<String> allowedEndpoints = new ArrayList<>();
-                if (roles != null){
-                    allowedEndpoints.addAll(roles.stream()
-                            .map(roleRegister.getRoles()::get)
-                            .filter(Objects::nonNull)
-                            .flatMap(List::stream)
-                            .distinct().toList());
-                }
+                List<String> allowedEndpoints = getAllowedEndpoints(roles);
 
                 String requestPath = httpServletRequest.getRequestURI();
                 logger.info("{} is trying to access {}", ip, requestPath);
                 logger.info("User {} is allowed to access {}", ip, allowedEndpoints);
-                if (allowedEndpoints.size() == 0 || !this.isPathAllowed(requestPath, allowedEndpoints)) {
+                if (allowedEndpoints.isEmpty() || !this.isPathAllowed(requestPath, allowedEndpoints)) {
                     httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
                     httpServletResponse.getWriter().write("Access to this endpoint is not allowed with this token");
                     return;
@@ -86,6 +79,18 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
+    }
+
+    List<String> getAllowedEndpoints(List<Role> roles){
+        List<String> allowedEndpoints = new ArrayList<>();
+        if (roles != null){
+            allowedEndpoints.addAll(roles.stream()
+                    .map(roleRegister.getRoles()::get)
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .distinct().toList());
+        }
+        return allowedEndpoints;
     }
 
     private boolean isPathAllowed(String requestPath, List<String> allowedEndpoints) {
