@@ -38,6 +38,7 @@ public class GeotrekTrailService {
             logger.error("Empty name cannot be referenced in the database.");
             throw new BadRequestException("Empty name cannot be referenced in the database.");
         }
+        logger.info("Processing {}", geotrekTrail);
 
         Trail trail = this.trailMapper.map(geotrekTrail);
 
@@ -56,5 +57,6 @@ public class GeotrekTrailService {
         trail.setMaintainer(geotrekTrail.getMaintainer());
 
         this.iTrailRepository.save(trail);
+        logger.info("Saved geotrek trail with id {}", geotrekTrail.getId());
     }
 }

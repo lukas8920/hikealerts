@@ -18,4 +18,9 @@ public class GeotrekTrail {
     private String maintainer;
     @JsonDeserialize(using = LineStringDeserializer.class)
     private LineString coordinates;
+
+    @Override
+    public String toString(){
+        return "Geotrek Trail - id: " + id + " - name: " + name + " - maintainer: " + maintainer;
+    }
 }
