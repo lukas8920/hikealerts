@@ -56,7 +56,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 Claims claims = jwtTokenProvider.getClaims(token);
                 Authentication auth = jwtTokenProvider.getAuthentication(claims);
 
-                List<Role> roles = (List<Role>) claims.get("roles", List.class);
+                List<String> roleStrings = claims.get("roles", List.class);
+
+                List<Role> roles = roleStrings.stream()
+                        .map(Role::valueOf)
+                        .toList();
                 List<String> allowedEndpoints = getAllowedEndpoints(roles);
 
                 String requestPath = httpServletRequest.getRequestURI();

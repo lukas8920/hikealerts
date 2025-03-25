@@ -60,7 +60,7 @@ public class JwtTokenProvider {
 
         String jwt = Jwts.builder()
                 .subject(id.toString())
-                .claim("roles", roles)
+                .claim("roles", roles.stream().map(Enum::name).toList())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(key)
