@@ -11,6 +11,7 @@ services:
 
   spring-boot-app:
     image: ghcr.io/lukas8920/hikealerts-springboot:latest # Replace with your G>
+    container_name: spring-boot-app
     environment:
       - SPRING_REDIS_HOST=redis # Set the Redis host environment variable
       - SPRING_REDIS_PORT=6379   # Set the Redis port environment variable
