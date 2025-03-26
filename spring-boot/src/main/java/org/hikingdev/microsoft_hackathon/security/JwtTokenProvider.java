@@ -126,7 +126,7 @@ public class JwtTokenProvider {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (JwtException | IllegalArgumentException e){
-            logger.info("Validating token " + token + " failed.", e);
+            logger.info("Validating token " + token + " failed.", e.getMessage());
             throw new InvalidationException("Expired or invalid Jwt Token");
         }
     }
