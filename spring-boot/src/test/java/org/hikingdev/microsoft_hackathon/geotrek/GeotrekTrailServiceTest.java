@@ -19,7 +19,10 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import retrofit2.Call;
+import retrofit2.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,14 +63,19 @@ public class GeotrekTrailServiceTest {
     }
 
     @Test
-    public void testThatPersistEditorHandlesInvalidCountry() throws BadRequestException {
+    public void testThatPersistEditorHandlesInvalidCountry() throws IOException {
         GeometryFactory geometryFactory = new GeometryFactory();
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)});
         GeotrekTrail geotrekTrail = new GeotrekTrail();
         geotrekTrail.setName("test");
         geotrekTrail.setCoordinates(new LineString(coordinateSequence, geometryFactory));
 
-        when(this.geonamesService.countryCode(2, 2, "dummy")).thenReturn(null);
+        Call<GeonamesResponse> call = mock(Call.class);
+        Response<GeonamesResponse> response = mock(Response.class);
+
+        when(this.geonamesService.countryCode(anyDouble(), anyDouble(), eq("dummy"))).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(null);
 
         Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail));
         assertThat(exception1.getMessage(), is("No valid country returned by geoname service."));
@@ -75,14 +83,16 @@ public class GeotrekTrailServiceTest {
         GeonamesResponse geonamesResponse1 = new GeonamesResponse();
         geonamesResponse1.setCountryCode("ddd");
 
-        when(this.geonamesService.countryCode(2, 2, "dummy")).thenReturn(geonamesResponse1);
+        when(this.geonamesService.countryCode(2, 2, "dummy")).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(geonamesResponse1);
 
         Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail));
         assertThat(exception2.getMessage(), is("No valid country returned by geoname service."));
     }
 
     @Test
-    public void testThatPersistGeotrekTrailWorks() throws BadRequestException {
+    public void testThatPersistGeotrekTrailWorks() throws BadRequestException, IOException {
         ITrailJpaRepository iTrailJpaRepository = mock(ITrailJpaRepository.class);
         GeoMatcher geoMatcher = mock(GeoMatcher.class);
         EntityManager entityManager = mock(EntityManager.class);
@@ -97,10 +107,15 @@ public class GeotrekTrailServiceTest {
         geotrekTrail.setMaintainer("maintainer");
         geotrekTrail.setCoordinates(new LineString(coordinateSequence, geometryFactory));
 
+        Call<GeonamesResponse> call = mock(Call.class);
+        Response<GeonamesResponse> response = mock(Response.class);
+
         GeonamesResponse geonamesResponse = new GeonamesResponse();
         geonamesResponse.setCountryCode("DE");
 
-        when(this.geonamesService.countryCode(anyDouble(), anyDouble(), eq("dummy"))).thenReturn(geonamesResponse);
+        when(this.geonamesService.countryCode(anyDouble(), anyDouble(), eq("dummy"))).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(geonamesResponse);
 
         geotrekTrailService.persistEditorData(geotrekTrail);
 
