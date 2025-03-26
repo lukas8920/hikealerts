@@ -17,4 +17,14 @@ public class PublisherRepository implements IPublisherRepository {
     public Publisher findUserById(Long id) {
         return this.iPublisherJpaRepository.findUserById(id);
     }
+
+    @Override
+    public Publisher findPublisherByUserId(Long userId) {
+        return this.iPublisherJpaRepository.findPublisherByUserId(userId);
+    }
+
+    @Override
+    public void save(Publisher publisher) {
+        this.iPublisherJpaRepository.save(publisher);
+    }
 }

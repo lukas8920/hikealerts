@@ -87,7 +87,7 @@ public class GeotrekTrailService {
         logger.info("Deleting trail {}", id);
 
         Long user = this.getActiveSecurityContextHolder();
-        Publisher publisher = this.iPublisherRepository.findUserById(user);
+        Publisher publisher = this.iPublisherRepository.findPublisherByUserId(user);
 
         List<String> publishers = new ArrayList<>();
         publishers.add(publisher.getName());

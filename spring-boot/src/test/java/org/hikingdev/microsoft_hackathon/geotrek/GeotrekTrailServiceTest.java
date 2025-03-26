@@ -149,7 +149,7 @@ public class GeotrekTrailServiceTest {
         GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository));
 
         doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
-        doReturn(publisher).when(iPublisherRepository).findUserById(1L);
+        doReturn(publisher).when(iPublisherRepository).findPublisherByUserId(1L);
 
         geotrekTrailService.deleteTrail(id);
 
