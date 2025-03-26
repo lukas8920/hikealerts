@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class LineStringDeserializerTest {
     @Test
     void testDeserializeValidLineString() throws Exception {
-            String json = "{ \"type\": \"LineString\", \"coordinates\": [ " +
+            String json = "[ " +
                     "[4708222.559304178, 259961.13886931736], " +
                     "[4708287.053046793, 259921.72602660747], " +
-                    "[4708396.931274952, 259926.50334087657] ] }";
+                    "[4708396.931274952, 259926.50334087657] ]";
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new com.fasterxml.jackson.databind.module.SimpleModule()
@@ -50,6 +50,6 @@ public class LineStringDeserializerTest {
             objectMapper.readValue(invalidJson, LineString.class);
         });
 
-        assertThat(exception.getMessage(), is("Unexpected IOException (of type java.io.IOException): Invalid LineString JSON"));
+        assertThat(exception.getMessage(), is("Unexpected IOException (of type java.io.IOException): Invalid LineString JSON: Expected an array"));
     }
 }
