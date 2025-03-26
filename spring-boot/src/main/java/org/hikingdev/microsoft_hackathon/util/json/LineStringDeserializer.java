@@ -18,12 +18,16 @@ public class LineStringDeserializer extends JsonDeserializer<LineString> {
     @Override
     public LineString deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         JsonNode node = parser.getCodec().readTree(parser);
-        if (!node.has("coordinates") || !node.get("coordinates").isArray()) {
-            throw new IOException("Invalid LineString JSON");
+
+        if (!node.isArray()) {
+            throw new IOException("Invalid LineString JSON: Expected an array");
         }
 
         List<Coordinate> coordinates = new ArrayList<>();
-        for (JsonNode coordNode : node.get("coordinates")) {
+        for (JsonNode coordNode : node) {
+            if (!coordNode.isArray() || coordNode.size() < 2) {
+                throw new IOException("Invalid coordinate format");
+            }
             double x = coordNode.get(0).asDouble();
             double y = coordNode.get(1).asDouble();
             coordinates.add(new Coordinate(x, y));
