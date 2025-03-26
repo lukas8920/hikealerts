@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Chat {
-    private final String supported_countries = "US, NZ & IE.";
+    private final String supported_countries = "FR, US, NZ & IE.";
     private final String maxTextError = "The description may not exceed 200 words. Please try to summarize your input.";
     private final String minTextError = "The description must be at least 5 words long. Please try again.";
     private final String intro = "Hi, let me know, if you are aware of a hiking alert.";
