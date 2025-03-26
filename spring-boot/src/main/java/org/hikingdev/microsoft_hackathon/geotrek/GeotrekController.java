@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/geotrek")
 @Hidden
@@ -53,6 +55,13 @@ public class GeotrekController {
     @PostMapping("/trail")
     public ResponseEntity<Void> persistTrail(@RequestBody GeotrekTrail geotrekTrail) throws BadRequestException {
         this.geotrekTrailService.persistEditorData(geotrekTrail);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org", "https://hiking-alerts.org:4200", "https://www.hiking-alerts.org:4200"})
+    @DeleteMapping("/trail")
+    public ResponseEntity<Void> deleteTrail(@RequestParam("id") List<String> ids) throws BadRequestException {
+        this.geotrekTrailService.deleteTrails(ids);
         return ResponseEntity.ok().build();
     }
 }

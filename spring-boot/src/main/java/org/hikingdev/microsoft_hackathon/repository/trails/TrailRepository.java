@@ -150,4 +150,9 @@ public class TrailRepository implements ITrailRepository {
             logger.error("Error while parsing wkt String for trail {}", trail.getTrailId());
         }
     }
+
+    @Override
+    public void delete(String trailId, List<String> publishers) {
+        this.iTrailJpaRepository.delete(trailId, publishers);
+    }
 }

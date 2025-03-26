@@ -6,6 +6,8 @@ import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.
 import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeonamesResponse;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
+import org.hikingdev.microsoft_hackathon.publisher_management.entities.Publisher;
+import org.hikingdev.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailJpaRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.TrailRepository;
@@ -18,24 +20,28 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class GeotrekTrailServiceTest {
     private GeotrekTrailService geotrekTrailService;
     private GeonamesService geonamesService;
+    private IPublisherRepository iPublisherRepository;
     private TrailMapper trailMapper;
 
     @BeforeEach
     public void setup(){
         this.geonamesService = mock(GeonamesService.class);
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
+        this.iPublisherRepository = mock(IPublisherRepository.class);
         this.trailMapper = new TrailMapper();
-        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository);
+        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository);
     }
 
     @Test
@@ -81,7 +87,7 @@ public class GeotrekTrailServiceTest {
         GeoMatcher geoMatcher = mock(GeoMatcher.class);
         EntityManager entityManager = mock(EntityManager.class);
         TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(iTrailJpaRepository, geoMatcher, entityManager);
-        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback);
+        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback, this.iPublisherRepository);
 
         GeometryFactory geometryFactory = new GeometryFactory();
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)});
@@ -106,7 +112,53 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.trail.getCoordinates().length > 1, is(true));
     }
 
+    @Test
+    public void testInvalidIds(){
+        List<String> ids1 = null;
+
+        Exception e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids1));
+        assertThat(e.getMessage(), is("No valid ids for delete request provided"));
+
+        List<String> ids2 = new ArrayList<>();
+
+        e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids2));
+        assertThat(e.getMessage(), is("No valid ids for delete request provided"));
+
+        List<String> ids3 = List.of("a", "b", "c", "d");
+
+        e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids3));
+        assertThat(e.getMessage(), is("No valid ids for delete request provided"));
+    }
+
+    @Test
+    public void testThatDeleteTrailsWorks() throws BadRequestException {
+        ITrailJpaRepository iTrailJpaRepository = mock(ITrailJpaRepository.class);
+        GeoMatcher geoMatcher = mock(GeoMatcher.class);
+        EntityManager entityManager = mock(EntityManager.class);
+        TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(iTrailJpaRepository, geoMatcher, entityManager);
+        IPublisherRepository iPublisherRepository = mock(IPublisherRepository.class);
+        Publisher publisher = new Publisher();
+        publisher.setName("dummy");
+
+        List<String> ids = List.of("2L");
+
+        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository));
+
+        doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
+        doReturn(publisher).when(iPublisherRepository).findUserById(1L);
+
+        geotrekTrailService.deleteTrails(ids);
+
+        assertThat(trailRepositoryCallback.counter, is(0));
+        assertThat(trailRepositoryCallback.publishers.size(), is(2));
+        assertThat(trailRepositoryCallback.publishers.contains(publisher.getName()), is(true));
+        assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
+        assertThat(trailRepositoryCallback.trail_id, is("2L"));
+    }
+
     static class TrailRepositoryCallback extends TrailRepository {
+        String trail_id;
+        List<String> publishers;
         Trail trail;
         int counter = 1;
 
@@ -118,6 +170,13 @@ public class GeotrekTrailServiceTest {
         @Override
         public void save(Trail trail){
             this.trail = trail;
+            counter -= 1;
+        }
+
+        @Override
+        public void delete(String trail_id, List<String> publishers){
+            this.trail_id = trail_id;
+            this.publishers = publishers;
             counter -= 1;
         }
     }
