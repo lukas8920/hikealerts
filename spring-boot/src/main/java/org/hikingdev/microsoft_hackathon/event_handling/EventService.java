@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 public class EventService {
     private static final Logger logger = LoggerFactory.getLogger(EventService.class.getName());
 
-    private static final List<String> supportedQueryCountries = Arrays.asList("NZ", "US", "CH", "IE");
-    private static final List<String> supportedPushCountries = Arrays.asList("NZ", "US", "IE");
+    private static final List<String> supportedQueryCountries = Arrays.asList("FR", "NZ", "US", "CH", "IE");
+    private static final List<String> supportedPushCountries = Arrays.asList("FR", "NZ", "US", "IE");
     private static final List<String> supportedCreatedBys = Arrays.asList("All", "Community", "Official");
 
     private static final Pattern COORDINATE_PATTERN = Pattern.compile("-?\\d+(\\.\\d+)?,-?\\d+(\\.\\d+)?");
