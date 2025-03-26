@@ -173,17 +173,13 @@ public class EventInjection implements IEventInjection {
     }
 
     protected BaseInjector assignCountryInjector(OpenAiEvent openAiEvent) {
-        switch (openAiEvent.getCountry()){
-            case "US":
-                return new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
-            case "NZ":
-                return new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
-            case "IE":
-                return new IEInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
-            case "CH":
-                return new CHInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
-            default:
-                return null;
-        }
+        return switch (openAiEvent.getCountry()) {
+            case "FR" -> new FRInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "US" -> new USInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "NZ" -> new NZInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "IE" -> new IEInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            case "CH" -> new CHInjector(iRawEventRepository, iEventRepository, iTrailRepository, iRegionRepository);
+            default -> null;
+        };
     }
 }
