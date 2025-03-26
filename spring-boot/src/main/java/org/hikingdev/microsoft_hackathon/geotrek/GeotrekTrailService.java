@@ -11,6 +11,7 @@ import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.io.WKBWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class GeotrekTrailService {
     private final TrailMapper trailMapper;
     private final IPublisherRepository iPublisherRepository;
     private final String username;
+    private final WKBWriter wkbWriter;
 
     @Autowired
     public GeotrekTrailService(@Qualifier("geonamesUsername") String geonamesUsername, @Qualifier("GeonamesService") GeonamesService geonamesService, TrailMapper trailMapper,
@@ -43,6 +45,7 @@ public class GeotrekTrailService {
         this.iPublisherRepository = iPublisherRepository;
         this.trailMapper = trailMapper;
         this.username = geonamesUsername;
+        this.wkbWriter = new WKBWriter();
     }
 
     public void persistEditorData(GeotrekTrail geotrekTrail) throws BadRequestException {
@@ -58,6 +61,9 @@ public class GeotrekTrailService {
         LineString lineString = Math.convertToWGS84(geotrekTrail.getCoordinates());
         //determine median coordinate
         Coordinate midPoint = Math.determineMid(lineString);
+
+        byte[] convertedCoords = this.wkbWriter.write(lineString);
+        trail.setCoordinates(convertedCoords);
 
         Call<GeonamesResponse> response = this.geonamesService.countryCode(midPoint.x, midPoint.y, username);
 
