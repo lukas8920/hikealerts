@@ -56,9 +56,13 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     @Query(value = "EXEC GetTrailsByEventIdAndCountry @event_id = :event_id, @country = :country", nativeQuery = true)
     List<Trail> findTrailsByEventIdAndCountry(String event_id, String country);
 
+    @Modifying
+    @Transactional
     @Query(value = "EXEC InsertGeodataTrails @trail_id = :trail_id, @country = :country, @trailname = :trailname, @maplabel = 'None', @unitcode = 'None', @unitname = 'None', @regioncode = 'None', @maintainer = :maintainer, @lineString = :lineString", nativeQuery = true)
     void save(@Param("trail_id") String trail_id, @Param("country") String country, @Param("trailname") String trailname, @Param("maintainer") String maintainer, @Param("lineString") String lineString);
 
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM geodata_trails WHERE trail_id = :trail_id AND maintainer in (:publishers)", nativeQuery = true)
     void delete(@Param("trail_id") String trail_id, @Param("publishers") List<String> publishers);
 }
