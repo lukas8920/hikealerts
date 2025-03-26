@@ -55,15 +55,13 @@ public class GeotrekTrailService {
         }
         logger.info("Processing {}", geotrekTrail);
 
-        Trail trail = this.trailMapper.map(geotrekTrail);
-
         //convert coordinates to WGS84
         LineString lineString = Math.convertToWGS84(geotrekTrail.getCoordinates());
         //determine median coordinate
         Coordinate midPoint = Math.determineMid(lineString);
+        geotrekTrail.setCoordinates(lineString);
 
-        byte[] convertedCoords = this.wkbWriter.write(lineString);
-        trail.setCoordinates(convertedCoords);
+        Trail trail = this.trailMapper.map(geotrekTrail);
 
         Call<GeonamesResponse> response = this.geonamesService.countryCode(midPoint.x, midPoint.y, username);
 
