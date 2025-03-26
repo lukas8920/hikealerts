@@ -79,12 +79,12 @@ public class GeotrekTrailService {
         }
     }
 
-    public void deleteTrails(List<String> ids) throws BadRequestException {
-        if (ids == null || ids.isEmpty() || ids.size() > 3){
+    public void deleteTrail(String id) throws BadRequestException {
+        if (id == null){
             logger.error("Error for delete request - min 1 and max 3 ids are expected");
             throw new BadRequestException("No valid ids for delete request provided");
         }
-        logger.info("Deleting trails {}", ids);
+        logger.info("Deleting trail {}", id);
 
         Long user = this.getActiveSecurityContextHolder();
         Publisher publisher = this.iPublisherRepository.findUserById(user);
@@ -95,9 +95,7 @@ public class GeotrekTrailService {
             publishers.add(COMMUNITY);
         }
 
-        for (String id: ids){
-            this.iTrailRepository.delete(id, publishers);
-        }
+        this.iTrailRepository.delete(id, publishers);
         logger.info("Successfully deleted trails");
     }
 

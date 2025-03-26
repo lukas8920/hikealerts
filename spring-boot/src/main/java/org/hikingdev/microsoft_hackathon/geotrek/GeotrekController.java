@@ -60,8 +60,8 @@ public class GeotrekController {
 
     @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org", "https://hiking-alerts.org:4200", "https://www.hiking-alerts.org:4200"})
     @DeleteMapping("/trail")
-    public ResponseEntity<Void> deleteTrail(@RequestParam("id") List<String> ids) throws BadRequestException {
-        this.geotrekTrailService.deleteTrails(ids);
+    public ResponseEntity<Void> deleteTrail(@RequestParam("id") String id) throws BadRequestException {
+        this.geotrekTrailService.deleteTrail(id);
         return ResponseEntity.ok().build();
     }
 }

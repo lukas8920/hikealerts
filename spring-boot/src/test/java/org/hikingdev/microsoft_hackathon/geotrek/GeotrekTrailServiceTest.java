@@ -23,7 +23,6 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -129,19 +128,9 @@ public class GeotrekTrailServiceTest {
 
     @Test
     public void testInvalidIds(){
-        List<String> ids1 = null;
+        String id1 = null;
 
-        Exception e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids1));
-        assertThat(e.getMessage(), is("No valid ids for delete request provided"));
-
-        List<String> ids2 = new ArrayList<>();
-
-        e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids2));
-        assertThat(e.getMessage(), is("No valid ids for delete request provided"));
-
-        List<String> ids3 = List.of("a", "b", "c", "d");
-
-        e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrails(ids3));
+        Exception e = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.deleteTrail(id1));
         assertThat(e.getMessage(), is("No valid ids for delete request provided"));
     }
 
@@ -155,14 +144,14 @@ public class GeotrekTrailServiceTest {
         Publisher publisher = new Publisher();
         publisher.setName("dummy");
 
-        List<String> ids = List.of("2L");
+        String id = "2L";
 
         GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository));
 
         doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
         doReturn(publisher).when(iPublisherRepository).findUserById(1L);
 
-        geotrekTrailService.deleteTrails(ids);
+        geotrekTrailService.deleteTrail(id);
 
         assertThat(trailRepositoryCallback.counter, is(0));
         assertThat(trailRepositoryCallback.publishers.size(), is(2));
