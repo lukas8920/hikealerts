@@ -30,7 +30,7 @@ import java.util.List;
 public class ChatService {
     private static final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
-    private static final List<String> countries = List.of("US", "NZ", "IE");
+    private static final List<String> countries = List.of("FR", "US", "NZ", "IE");
 
     @Value("${spring.profiles.active}")
     private String profile;
