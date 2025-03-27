@@ -33,18 +33,28 @@ export class EditorComponent implements AfterViewInit, OnDestroy, OnInit {
     const {type} = event.data;
     console.log("Received message with type: " + type);
 
-    if (type == "LOGIN"){
-      this.requestLogin();
-    } else if (type == "LOADED"){
-      console.log("log in completed");
-      this.isLoading = false;
-      this.isIframeVisible = true;
-      this.sharedAppService.updateIsNavigating(false);
-    } else if (type == "RUNNING"){
-      console.log("active session is running");
-      this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.pathUrl);
-      this.isLoading = false;
-      this.isIframeVisible = true;
+    switch (type){
+      case "LOGIN":
+        this.requestLogin();
+        break;
+      case "LOADED":
+        console.log("log in completed");
+        this.isLoading = false;
+        this.isIframeVisible = true;
+        this.sharedAppService.updateIsNavigating(false);
+        break;
+      case "RUNNING":
+        console.log("active session is running");
+        this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.pathUrl);
+        this.isLoading = false;
+        this.isIframeVisible = true;
+        break;
+      case "PATH_START":
+        this.sharedAppService.updateIsNavigating(true);
+        break;
+      case "PATH_END":
+        this.sharedAppService.updateIsNavigating(false);
+        break
     }
   };
 
