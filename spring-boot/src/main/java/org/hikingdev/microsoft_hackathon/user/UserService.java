@@ -19,8 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -39,6 +38,8 @@ public class UserService {
     private String port;
     @Value("${contact.mail.address}")
     private String contactMail;
+    @Value("${security.api.validity}")
+    private Long validity;
 
     @Autowired
     public UserService(IUserRepository iUserRepository, Publisher publisher, JavaMailSender javaMailSender,
@@ -126,7 +127,12 @@ public class UserService {
         User tmpUser = this.iUserRepository.findById(user);
         if (tmpUser == null) throw new BadRequestException("No permission to change api key.");
 
-        String rawKey= this.jwtTokenProvider.generateApiToken(user);
+        List<Role> roles = Arrays.asList(Role.API_USER);
+        if (!tmpUser.getPublisherId().equals(User.COMMUNITY_ID)){
+            roles.add(Role.API_PUBLISHER);
+        }
+
+        String rawKey= this.jwtTokenProvider.createToken(user, roles, validity).getToken();
         String apiKey = encoder.encode(rawKey);
         tmpUser.setApiKey(apiKey);
         this.iUserRepository.save(tmpUser);

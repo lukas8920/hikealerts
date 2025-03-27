@@ -30,9 +30,6 @@ import java.util.List;
 public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class.getName());
 
-    @Value("${security.jwt.token.expire-length:3600000}")
-    private long validityInMilliseconds = 60000;
-
     private final UserDetailsImpl userDetails;
 
     private String encoderKey;
@@ -50,9 +47,9 @@ public class JwtTokenProvider {
         encoderKey = Base64.getEncoder().encodeToString(encoderKey.getBytes());
     }
 
-    public JwtResponse createUserToken(Long id, List<Role> roles){
+    public JwtResponse createToken(Long id, List<Role> roles, long validity){
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + validityInMilliseconds);
+        Date expiryDate = new Date(now.getTime() + validity);
 
         Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
 
@@ -90,18 +87,6 @@ public class JwtTokenProvider {
         }
 
         return builder.compact();
-    }
-
-
-    public String generateApiToken(Long id){
-        Key key = Keys.hmacShaKeyFor(encoderKey.getBytes());
-
-        return Jwts.builder()
-                .subject(id.toString())
-                .claim("roles", Role.API_USER)
-                .issuedAt(new Date())
-                .signWith(key)
-                .compact();
     }
 
     public Authentication getAuthentication(Claims claims) throws InvalidationException {

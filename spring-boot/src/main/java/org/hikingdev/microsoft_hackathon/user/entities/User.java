@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "users")
 public class User {
+    public static final Long COMMUNITY_ID = 3L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

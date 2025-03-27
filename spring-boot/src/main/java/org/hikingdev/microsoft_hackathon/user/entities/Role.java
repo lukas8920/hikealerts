@@ -4,5 +4,6 @@ public enum Role {
     UI_USER,
     ADMIN,
     API_USER,
+    API_PUBLISHER,
     GEOTREK
 }

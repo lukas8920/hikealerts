@@ -17,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,13 +24,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
-
-    private static final Long COMMUNITY_ID = 3L;
 
     private final IUserRepository iUserRepository;
     private final Publisher publisher;
@@ -46,6 +42,8 @@ public class AuthService {
     private String host;
     @Value("${angular.server.port}")
     private String port;
+    @Value("${security.user.validity}")
+    private Long validity;
 
     @Autowired
     public AuthService(Publisher publisher, AuthenticationManager authenticationManager, IUserRepository iUserRepository,
@@ -89,7 +87,7 @@ public class AuthService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         logger.info("Generating token for roles {}", user.getRoles());
-        JwtResponse jwt = jwtTokenProvider.createUserToken(Long.valueOf(userDetails.getUsername()), user.getRoles());
+        JwtResponse jwt = jwtTokenProvider.createToken(Long.valueOf(userDetails.getUsername()), user.getRoles(), validity);
 
         this.publisher.publishAuthorizationSuccess();
         jwt.setEmail(user.getMail());
@@ -110,7 +108,7 @@ public class AuthService {
 
         List<Role> roles = List.of(Role.UI_USER);
         User user = new User(null, signupRequest.getMail(), this.passwordEncoder.encode(signupRequest.getPassword())
-                , roles, false, COMMUNITY_ID, null);
+                , roles, false, User.COMMUNITY_ID, null);
 
         user = this.iUserRepository.save(user);
         try {
