@@ -2,6 +2,10 @@ package org.hikingdev.microsoft_hackathon.util.geodata;
 
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,5 +58,54 @@ public class MathTest {
 
         assertThat(transformedCoordinate3.x, is(0.0));
         assertThat(transformedCoordinate3.y, closeTo(51.5074, 1e-6));
+    }
+
+    @Test
+    public void testInvalidWGS84Linestring(){
+        LineString lineString = epsg3857LineString();
+
+        boolean result = Math.isValidWGS84(lineString);
+
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void testValidWGS84Linestring(){
+        LineString lineString = wgs84LineString();
+
+        boolean result = Math.isValidWGS84(lineString);
+
+        assertThat(result, is(true));
+    }
+
+    @Test
+    public void testValidEPSG3857Linestring(){
+        LineString lineString = epsg3857LineString();
+
+        boolean result = Math.isValidEPSG3857(lineString);
+
+        assertThat(result, is(true));
+    }
+
+    private LineString wgs84LineString(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-74.006, 40.7128),
+                new Coordinate(90, 0),
+                new Coordinate(0, 51.5074)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        return new LineString(seq, geometryFactory);
+    }
+
+    private LineString epsg3857LineString(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-8238310.234500223, 4970071.579142425),
+                new Coordinate(1.001875417E7, -7.081154551613622E-10),
+                new Coordinate(0.0, 6711542.475587636)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        return new LineString(seq, geometryFactory);
     }
 }

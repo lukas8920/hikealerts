@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.geotrek.api;
 
+import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekUser;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.Salt;
 import retrofit2.Call;
@@ -13,4 +14,7 @@ public interface GeotrekDbService {
 
     @GET("/v1/geotrek/salt")
     Call<Salt> getSalt();
+
+    @POST("/v1/geotrek/trail")
+    Call<Long> postTrail(@Body GeotrekTrail geotrekTrail);
 }

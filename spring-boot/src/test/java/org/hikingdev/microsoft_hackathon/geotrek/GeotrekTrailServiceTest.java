@@ -4,14 +4,18 @@ import jakarta.persistence.EntityManager;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.matcher.GeoMatcher;
 import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
+import org.hikingdev.microsoft_hackathon.geotrek.api.GeotrekDbService;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeonamesResponse;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
+import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekUser;
+import org.hikingdev.microsoft_hackathon.geotrek.entities.Salt;
 import org.hikingdev.microsoft_hackathon.publisher_management.entities.Publisher;
 import org.hikingdev.microsoft_hackathon.publisher_management.repository.IPublisherRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailJpaRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.repository.trails.TrailRepository;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
+import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -19,11 +23,13 @@ import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -43,7 +49,7 @@ public class GeotrekTrailServiceTest {
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
         this.iPublisherRepository = mock(IPublisherRepository.class);
         this.trailMapper = new TrailMapper();
-        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository);
+        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository, null);
     }
 
     @Test
@@ -51,13 +57,13 @@ public class GeotrekTrailServiceTest {
         GeotrekTrail geotrekTrail1 = new GeotrekTrail();
         geotrekTrail1.setName(null);
 
-        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail1));
+        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrail(geotrekTrail1));
         assertThat(exception1.getMessage(), is("Empty name cannot be referenced in the database."));
 
         GeotrekTrail geotrekTrail2 = new GeotrekTrail();
         geotrekTrail2.setName(" ");
 
-        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail2));
+        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrail(geotrekTrail2));
         assertThat(exception2.getMessage(), is("Empty name cannot be referenced in the database."));
     }
 
@@ -76,7 +82,7 @@ public class GeotrekTrailServiceTest {
         when(call.execute()).thenReturn(response);
         when(response.body()).thenReturn(null);
 
-        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail));
+        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrail(geotrekTrail));
         assertThat(exception1.getMessage(), is("No valid country returned by geoname service."));
 
         GeonamesResponse geonamesResponse1 = new GeonamesResponse();
@@ -86,7 +92,7 @@ public class GeotrekTrailServiceTest {
         when(call.execute()).thenReturn(response);
         when(response.body()).thenReturn(geonamesResponse1);
 
-        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistEditorData(geotrekTrail));
+        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrail(geotrekTrail));
         assertThat(exception2.getMessage(), is("No valid country returned by geoname service."));
     }
 
@@ -96,7 +102,7 @@ public class GeotrekTrailServiceTest {
         GeoMatcher geoMatcher = mock(GeoMatcher.class);
         EntityManager entityManager = mock(EntityManager.class);
         TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(iTrailJpaRepository, geoMatcher, entityManager);
-        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback, this.iPublisherRepository);
+        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback, this.iPublisherRepository, null);
 
         GeometryFactory geometryFactory = new GeometryFactory();
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)});
@@ -116,7 +122,7 @@ public class GeotrekTrailServiceTest {
         when(call.execute()).thenReturn(response);
         when(response.body()).thenReturn(geonamesResponse);
 
-        geotrekTrailService.persistEditorData(geotrekTrail);
+        geotrekTrailService.persistTrail(geotrekTrail);
 
         assertThat(trailRepositoryCallback.counter, is(0));
         assertThat(trailRepositoryCallback.trail.getTrailId(), is("trail_1"));
@@ -146,7 +152,7 @@ public class GeotrekTrailServiceTest {
 
         String id = "2L";
 
-        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository));
+        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository, null));
 
         doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
         doReturn(publisher).when(iPublisherRepository).findPublisherByUserId(1L);
@@ -158,6 +164,107 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.publishers.contains(publisher.getName()), is(true));
         assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
         assertThat(trailRepositoryCallback.trail_id, is("2L"));
+    }
+
+    @Test
+    public void testThatImportTrailRejectsInvalidLists(){
+        List<GeotrekTrail> trails1 = null;
+        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(trails1));
+        assertThat(exception1.getMessage(), is("Invalid input for multiple geotrek trails."));
+
+        List<GeotrekTrail> trails2 = List.of();
+        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(trails2));
+        assertThat(exception2.getMessage(), is("Invalid input for multiple geotrek trails."));
+
+        List<GeotrekTrail> trails3 = new ArrayList<>();
+        trails3.addAll(Collections.nCopies(201, new GeotrekTrail()));
+        Exception exception3 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(trails3));
+        assertThat(exception3.getMessage(), is("Invalid input for multiple geotrek trails."));
+    }
+
+    @Test
+    public void testThatImportTrailsRejectsInvalidFormat(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-8238310.234500223, 4970071.579142425),
+                new Coordinate(1.001875417E7, -7.081154551613622E-10),
+                new Coordinate(0.0, 6711542.475587636)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        LineString lineString = new LineString(seq, geometryFactory);
+        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString);
+
+        Exception exception = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(List.of(geotrekTrail)));
+
+        assertThat(exception.getMessage(), is("Linestring format for index 0 needs to be WGS84"));
+    }
+
+    @Test
+    public void testThatImportTrailsWorks() throws BadRequestException, ParseException, IOException {
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-74.006, 40.7128),
+                new Coordinate(90, 0),
+                new Coordinate(0, 51.5074)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        LineString lineString = new LineString(seq, geometryFactory);
+        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString);
+
+        Call<Long> longCall = mock(Call.class);
+        Response<Long> response = mock(Response.class);
+        when(longCall.execute()).thenReturn(response);
+        when(response.body()).thenReturn(1L);
+
+        TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(null, null, null);
+        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(longCall);
+
+        GeotrekTrailService geotrekTrailService = new GeotrekTrailService(null, null, this.trailMapper,
+                trailRepositoryCallback, null, geotrekDbCallback);
+
+        geotrekTrailService.persistTrails(List.of(geotrekTrail));
+
+        assertThat(geotrekDbCallback.counter, is(0));
+        assertThat(geotrekDbCallback.geotrekTrail.getName(), is("dummy"));
+        assertThat(geotrekDbCallback.geotrekTrail.getMaintainer(), is("maintainer"));
+        assertThat(Math.isValidEPSG3857(geotrekDbCallback.geotrekTrail.getCoordinates()), is(true));
+
+        assertThat(trailRepositoryCallback.counter, is(0));
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-1"));
+        assertThat(trailRepositoryCallback.trail.getTrailname(), is("dummy"));
+        assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
+
+        WKBReader wkbReader = new WKBReader();
+        LineString resultLinestring = (LineString) wkbReader.read(trailRepositoryCallback.trail.getCoordinates());
+        assertThat(Math.isValidWGS84(resultLinestring), is(true));
+    }
+
+    static class GeotrekDbCallback implements GeotrekDbService {
+        GeotrekTrail geotrekTrail;
+        int counter = 1;
+
+        private final Call<Long> postResponse;
+
+        public GeotrekDbCallback(Call<Long> postResponse){
+            this.postResponse = postResponse;
+        }
+
+        @Override
+        public Call<Void> postUser(GeotrekUser geotrekUser) {
+            return null;
+        }
+
+        @Override
+        public Call<Salt> getSalt() {
+            return null;
+        }
+
+        @Override
+        public Call<Long> postTrail(GeotrekTrail geotrekTrail) {
+            this.geotrekTrail = geotrekTrail;
+            this.counter -= 1;
+            return this.postResponse;
+        }
     }
 
     static class TrailRepositoryCallback extends TrailRepository {

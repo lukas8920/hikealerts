@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekToken;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
 import org.hikingdev.microsoft_hackathon.user.UserService;
-import org.hikingdev.microsoft_hackathon.util.exceptions.AiException;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.hikingdev.microsoft_hackathon.util.exceptions.InvalidationException;
 import org.slf4j.Logger;
@@ -54,7 +53,7 @@ public class GeotrekController {
     @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org", "https://hiking-alerts.org:4200", "https://www.hiking-alerts.org:4200"})
     @PostMapping("/trail")
     public ResponseEntity<Void> persistTrail(@RequestBody GeotrekTrail geotrekTrail) throws BadRequestException {
-        this.geotrekTrailService.persistEditorData(geotrekTrail);
+        this.geotrekTrailService.persistTrail(geotrekTrail);
         return ResponseEntity.ok().build();
     }
 
@@ -62,6 +61,13 @@ public class GeotrekController {
     @DeleteMapping("/trail")
     public ResponseEntity<Void> deleteTrail(@RequestParam("id") String id) throws BadRequestException {
         this.geotrekTrailService.deleteTrail(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
+    @PostMapping("/trail")
+    public ResponseEntity<Void> persistTrails(@RequestBody List<GeotrekTrail> geotrekTrails) throws BadRequestException {
+        this.geotrekTrailService.persistTrails(geotrekTrails);
         return ResponseEntity.ok().build();
     }
 }

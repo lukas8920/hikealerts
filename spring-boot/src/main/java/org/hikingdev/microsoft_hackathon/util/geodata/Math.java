@@ -66,6 +66,32 @@ public class Math {
         };
     }
 
+    public static boolean isValidWGS84(LineString lineString) {
+        if (lineString == null || lineString.isEmpty()) {
+            return false;
+        }
+
+        for (Coordinate coord : lineString.getCoordinates()) {
+            double lon = coord.x;
+            double lat = coord.y;
+
+            if (lon < -180 || lon > 180 || lat < -90 || lat > 90) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean isValidEPSG3857(LineString lineString){
+        for (Coordinate coord : lineString.getCoordinates()) {
+            if (java.lang.Math.abs(coord.x) > 20037508.34 || java.lang.Math.abs(coord.y) > 20037508.34) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // Convert longitude to EPSG:3857
     private static double lonToMerc(double lon) {
         return lon * 20037508.34 / 180;

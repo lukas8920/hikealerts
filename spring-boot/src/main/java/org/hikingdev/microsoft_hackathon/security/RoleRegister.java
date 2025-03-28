@@ -33,10 +33,15 @@ public class RoleRegister {
             "/v1/geotrek/trail"
     );
 
+    private List<String> ADMIN_ENDPOINTS = List.of(
+            "/v1/geotrek/trails"
+    );
+
     private Map<Role, List<String>> roles = Map.of(
             Role.UI_USER, UI_USER_ENDPOINTS,
             Role.API_USER, API_USER_ENDPOINTS,
             Role.GEOTREK, GEOTREK_ENDPOINTS,
-            Role.API_PUBLISHER, API_PUBLISHER_ENDPOINTS
+            Role.API_PUBLISHER, API_PUBLISHER_ENDPOINTS,
+            Role.ADMIN, ADMIN_ENDPOINTS
     );
 }

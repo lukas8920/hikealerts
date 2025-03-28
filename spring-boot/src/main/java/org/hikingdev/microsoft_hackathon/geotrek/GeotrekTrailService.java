@@ -1,6 +1,7 @@
 package org.hikingdev.microsoft_hackathon.geotrek;
 
 import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
+import org.hikingdev.microsoft_hackathon.geotrek.api.GeotrekDbService;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeonamesResponse;
 import org.hikingdev.microsoft_hackathon.event_handling.event_injection.entities.Trail;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
@@ -26,26 +27,32 @@ import java.util.List;
 
 @Service
 public class GeotrekTrailService {
+    private static final int MIN_TRAILS = 1;
+    private static final int MAX_TRAILS = 200;
+
     private static final String COMMUNITY = "Community";
     private static final Logger logger = LoggerFactory.getLogger(GeotrekTrailService.class);
 
     private final GeonamesService geonamesService;
     private final ITrailRepository iTrailRepository;
+    private final GeotrekDbService geotrekDbService;
     private final TrailMapper trailMapper;
     private final IPublisherRepository iPublisherRepository;
     private final String username;
 
     @Autowired
     public GeotrekTrailService(@Qualifier("geonamesUsername") String geonamesUsername, @Qualifier("GeonamesService") GeonamesService geonamesService, TrailMapper trailMapper,
-                               ITrailRepository iTrailRepository, IPublisherRepository iPublisherRepository){
+                               ITrailRepository iTrailRepository, IPublisherRepository iPublisherRepository,
+                               @Qualifier("GeotrekDbService") GeotrekDbService geotrekDbService){
         this.geonamesService = geonamesService;
         this.iTrailRepository = iTrailRepository;
         this.iPublisherRepository = iPublisherRepository;
+        this.geotrekDbService = geotrekDbService;
         this.trailMapper = trailMapper;
         this.username = geonamesUsername;
     }
 
-    public void persistEditorData(GeotrekTrail geotrekTrail) throws BadRequestException {
+    public void persistTrail(GeotrekTrail geotrekTrail) throws BadRequestException {
         if (geotrekTrail.getName() == null || geotrekTrail.getName().trim().equals("") ){
             logger.error("Empty name cannot be referenced in the database.");
             throw new BadRequestException("Empty name cannot be referenced in the database.");
@@ -77,6 +84,42 @@ public class GeotrekTrailService {
             logger.error("Geonames error {}", e.getMessage());
             throw new BadRequestException("Error while requesting country code from geonames service");
         }
+    }
+
+    public void persistTrails(List<GeotrekTrail> geotrekTrails) throws BadRequestException {
+        if (geotrekTrails == null || geotrekTrails.size() > MAX_TRAILS || geotrekTrails.size() < MIN_TRAILS ){
+            logger.error("Provided list of trails needs to be within allowed limits.");
+            throw new BadRequestException("Invalid input for multiple geotrek trails.");
+        }
+        for (GeotrekTrail t: geotrekTrails){
+            if (!Math.isValidWGS84(t.getCoordinates())) {
+                int indexOfTrail = geotrekTrails.indexOf(t);
+                logger.info("Invalid linestring format for trail index {}", indexOfTrail);
+                throw new BadRequestException("Linestring format for index " + indexOfTrail + " needs to be WGS84");
+            }
+        };
+
+        logger.info("Valid input, start with database insertion.");
+        for(GeotrekTrail geotrekTrail: geotrekTrails){
+            try {
+                Trail trail = this.trailMapper.map(geotrekTrail);
+
+                LineString convertedLinestring = Math.convertLinestringToEPSG3857(geotrekTrail.getCoordinates());
+                geotrekTrail.setCoordinates(convertedLinestring);
+
+                Long id = this.geotrekDbService.postTrail(geotrekTrail).execute().body();
+                trail.setTrailId("geotrek-" + id);
+
+                if (trail.getTrailname() != null && !trail.getTrailname().trim().equals("")
+                        && trail.getTrailId() != null){
+                    this.iTrailRepository.save(trail);
+                }
+            } catch (IOException e) {
+                logger.error("Error while waiting for response from geotrekDbService for {}, {}", geotrekTrail.getId(), e.getMessage());
+                throw new BadRequestException("Processing was not possible for " + geotrekTrail.getId());
+            }
+        }
+        logger.info("Successfully saved all trails in the geotrek and ms database");
     }
 
     public void deleteTrail(String id) throws BadRequestException {

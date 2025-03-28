@@ -12,6 +12,7 @@ public class TrailMapper {
     public Trail map(GeotrekTrail geotrekTrail){
         Trail trail = new Trail();
         trail.setTrailname(geotrekTrail.getName());
+        trail.setMaintainer(geotrekTrail.getMaintainer());
         trail.setTrailId(geotrekTrail.getId());
         trail.setCoordinates(this.wkbWriter.write(geotrekTrail.getCoordinates()));
         return trail;
