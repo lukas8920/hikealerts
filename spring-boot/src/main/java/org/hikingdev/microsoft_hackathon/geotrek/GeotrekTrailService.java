@@ -108,11 +108,13 @@ public class GeotrekTrailService {
                 geotrekTrail.setCoordinates(convertedLinestring);
 
                 Long id = this.geotrekDbService.postTrail(geotrekTrail).execute().body();
-                trail.setTrailId("geotrek-" + id);
+                if (id != null){
+                    trail.setTrailId("geotrek-" + id);
 
-                if (trail.getTrailname() != null && !trail.getTrailname().trim().equals("")
-                        && trail.getTrailId() != null){
-                    this.iTrailRepository.save(trail);
+                    if (trail.getTrailname() != null && !trail.getTrailname().trim().equals("")
+                            && trail.getTrailId() != null){
+                        this.iTrailRepository.save(trail);
+                    }
                 }
             } catch (IOException e) {
                 logger.error("Error while waiting for response from geotrekDbService for {}, {}", geotrekTrail.getId(), e.getMessage());
