@@ -65,7 +65,7 @@ public class GeotrekController {
     }
 
     @CrossOrigin(origins = {"https://hiking-alerts.org", "https://www.hiking-alerts.org"})
-    @PostMapping("/trail")
+    @PostMapping("/trails")
     public ResponseEntity<Void> persistTrails(@RequestBody List<GeotrekTrail> geotrekTrails) throws BadRequestException {
         this.geotrekTrailService.persistTrails(geotrekTrails);
         return ResponseEntity.ok().build();
