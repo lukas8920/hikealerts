@@ -110,10 +110,10 @@ public class ChatService {
             this.removalService.removeEvent(chatEvent.getTrailName(), chatEvent.getCountry(), publisherId);
             this.signalRService.pushFlaggedMessage(chat.getDeleteSuccess(), userId);
         } catch (EventNotFoundException e){
-            logger.error("Event deletion not possible ", e);
+            logger.error("Event deletion not possible, {}", e.getMessage());
             this.signalRService.pushFlaggedMessage(chat.getNoAlertError(), userId);
         } catch (InvalidationException e){
-            logger.error("User is not authorized to delete event ", e);
+            logger.error("User is not authorized to delete event, {}", e.getMessage());
             this.signalRService.pushFlaggedMessage(chat.getOwnerError(), userId);
         }
     }
