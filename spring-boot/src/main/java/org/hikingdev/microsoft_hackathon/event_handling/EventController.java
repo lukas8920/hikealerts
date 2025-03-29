@@ -69,7 +69,7 @@ public class EventController {
         return ResponseEntity.ok(events);
     }
 
-    @Operation(summary = "Publish your own event.", description = "Allows to publish an event and requests hiking-alerts.org to match the event with geospatial data. By default events are published via the 'Community' tag. Anybody who belongs to the community can adjust/delete community events. On request via mail you can become member of an official institution. The events are then published via this institution. And only members of the institution can adjust or delete the event.", operationId = "queryEvents")
+    @Operation(summary = "Publish your own event.", description = "Allows to publish an event and requests hiking-alerts.org to match the event with geospatial data. Only registered organisation can publish via the API. On request via mail you can become member of an official institution. The events are then published via this institution. And only members of the institution can adjust or delete the event.", operationId = "queryEvents")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Feedback whether event injection worked.",
                     content = { @Content(mediaType = "application/json",
