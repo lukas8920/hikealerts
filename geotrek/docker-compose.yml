@@ -20,8 +20,6 @@ services:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     networks:
       - hiking-alerts_geotrek-network
 
