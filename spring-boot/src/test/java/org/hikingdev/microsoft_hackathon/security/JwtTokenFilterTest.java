@@ -47,7 +47,7 @@ public class JwtTokenFilterTest {
         resultEndpoints.addAll(roleRegister.getAPI_USER_ENDPOINTS());
         resultEndpoints.addAll(roleRegister.getGEOTREK_ENDPOINTS());
 
-        assertThat(allowedEndpoints.size(), is(2));
+        assertThat(allowedEndpoints.size(), is(3));
         assertThat(allowedEndpoints.containsAll(resultEndpoints), is(true));
     }
 }

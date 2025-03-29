@@ -5,7 +5,7 @@ import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Configuration
 public class GenericApiProvider {
@@ -14,7 +14,7 @@ public class GenericApiProvider {
         OkHttpClient client = new OkHttpClient.Builder().build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.geonames.org")
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(JacksonConverterFactory.create())
                 .client(client)
                 .build();
         return retrofit.create(GeonamesService.class);

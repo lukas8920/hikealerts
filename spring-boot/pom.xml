@@ -19,6 +19,7 @@
         <bouncy.castle.version>1.80</bouncy.castle.version>
         <geotools.version>22.2</geotools.version>
         <h2.version>2.3.232</h2.version>
+        <jackson.version>2.9.0</jackson.version>
         <java.version>17</java.version>
         <jedis.client.version>4.4.8</jedis.client.version>
         <jetty.version>12.0.12</jetty.version>
@@ -173,8 +174,8 @@
         </dependency>
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-gson</artifactId>
-            <version>${retrofit.version}</version>
+            <artifactId>converter-jackson</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- String matching algorithms -->
