@@ -22,11 +22,10 @@ paths:
       - event-controller
       summary: Publish your own event.
       description: Allows to publish an event and requests hiking-alerts.org to match
-        the event with geospatial data. By default events are published via the 'Community'
-        tag. Anybody who belongs to the community can adjust/delete community events.
-        On request via mail you can become member of an official institution. The
-        events are then published via this institution. And only members of the institution
-        can adjust or delete the event.
+        the event with geospatial data. Only registered organisations can publish via
+        the API. On request via mail you can become a member of an official institution.
+        The events are then published via this institution. And only members of the
+        institution can adjust or delete the event.
       operationId: queryEvents
       parameters:
       - name: title
@@ -74,9 +73,6 @@ paths:
           format: date
         example: 2024-12-05
       responses:
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
         "200":
           description: Feedback whether event injection worked.
           content:
@@ -85,6 +81,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MessageResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
   /v1/events/delete:
     post:
       tags:
@@ -210,9 +209,6 @@ paths:
           default: 50
         example: 40
       responses:
-        "400":
-          description: Invalid user input. The provided parameters are not meeting
-            the requirements. See response message for details.
         "200":
           description: The queried events.
           content:
@@ -221,6 +217,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventResponse'
+        "400":
+          description: Invalid user input. The provided parameters are not meeting
+            the requirements. See response message for details.
 components:
   schemas:
     MessageResponse:
