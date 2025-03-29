@@ -1,5 +1,7 @@
 package org.hikingdev.microsoft_hackathon.geotrek;
 
+import okhttp3.Headers;
+import okhttp3.ResponseBody;
 import org.hikingdev.microsoft_hackathon.geotrek.api.GeonamesService;
 import org.hikingdev.microsoft_hackathon.geotrek.api.GeotrekDbService;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeonamesResponse;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
+import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,13 +104,15 @@ public class GeotrekTrailService {
 
         logger.info("Valid input, start with database insertion.");
         for(GeotrekTrail geotrekTrail: geotrekTrails){
+            Response<Long> response = null;
             try {
                 Trail trail = this.trailMapper.map(geotrekTrail);
 
                 LineString convertedLinestring = Math.convertLinestringToEPSG3857(geotrekTrail.getCoordinates());
                 geotrekTrail.setCoordinates(convertedLinestring);
 
-                Long id = this.geotrekDbService.postTrail(geotrekTrail).execute().body();
+                response = this.geotrekDbService.postTrail(geotrekTrail).execute();
+                Long id = response.body();
                 if (id != null){
                     trail.setTrailId("geotrek-" + id);
 
@@ -120,6 +125,13 @@ public class GeotrekTrailService {
                 }
             } catch (IOException e) {
                 logger.error("Error while waiting for response from geotrekDbService for {}, {}", geotrekTrail.getId(), e.getMessage());
+                if (response != null){
+                    Headers headers = response.headers();
+                    ResponseBody body = response.errorBody();
+
+                    logger.error("Headers {}", headers);
+                    logger.error("Body {}", body);
+                }
                 throw new BadRequestException("Processing was not possible for " + geotrekTrail.getId());
             }
         }
