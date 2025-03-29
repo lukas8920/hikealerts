@@ -115,6 +115,8 @@ public class GeotrekTrailService {
                             && trail.getTrailId() != null){
                         this.iTrailRepository.save(trail);
                     }
+                } else {
+                    logger.error("No id received for {}", geotrekTrail.getName());
                 }
             } catch (IOException e) {
                 logger.error("Error while waiting for response from geotrekDbService for {}, {}", geotrekTrail.getId(), e.getMessage());
