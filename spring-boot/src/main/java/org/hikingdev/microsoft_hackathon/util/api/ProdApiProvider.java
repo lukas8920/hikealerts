@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Profile;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.time.LocalDateTime;
-
 @Configuration
 @Profile("prod")
 public class ProdApiProvider {
@@ -35,10 +33,6 @@ public class ProdApiProvider {
                 .build();
         return retrofit.create(GpgService.class);
     }
-
-    Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-            .create();
 
     @Bean("GeotrekDbService")
     public GeotrekDbService provideGeotrekDbService(){
