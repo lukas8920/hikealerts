@@ -4,14 +4,15 @@ x-images:
     build:
       context: .
       dockerfile: ./docker/Dockerfile
-      target: dev
+      target: prod
       args:
         BASE_IMAGE: ubuntu:jammy
-    user: ${UID:-1000}:${GID:-1000}
+        GITHUB_TOKEN: ${GITHUB_TOKEN}
+    user: ${UID:-0}:${GID:-0}
     env_file:
       - .env
     volumes:
-      - .:/opt/geotrek-admin
+      - ./var:/opt/geotrek-admin/var
 
 services:
   postgres:
@@ -28,6 +29,11 @@ services:
     networks:
       - hiking-alerts_geotrek-network
 
+  memcached:
+    image: memcached:1.5-alpine
+    networks:
+      - hiking-alerts_geotrek-network
+
   screamshotter:
     image: my-screamshotter:latest
     networks:
@@ -37,6 +43,7 @@ services:
     <<: [ *django ]
     depends_on:
       - postgres
+      - memcached
     command: celery -A geotrek worker -c 1
     networks:
       - hiking-alerts_geotrek-network
@@ -46,17 +53,14 @@ services:
     depends_on:
       - postgres
       - screamshotter
+      - memcached
       - convertit
       - celery
     networks:
       - hiking-alerts_geotrek-network
-
-  sphinx:
-    <<: [ *django ]
-    working_dir: /opt/geotrek-admin/docs
-    command: sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html
-    networks:
-      - hiking-alerts_geotrek-network
+      - hiking-alerts_pass-network
+    volumes:
+      - ./var:/opt/geotrek-admin/var
 
   geotrek-db-service:
     image: geotrek-db-service

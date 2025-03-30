@@ -53,6 +53,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt
       - ./proxy-ssl.conf:/etc/nginx/proxy-ssl.conf:ro
       - ./geotrek-proxy-headers.conf:/etc/nginx/geotrek-proxy-headers.conf:ro
+      - /home/lukas/geotrek/geotrek-admin/var:/opt/geotrek-admin/var
     networks:
       - app-network
       - geotrek-network
