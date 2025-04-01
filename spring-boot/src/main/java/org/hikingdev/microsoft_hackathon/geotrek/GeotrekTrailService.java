@@ -171,6 +171,8 @@ public class GeotrekTrailService {
 
                     Trail trail = this.trailMapper.map(joinedTrail);
                     this.iTrailRepository.save(trail);
+                } else {
+                    logger.info("Only one trail was returned - hence, keep the trail deleted.");
                 }
             } catch (IOException ioException){
                 logger.error("Service request for trails connected to {} failed: {}", extractedId, ioException.getMessage());
