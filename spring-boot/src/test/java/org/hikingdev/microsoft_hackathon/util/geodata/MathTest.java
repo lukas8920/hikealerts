@@ -87,6 +87,59 @@ public class MathTest {
         assertThat(result, is(true));
     }
 
+    @Test
+    public void testJoiningOverlappingLineStrings(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coords1 = new Coordinate[]{
+                new Coordinate(0, 0),
+                new Coordinate(1, 1)
+        };
+        LineString line1 = geometryFactory.createLineString(coords1);
+        Coordinate[] coords2 = new Coordinate[]{
+                new Coordinate(1, 1),
+                new Coordinate(2, 2),
+                new Coordinate(3, 3)
+        };
+        LineString line2 = geometryFactory.createLineString(coords2);
+
+        LineString outputLine = Math.joinLineStrings(line1, line2);
+
+        Coordinate[] outputCoords = new Coordinate[]{
+                new Coordinate(0, 0),
+                new Coordinate(1, 1),
+                new Coordinate(2, 2),
+                new Coordinate(3, 3)
+        };
+        assertThat(outputLine.getCoordinates(), is(outputCoords));
+    }
+
+    @Test
+    public void testJoiningLineStrings(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coords1 = new Coordinate[]{
+                new Coordinate(0, 0),
+                new Coordinate(1, 1)
+        };
+        LineString line1 = geometryFactory.createLineString(coords1);
+        Coordinate[] coords2 = new Coordinate[]{
+                new Coordinate(2, 2),
+                new Coordinate(3, 3),
+                new Coordinate(4, 4)
+        };
+        LineString line2 = geometryFactory.createLineString(coords2);
+
+        LineString outputLine = Math.joinLineStrings(line1, line2);
+
+        Coordinate[] outputCoords = new Coordinate[]{
+                new Coordinate(0, 0),
+                new Coordinate(1, 1),
+                new Coordinate(2, 2),
+                new Coordinate(3, 3),
+                new Coordinate(4, 4)
+        };
+        assertThat(outputLine.getCoordinates(), is(outputCoords));
+    }
+
     private LineString wgs84LineString(){
         GeometryFactory geometryFactory = new GeometryFactory();
         Coordinate[] coordinates = new Coordinate[]{

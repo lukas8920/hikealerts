@@ -14,7 +14,9 @@ public class TrailMapper {
         trail.setTrailname(geotrekTrail.getName());
         trail.setMaintainer(geotrekTrail.getMaintainer());
         trail.setTrailId(geotrekTrail.getId());
-        trail.setCoordinates(this.wkbWriter.write(geotrekTrail.getCoordinates()));
+        if (geotrekTrail.getCoordinates() != null){
+            trail.setCoordinates(this.wkbWriter.write(geotrekTrail.getCoordinates()));
+        }
         return trail;
     }
 }

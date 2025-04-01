@@ -64,5 +64,5 @@ public interface ITrailJpaRepository extends JpaRepository<Trail, Long> {
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM geodata_trails WHERE trail_id = :trail_id AND maintainer in (:publishers)", nativeQuery = true)
-    void delete(@Param("trail_id") String trail_id, @Param("publishers") List<String> publishers);
+    int delete(@Param("trail_id") String trail_id, @Param("publishers") List<String> publishers);
 }

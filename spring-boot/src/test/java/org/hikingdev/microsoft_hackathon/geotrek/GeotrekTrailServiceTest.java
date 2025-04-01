@@ -42,6 +42,7 @@ public class GeotrekTrailServiceTest {
     private GeonamesService geonamesService;
     private IPublisherRepository iPublisherRepository;
     private TrailMapper trailMapper;
+    private GeotrekDbService geotrekDbService;
 
     @BeforeEach
     public void setup(){
@@ -50,6 +51,7 @@ public class GeotrekTrailServiceTest {
         this.iPublisherRepository = mock(IPublisherRepository.class);
         this.trailMapper = new TrailMapper();
         this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository, null);
+        this.geotrekDbService = mock(GeotrekDbService.class);
     }
 
     @Test
@@ -141,7 +143,7 @@ public class GeotrekTrailServiceTest {
     }
 
     @Test
-    public void testThatDeleteTrailsWorks() throws BadRequestException {
+    public void testThatDeleteTrailsSavesNewPath() throws BadRequestException, IOException {
         ITrailJpaRepository iTrailJpaRepository = mock(ITrailJpaRepository.class);
         GeoMatcher geoMatcher = mock(GeoMatcher.class);
         EntityManager entityManager = mock(EntityManager.class);
@@ -150,12 +152,61 @@ public class GeotrekTrailServiceTest {
         Publisher publisher = new Publisher();
         publisher.setName("dummy");
 
-        String id = "2L";
+        String id = "geotrek-2";
 
-        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, null, trailRepositoryCallback, iPublisherRepository, null));
+        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, trailMapper, trailRepositoryCallback, iPublisherRepository, geotrekDbService));
 
         doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
         doReturn(publisher).when(iPublisherRepository).findPublisherByUserId(1L);
+
+        Call<List<GeotrekTrail>> call = mock(Call.class);
+        Response<List<GeotrekTrail>> response = mock(Response.class);
+
+        List<GeotrekTrail> geotrekTrails = Arrays.asList(new GeotrekTrail(), new GeotrekTrail());
+
+        when(this.geotrekDbService.findTrails(2L)).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(geotrekTrails);
+
+        GeotrekTrail geotrekTrail = new GeotrekTrail();
+        geotrekTrail.setId("3");
+        doReturn(geotrekTrail).when(geotrekTrailService).joinGeotrekTrails(geotrekTrails);
+
+        geotrekTrailService.deleteTrail(id);
+
+        assertThat(trailRepositoryCallback.counter, is(-1));
+        assertThat(trailRepositoryCallback.publishers.size(), is(2));
+        assertThat(trailRepositoryCallback.publishers.contains(publisher.getName()), is(true));
+        assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
+        assertThat(trailRepositoryCallback.trail_id, is("geotrek-2"));
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("3"));
+    }
+
+    @Test
+    public void testThatDeleteIsComplete() throws IOException, BadRequestException {
+        ITrailJpaRepository iTrailJpaRepository = mock(ITrailJpaRepository.class);
+        GeoMatcher geoMatcher = mock(GeoMatcher.class);
+        EntityManager entityManager = mock(EntityManager.class);
+        TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(iTrailJpaRepository, geoMatcher, entityManager);
+        IPublisherRepository iPublisherRepository = mock(IPublisherRepository.class);
+        Publisher publisher = new Publisher();
+        publisher.setName("dummy");
+
+        String id = "geotrek-2";
+
+        GeotrekTrailService geotrekTrailService = spy(new GeotrekTrailService(null, null, trailMapper, trailRepositoryCallback, iPublisherRepository, geotrekDbService));
+
+        doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
+        doReturn(publisher).when(iPublisherRepository).findPublisherByUserId(1L);
+
+        Call<List<GeotrekTrail>> call = mock(Call.class);
+        Response<List<GeotrekTrail>> response = mock(Response.class);
+
+        List<GeotrekTrail> geotrekTrails = List.of(new GeotrekTrail());
+
+        when(this.geotrekDbService.findTrails(2L)).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(geotrekTrails);
 
         geotrekTrailService.deleteTrail(id);
 
@@ -163,7 +214,7 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.publishers.size(), is(2));
         assertThat(trailRepositoryCallback.publishers.contains(publisher.getName()), is(true));
         assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
-        assertThat(trailRepositoryCallback.trail_id, is("2L"));
+        assertThat(trailRepositoryCallback.trail_id, is("geotrek-2"));
     }
 
     @Test
@@ -192,7 +243,7 @@ public class GeotrekTrailServiceTest {
         };
         CoordinateSequence seq = new CoordinateArraySequence(coordinates);
         LineString lineString = new LineString(seq, geometryFactory);
-        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString);
+        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0);
 
         Exception exception = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(List.of(geotrekTrail)));
 
@@ -209,7 +260,7 @@ public class GeotrekTrailServiceTest {
         };
         CoordinateSequence seq = new CoordinateArraySequence(coordinates);
         LineString lineString = new LineString(seq, geometryFactory);
-        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString);
+        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0);
 
         Call<Long> longCall = mock(Call.class);
         Response<Long> response = mock(Response.class);
@@ -265,6 +316,11 @@ public class GeotrekTrailServiceTest {
             this.counter -= 1;
             return this.postResponse;
         }
+
+        @Override
+        public Call<List<GeotrekTrail>> findTrails(Long id) {
+            return null;
+        }
     }
 
     static class TrailRepositoryCallback extends TrailRepository {
@@ -285,10 +341,11 @@ public class GeotrekTrailServiceTest {
         }
 
         @Override
-        public void delete(String trail_id, List<String> publishers){
+        public int delete(String trail_id, List<String> publishers){
             this.trail_id = trail_id;
             this.publishers = publishers;
             counter -= 1;
+            return 1;
         }
     }
 }

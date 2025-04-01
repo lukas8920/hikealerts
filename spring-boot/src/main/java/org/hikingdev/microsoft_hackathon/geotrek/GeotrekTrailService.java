@@ -154,8 +154,35 @@ public class GeotrekTrailService {
             publishers.add(COMMUNITY);
         }
 
-        this.iTrailRepository.delete(id, publishers);
-        logger.info("Successfully deleted trails");
+        int rowsDeleted = this.iTrailRepository.delete(id, publishers);
+
+        // delete ensures that only authorized user update potential leftovers of the trail
+        if (rowsDeleted > 0){
+            logger.info("Successfully deleted trails");
+            Long extractedId = Long.valueOf(id.substring(8));
+            logger.info("Query connected trails for {}", id);
+            try {
+                Response<List<GeotrekTrail>> trailResponse = this.geotrekDbService.findTrails(extractedId).execute();
+                List<GeotrekTrail> connectedTrails = trailResponse.body();
+
+                // if connected trails greater 1, then there will be connected trails left in the geotrek database
+                if (connectedTrails != null && connectedTrails.size() > 1){
+                    GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
+
+                    Trail trail = this.trailMapper.map(joinedTrail);
+                    this.iTrailRepository.save(trail);
+                }
+            } catch (IOException ioException){
+                logger.error("Service request for trails connected to {} failed: {}", extractedId, ioException.getMessage());
+                throw new BadRequestException("Error while requesting connected ids.");
+            }
+        } else {
+            logger.info("Did not find trails to delete.");
+        }
+    }
+
+    GeotrekTrail joinGeotrekTrails(List<GeotrekTrail> geotrekTrails){
+        return GeotrekTrail.joinGeotrekTrails(geotrekTrails);
     }
 
     Long getActiveSecurityContextHolder(){

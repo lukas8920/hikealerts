@@ -152,7 +152,7 @@ public class TrailRepository implements ITrailRepository {
     }
 
     @Override
-    public void delete(String trailId, List<String> publishers) {
-        this.iTrailJpaRepository.delete(trailId, publishers);
+    public int delete(String trailId, List<String> publishers) {
+        return this.iTrailJpaRepository.delete(trailId, publishers);
     }
 }

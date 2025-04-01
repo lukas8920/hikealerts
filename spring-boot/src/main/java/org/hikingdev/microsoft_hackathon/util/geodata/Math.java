@@ -1,20 +1,21 @@
 package org.hikingdev.microsoft_hackathon.util.geodata;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
+import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
+import org.locationtech.jts.geom.*;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Math {
     private static final WKBReader wkbReader = new WKBReader();
     private static final WKTWriter wktWriter = new WKTWriter();
+    private static final GeometryFactory geometryFactory = new GeometryFactory();
 
     public static String convertByteArrayToString(byte[] coordinates) throws ParseException {
         Geometry geometry = wkbReader.read(coordinates);
@@ -90,6 +91,23 @@ public class Math {
             }
         }
         return true;
+    }
+
+    public static LineString joinLineStrings(LineString line1, LineString line2){
+        Coordinate[] mergedCoords = new Coordinate[line1.getNumPoints() + line2.getNumPoints()];
+
+        boolean removeDuplicate = line1.getEndPoint().getCoordinate().equals2D(line2.getStartPoint().getCoordinate());
+
+        int offset = line1.getNumPoints();
+        if (removeDuplicate) {
+            mergedCoords = new Coordinate[line1.getNumPoints() + line2.getNumPoints() - 1];
+        }
+
+        System.arraycopy(line1.getCoordinates(), 0, mergedCoords, 0, offset);
+        System.arraycopy(line2.getCoordinates(), removeDuplicate ? 1 : 0, mergedCoords, offset, line2.getNumPoints() - (removeDuplicate ? 1 : 0));
+
+        CoordinateSequence seq = new CoordinateArraySequence(mergedCoords);
+        return new LineString(seq, geometryFactory);
     }
 
     // Convert longitude to EPSG:3857
