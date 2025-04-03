@@ -13,9 +13,7 @@ import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.LineString;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +68,6 @@ public class GeotrekTrailService {
         Coordinate midPoint = Math.determineMid(lineString);
         geotrekTrail.setCoordinates(lineString);
 
-        Trail trail = this.trailMapper.map(geotrekTrail);
-
         Call<GeonamesResponse> response = this.geonamesService.countryCode(midPoint.x, midPoint.y, username);
 
         try {
@@ -80,10 +76,22 @@ public class GeotrekTrailService {
                 logger.error("No valid country returned by geoname service.");
                 throw new BadRequestException("No valid country returned by geoname service.");
             }
-            trail.setCountry(body.getCountryCode());
-            trail.setMaintainer(geotrekTrail.getMaintainer());
 
-            GeotrekTrailService.this.iTrailRepository.save(trail);
+            Long extractedId = Long.valueOf(geotrekTrail.getId().substring(8));
+            logger.info("Query connected trails for {}", extractedId);
+            try {
+                Response<List<GeotrekTrail>> trailResponse = this.geotrekDbService.findTrails(extractedId).execute();
+                List<GeotrekTrail> connectedTrails = trailResponse.body();
+
+                // if connected trails greater 1, then there will be connected trails left in the geotrek database
+                Trail trail = connectedTrails != null && connectedTrails.size() > 1
+                        ? persistConnectedTrails(connectedTrails, body.getCountryCode())
+                        : this.trailMapper.map(geotrekTrail, body.getCountryCode());
+                this.iTrailRepository.save(trail);
+            } catch (IOException ioException) {
+                logger.error("Service request for trails connected to {} failed: {}", extractedId, ioException.getMessage());
+                throw new BadRequestException("Error while requesting connected ids.");
+            }
             logger.info("Saved geotrek trail with id {}", geotrekTrail.getId());
         } catch (IOException e){
             logger.error("Geonames error {}", e.getMessage());
@@ -178,28 +186,30 @@ public class GeotrekTrailService {
                 List<GeotrekTrail> connectedTrails = trailResponse.body();
 
                 // if connected trails greater 1, then there will be connected trails left in the geotrek database
-                if (connectedTrails != null && connectedTrails.size() > 1){
+                if (connectedTrails != null && connectedTrails.size() > 1) {
                     //void first trail
                     connectedTrails.get(0).setCoordinates(Math.voidLineString());
-                    GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
-
-                    LineString lineString = Math.convertToWGS84(joinedTrail.getCoordinates());
-                    joinedTrail.setCoordinates(lineString);
-
-                    Trail trail = this.trailMapper.map(joinedTrail);
-                    trail.setCountry(oldTrail.getCountry());
-
+                    Trail trail = persistConnectedTrails(connectedTrails, oldTrail.getCountry());
                     this.iTrailRepository.save(trail);
                 } else {
                     logger.info("Only one trail was returned - hence, keep the trail deleted.");
                 }
-            } catch (IOException ioException){
+            } catch (IOException ioException) {
                 logger.error("Service request for trails connected to {} failed: {}", extractedId, ioException.getMessage());
                 throw new BadRequestException("Error while requesting connected ids.");
             }
         } else {
             logger.info("Did not find trails to delete.");
         }
+    }
+
+    private Trail persistConnectedTrails(List<GeotrekTrail> connectedTrails, String country){
+        GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
+
+        LineString lineString = Math.convertToWGS84(joinedTrail.getCoordinates());
+        joinedTrail.setCoordinates(lineString);
+
+        return this.trailMapper.map(joinedTrail, country);
     }
 
     GeotrekTrail joinGeotrekTrails(List<GeotrekTrail> geotrekTrails){

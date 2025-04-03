@@ -23,4 +23,10 @@ public class TrailMapper {
         }
         return trail;
     }
+
+    public Trail map(GeotrekTrail geotrekTrail, String country){
+        Trail trail = map(geotrekTrail);
+        trail.setCountry(country);
+        return trail;
+    }
 }

@@ -50,8 +50,8 @@ public class GeotrekTrailServiceTest {
         ITrailRepository iTrailRepository = mock(ITrailRepository.class);
         this.iPublisherRepository = mock(IPublisherRepository.class);
         this.trailMapper = new TrailMapper();
-        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository, null);
         this.geotrekDbService = mock(GeotrekDbService.class);
+        this.geotrekTrailService = new GeotrekTrailService("dummy", geonamesService, trailMapper, iTrailRepository, iPublisherRepository, geotrekDbService);
     }
 
     @Test
@@ -104,13 +104,13 @@ public class GeotrekTrailServiceTest {
         GeoMatcher geoMatcher = mock(GeoMatcher.class);
         EntityManager entityManager = mock(EntityManager.class);
         TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(iTrailJpaRepository, geoMatcher, entityManager);
-        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback, this.iPublisherRepository, null);
+        GeotrekTrailService geotrekTrailService = new GeotrekTrailService("dummy", this.geonamesService, this.trailMapper, trailRepositoryCallback, this.iPublisherRepository, this.geotrekDbService);
 
         GeometryFactory geometryFactory = new GeometryFactory();
         CoordinateSequence coordinateSequence = new CoordinateArraySequence(new Coordinate[]{new Coordinate(1, 1), new Coordinate(2, 2), new Coordinate(3, 3)});
         GeotrekTrail geotrekTrail = new GeotrekTrail();
         geotrekTrail.setName("test");
-        geotrekTrail.setId("trail_1");
+        geotrekTrail.setId("geotrek-1");
         geotrekTrail.setMaintainer("maintainer");
         geotrekTrail.setCoordinates(new LineString(coordinateSequence, geometryFactory));
 
@@ -124,10 +124,13 @@ public class GeotrekTrailServiceTest {
         when(call.execute()).thenReturn(response);
         when(response.body()).thenReturn(geonamesResponse);
 
+        List<GeotrekTrail> geotrekTrails = List.of(geotrekTrail);
+        this.mockGeotrekDbServiceFindTrails(geotrekTrails, 1L);
+
         geotrekTrailService.persistTrail(geotrekTrail);
 
         assertThat(trailRepositoryCallback.counter, is(0));
-        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-trail_1"));
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-1"));
         assertThat(trailRepositoryCallback.trail.getTrailname(), is("test"));
         assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
         assertThat(trailRepositoryCallback.trail.getCountry(), is("DE"));
@@ -201,14 +204,8 @@ public class GeotrekTrailServiceTest {
         doReturn(1L).when(geotrekTrailService).getActiveSecurityContextHolder();
         doReturn(publisher).when(iPublisherRepository).findPublisherByUserId(1L);
 
-        Call<List<GeotrekTrail>> call = mock(Call.class);
-        Response<List<GeotrekTrail>> response = mock(Response.class);
-
         List<GeotrekTrail> geotrekTrails = List.of(new GeotrekTrail());
-
-        when(this.geotrekDbService.findTrails(2L)).thenReturn(call);
-        when(call.execute()).thenReturn(response);
-        when(response.body()).thenReturn(geotrekTrails);
+        mockGeotrekDbServiceFindTrails(geotrekTrails, 2L);
 
         geotrekTrailService.deleteTrail(id);
 
@@ -283,6 +280,15 @@ public class GeotrekTrailServiceTest {
         WKBReader wkbReader = new WKBReader();
         LineString resultLinestring = (LineString) wkbReader.read(trailRepositoryCallback.trail.getCoordinates());
         assertThat(Math.isValidWGS84(resultLinestring), is(true));
+    }
+
+    private void mockGeotrekDbServiceFindTrails(List<GeotrekTrail> geotrekTrails, Long id) throws IOException {
+        Call<List<GeotrekTrail>> call = mock(Call.class);
+        Response<List<GeotrekTrail>> response = mock(Response.class);
+
+        when(this.geotrekDbService.findTrails(id)).thenReturn(call);
+        when(call.execute()).thenReturn(response);
+        when(response.body()).thenReturn(geotrekTrails);
     }
 
     LineString wgs84LineString(){

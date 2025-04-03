@@ -1,6 +1,5 @@
 package org.hikingdev.microsoft_hackathon.util.geodata;
 
-import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
 import org.locationtech.jts.geom.*;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
@@ -9,7 +8,6 @@ import org.locationtech.jts.io.WKTWriter;
 import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Math {
