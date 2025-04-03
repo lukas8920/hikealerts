@@ -14,5 +14,4 @@ public class GeonamesResponse {
     private String distance;
     private String countryCode;
     private String countryName;
-    private String status;
 }
