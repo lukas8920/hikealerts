@@ -68,6 +68,7 @@ public class GeotrekTrailService {
         Coordinate midPoint = Math.determineMid(lineString);
         geotrekTrail.setCoordinates(lineString);
 
+        logger.info("Request country code for: " + midPoint.x + " / " + midPoint.y);
         Call<GeonamesResponse> response = this.geonamesService.countryCode(midPoint.x, midPoint.y, username);
 
         try {
