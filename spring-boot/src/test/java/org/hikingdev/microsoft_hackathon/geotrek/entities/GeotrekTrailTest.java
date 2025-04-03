@@ -1,5 +1,6 @@
 package org.hikingdev.microsoft_hackathon.geotrek.entities;
 
+import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -100,5 +101,29 @@ public class GeotrekTrailTest {
         assertThat(outputGeotrail.getCoordinates().getNumPoints(), is(6));
         assertThat(outputGeotrail.getCoordinates().getCoordinates(), is(outputCoords));
         assertThat(outputGeotrail.getId(), is("2"));
+    }
+
+    @Test
+    public void testVoidFirstGeotrekTrail(){
+        LineString lineString = Math.voidLineString();
+        GeotrekTrail geotrekTrail = new GeotrekTrail();
+        geotrekTrail.setId("1");
+        geotrekTrail.setCoordinates(lineString);
+        geotrekTrail.setSource(4);
+        geotrekTrail.setTarget(5);
+        List<GeotrekTrail> geotrekTrails = List.of(geotrekTrail, geotrekTrail2, geotrekTrail3);
+
+        GeotrekTrail outputGeotrail = GeotrekTrail.joinGeotrekTrails(geotrekTrails);
+
+        Coordinate[] outputCoords = new Coordinate[]{
+                new Coordinate(2, 2),
+                new Coordinate(3, 3),
+                new Coordinate(4, 4),
+                new Coordinate(5, 5)
+        };
+
+        assertThat(outputGeotrail.getCoordinates().getNumPoints(), is(4));
+        assertThat(outputGeotrail.getCoordinates().getCoordinates(), is(outputCoords));
+        assertThat(outputGeotrail.getId(), is("3"));
     }
 }

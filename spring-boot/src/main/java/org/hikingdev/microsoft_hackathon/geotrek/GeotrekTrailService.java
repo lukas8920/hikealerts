@@ -13,7 +13,9 @@ import org.hikingdev.microsoft_hackathon.repository.trails.ITrailRepository;
 import org.hikingdev.microsoft_hackathon.util.exceptions.BadRequestException;
 import org.hikingdev.microsoft_hackathon.util.geodata.Math;
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +179,8 @@ public class GeotrekTrailService {
 
                 // if connected trails greater 1, then there will be connected trails left in the geotrek database
                 if (connectedTrails != null && connectedTrails.size() > 1){
+                    //void first trail
+                    connectedTrails.get(0).setCoordinates(Math.voidLineString());
                     GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
 
                     LineString lineString = Math.convertToWGS84(joinedTrail.getCoordinates());

@@ -96,7 +96,7 @@ public class Math {
     public static LineString joinLineStrings(LineString line1, LineString line2){
         Coordinate[] mergedCoords = new Coordinate[line1.getNumPoints() + line2.getNumPoints()];
 
-        boolean removeDuplicate = line1.getEndPoint().getCoordinate().equals2D(line2.getStartPoint().getCoordinate());
+        boolean removeDuplicate = line1.getEndPoint() != null && line1.getEndPoint().getCoordinate().equals2D(line2.getStartPoint().getCoordinate());
 
         int offset = line1.getNumPoints();
         if (removeDuplicate) {
@@ -107,6 +107,12 @@ public class Math {
         System.arraycopy(line2.getCoordinates(), removeDuplicate ? 1 : 0, mergedCoords, offset, line2.getNumPoints() - (removeDuplicate ? 1 : 0));
 
         CoordinateSequence seq = new CoordinateArraySequence(mergedCoords);
+        return new LineString(seq, geometryFactory);
+    }
+
+    public static LineString voidLineString(){
+        Coordinate[] coordinates = new Coordinate[]{};
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
         return new LineString(seq, geometryFactory);
     }
 
