@@ -179,6 +179,9 @@ public class GeotrekTrailService {
                 if (connectedTrails != null && connectedTrails.size() > 1){
                     GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
 
+                    LineString lineString = Math.convertToWGS84(joinedTrail.getCoordinates());
+                    joinedTrail.setCoordinates(lineString);
+
                     Trail trail = this.trailMapper.map(joinedTrail);
                     trail.setCountry(oldTrail.getCountry());
 

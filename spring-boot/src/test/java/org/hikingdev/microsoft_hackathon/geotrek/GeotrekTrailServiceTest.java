@@ -170,6 +170,7 @@ public class GeotrekTrailServiceTest {
 
         GeotrekTrail geotrekTrail = new GeotrekTrail();
         geotrekTrail.setId("3");
+        geotrekTrail.setCoordinates(epsg3857LineString());
         doReturn(geotrekTrail).when(geotrekTrailService).joinGeotrekTrails(geotrekTrails);
 
         geotrekTrailService.deleteTrail(id);
