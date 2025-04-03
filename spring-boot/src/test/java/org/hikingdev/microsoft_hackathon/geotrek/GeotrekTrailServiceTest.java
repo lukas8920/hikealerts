@@ -127,7 +127,7 @@ public class GeotrekTrailServiceTest {
         geotrekTrailService.persistTrail(geotrekTrail);
 
         assertThat(trailRepositoryCallback.counter, is(0));
-        assertThat(trailRepositoryCallback.trail.getTrailId(), is("trail_1"));
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-trail_1"));
         assertThat(trailRepositoryCallback.trail.getTrailname(), is("test"));
         assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
         assertThat(trailRepositoryCallback.trail.getCountry(), is("DE"));
@@ -179,7 +179,7 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.publishers.contains(publisher.getName()), is(true));
         assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
         assertThat(trailRepositoryCallback.trail_id, is("geotrek-2"));
-        assertThat(trailRepositoryCallback.trail.getTrailId(), is("3"));
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-3"));
     }
 
     @Test

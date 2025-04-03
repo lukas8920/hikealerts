@@ -13,7 +13,11 @@ public class TrailMapper {
         Trail trail = new Trail();
         trail.setTrailname(geotrekTrail.getName());
         trail.setMaintainer(geotrekTrail.getMaintainer());
-        trail.setTrailId(geotrekTrail.getId());
+        if (geotrekTrail.getId() == null || geotrekTrail.getId().startsWith("geotrek-")) {
+            trail.setTrailId(geotrekTrail.getId());
+        } else {
+            trail.setTrailId("geotrek-" + geotrekTrail.getId());
+        }
         if (geotrekTrail.getCoordinates() != null){
             trail.setCoordinates(this.wkbWriter.write(geotrekTrail.getCoordinates()));
         }
