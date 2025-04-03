@@ -33,8 +33,8 @@ public class GeotrekTrail {
         return "Geotrek Trail - id: " + id + " - name: " + name + " - maintainer: " + maintainer;
     }
 
-    public GeotrekTrail(GeotrekTrail geotrekTrail, LineString lineString){
-        this.id = geotrekTrail.id;
+    public GeotrekTrail(GeotrekTrail geotrekTrail, LineString lineString, String id){
+        this.id = id;
         this.name = geotrekTrail.name;
         this.maintainer = geotrekTrail.maintainer;
         this.coordinates = lineString;
@@ -47,7 +47,7 @@ public class GeotrekTrail {
         GeotrekTrail nextTrail = getNextGeotrail(outputTrail, geotrekTrails, firstTrailTarget);
         while (nextTrail != null){
             LineString joinedLineString = Math.joinLineStrings(outputTrail.getCoordinates(), nextTrail.getCoordinates());
-            outputTrail = new GeotrekTrail(outputTrail, joinedLineString);
+            outputTrail = new GeotrekTrail(outputTrail, joinedLineString, nextTrail.id);
             nextTrail = getNextGeotrail(nextTrail, geotrekTrails, firstTrailTarget);
         }
         return outputTrail;

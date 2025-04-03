@@ -76,7 +76,7 @@ public class GeotrekTrailTest {
 
         assertThat(outputGeotrail.getCoordinates().getNumPoints(), is(6));
         assertThat(outputGeotrail.getCoordinates().getCoordinates(), is(outputCoords));
-        assertThat(outputGeotrail.getId(), is("1"));
+        assertThat(outputGeotrail.getId(), is("3"));
     }
 
     @Test
@@ -99,6 +99,6 @@ public class GeotrekTrailTest {
 
         assertThat(outputGeotrail.getCoordinates().getNumPoints(), is(6));
         assertThat(outputGeotrail.getCoordinates().getCoordinates(), is(outputCoords));
-        assertThat(outputGeotrail.getId(), is("3"));
+        assertThat(outputGeotrail.getId(), is("2"));
     }
 }
