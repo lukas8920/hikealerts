@@ -180,6 +180,7 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.publishers.contains("Community"), is(true));
         assertThat(trailRepositoryCallback.trail_id, is("geotrek-2"));
         assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-3"));
+        assertThat(trailRepositoryCallback.trail.getCountry(), is("ZZ"));
     }
 
     @Test
@@ -346,6 +347,13 @@ public class GeotrekTrailServiceTest {
             this.publishers = publishers;
             counter -= 1;
             return 1;
+        }
+
+        @Override
+        public Trail findTrailByTrailId(String trailId){
+            Trail trail = new Trail();
+            trail.setCountry("ZZ");
+            return trail;
         }
     }
 }

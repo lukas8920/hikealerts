@@ -17,4 +17,5 @@ public interface ITrailRepository {
     List<Trail> findTrailsByEventIdAndCountry(String eventId, String country);
     void save(Trail trail);
     int delete(String trailId, List<String> publishers);
+    Trail findTrailByTrailId(String trailId);
 }

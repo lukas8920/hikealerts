@@ -154,6 +154,12 @@ public class GeotrekTrailService {
             publishers.add(COMMUNITY);
         }
 
+        Trail oldTrail = this.iTrailRepository.findTrailByTrailId(id);
+        if (oldTrail == null){
+            logger.error("No Trail exists for id {}", id);
+            throw new BadRequestException("No trail in database exists for id " + id);
+        }
+
         int rowsDeleted = this.iTrailRepository.delete(id, publishers);
 
         // delete ensures that only authorized user update potential leftovers of the trail
@@ -170,6 +176,8 @@ public class GeotrekTrailService {
                     GeotrekTrail joinedTrail = this.joinGeotrekTrails(connectedTrails);
 
                     Trail trail = this.trailMapper.map(joinedTrail);
+                    trail.setCountry(oldTrail.getCountry());
+
                     this.iTrailRepository.save(trail);
                 } else {
                     logger.info("Only one trail was returned - hence, keep the trail deleted.");
