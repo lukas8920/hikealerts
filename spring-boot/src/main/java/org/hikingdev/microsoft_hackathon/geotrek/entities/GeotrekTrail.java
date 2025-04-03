@@ -26,6 +26,7 @@ public class GeotrekTrail {
     private LineString coordinates;
     private Integer source;
     private Integer target;
+    private String country;
 
     @Override
     public String toString(){

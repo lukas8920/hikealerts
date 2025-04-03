@@ -95,10 +95,14 @@ public class GeotrekTrailService {
             throw new BadRequestException("Invalid input for multiple geotrek trails.");
         }
         for (GeotrekTrail t: geotrekTrails){
+            int indexOfTrail = geotrekTrails.indexOf(t);
             if (!Math.isValidWGS84(t.getCoordinates())) {
-                int indexOfTrail = geotrekTrails.indexOf(t);
                 logger.info("Invalid linestring format for trail index {}", indexOfTrail);
                 throw new BadRequestException("Linestring format for index " + indexOfTrail + " needs to be WGS84");
+            }
+            if (t.getCountry() == null){
+                logger.error("No country provided for trail index {}", indexOfTrail);
+                throw new BadRequestException("Trail with index " + indexOfTrail + " does not specify a country.");
             }
         };
 

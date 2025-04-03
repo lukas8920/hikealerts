@@ -236,32 +236,25 @@ public class GeotrekTrailServiceTest {
 
     @Test
     public void testThatImportTrailsRejectsInvalidFormat(){
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(-8238310.234500223, 4970071.579142425),
-                new Coordinate(1.001875417E7, -7.081154551613622E-10),
-                new Coordinate(0.0, 6711542.475587636)
-        };
-        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
-        LineString lineString = new LineString(seq, geometryFactory);
-        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0);
+        LineString lineString1 = epsg3857LineString();
+        GeotrekTrail geotrekTrail1 = new GeotrekTrail(null, "dummy", "maintainer", lineString1, 0, 0, null);
 
-        Exception exception = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(List.of(geotrekTrail)));
+        Exception exception1 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(List.of(geotrekTrail1)));
 
-        assertThat(exception.getMessage(), is("Linestring format for index 0 needs to be WGS84"));
+        assertThat(exception1.getMessage(), is("Linestring format for index 0 needs to be WGS84"));
+
+        LineString lineString2 = wgs84LineString();
+        GeotrekTrail geotrekTrail2 = new GeotrekTrail(null, "dummy", "maintainer", lineString2, 0, 0, null);
+
+        Exception exception2 = assertThrows(BadRequestException.class, () -> this.geotrekTrailService.persistTrails(List.of(geotrekTrail2)));
+
+        assertThat(exception2.getMessage(), is("Trail with index 0 does not specify a country."));
     }
 
     @Test
     public void testThatImportTrailsWorks() throws BadRequestException, ParseException, IOException {
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(-74.006, 40.7128),
-                new Coordinate(90, 0),
-                new Coordinate(0, 51.5074)
-        };
-        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
-        LineString lineString = new LineString(seq, geometryFactory);
-        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0);
+        LineString lineString = wgs84LineString();
+        GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0, "ZZ");
 
         Call<Long> longCall = mock(Call.class);
         Response<Long> response = mock(Response.class);
@@ -289,6 +282,28 @@ public class GeotrekTrailServiceTest {
         WKBReader wkbReader = new WKBReader();
         LineString resultLinestring = (LineString) wkbReader.read(trailRepositoryCallback.trail.getCoordinates());
         assertThat(Math.isValidWGS84(resultLinestring), is(true));
+    }
+
+    LineString wgs84LineString(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-74.006, 40.7128),
+                new Coordinate(90, 0),
+                new Coordinate(0, 51.5074)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        return new LineString(seq, geometryFactory);
+    }
+
+    LineString epsg3857LineString(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates1 = new Coordinate[]{
+                new Coordinate(-8238310.234500223, 4970071.579142425),
+                new Coordinate(1.001875417E7, -7.081154551613622E-10),
+                new Coordinate(0.0, 6711542.475587636)
+        };
+        CoordinateSequence seq1 = new CoordinateArraySequence(coordinates1);
+        return new LineString(seq1, geometryFactory);
     }
 
     static class GeotrekDbCallback implements GeotrekDbService {
