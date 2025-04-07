@@ -254,13 +254,16 @@ public class GeotrekTrailServiceTest {
         LineString lineString = wgs84LineString();
         GeotrekTrail geotrekTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString, 0, 0, "ZZ");
 
-        Call<Long> longCall = mock(Call.class);
-        Response<Long> response = mock(Response.class);
-        when(longCall.execute()).thenReturn(response);
-        when(response.body()).thenReturn(1L);
+        Call<GeotrekTrail> geotrekCall = mock(Call.class);
+        Response<GeotrekTrail> response = mock(Response.class);
+        GeotrekTrail outputTrail = new GeotrekTrail();
+        outputTrail.setId("geotrek-1");
+        outputTrail.setCoordinates(lineString);
+        when(geotrekCall.execute()).thenReturn(response);
+        when(response.body()).thenReturn(outputTrail);
 
         TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(null, null, null);
-        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(longCall);
+        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(geotrekCall);
 
         GeotrekTrailService geotrekTrailService = new GeotrekTrailService(null, null, this.trailMapper,
                 trailRepositoryCallback, null, geotrekDbCallback);
@@ -280,6 +283,60 @@ public class GeotrekTrailServiceTest {
         WKBReader wkbReader = new WKBReader();
         LineString resultLinestring = (LineString) wkbReader.read(trailRepositoryCallback.trail.getCoordinates());
         assertThat(Math.isValidWGS84(resultLinestring), is(true));
+    }
+
+    @Test
+    public void testImportTrailsDeletesCorrectly() throws IOException, BadRequestException {
+        LineString lineString1 = extendedWgs84LineString();
+        GeotrekTrail inputTrail = new GeotrekTrail(null, "dummy", "maintainer", lineString1, 0, 0, "ZZ");
+
+        LineString lineString2 = wgs84LineString();
+        GeotrekTrail persistedTrail = new GeotrekTrail("1", "dummy", "maintainer", lineString2, 0, 0, "ZZ");
+
+        Call<GeotrekTrail> firstGeotrekCall = mock(Call.class);
+        Response<GeotrekTrail> response1 = mock(Response.class);
+        when(firstGeotrekCall.execute()).thenReturn(response1);
+        when(response1.body()).thenReturn(persistedTrail);
+
+        Call<GeotrekTrail> secondGeotrekCall = mock(Call.class);
+        Response<GeotrekTrail> response2 = mock(Response.class);
+        GeotrekTrail outputTrail = new GeotrekTrail();
+        outputTrail.setId("geotrek-1");
+        outputTrail.setCoordinates(lineString1);
+        when(secondGeotrekCall.execute()).thenReturn(response2);
+        when(response2.body()).thenReturn(outputTrail);
+
+        Call<List<GeotrekTrail>> trailsCallback = mock(Call.class);
+        Response<List<GeotrekTrail>> response3 = mock(Response.class);
+        when(trailsCallback.execute()).thenReturn(response3);
+        when(response3.body()).thenReturn(List.of(persistedTrail));
+
+        TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(null, null, null);
+        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(firstGeotrekCall, secondGeotrekCall, trailsCallback);
+
+        GeotrekTrailService geotrekTrailService = new GeotrekTrailService(null, null, this.trailMapper,
+                trailRepositoryCallback, null, geotrekDbCallback);
+
+        geotrekTrailService.persistTrails(List.of(inputTrail));
+
+        // check that there are two calls to geotrek db service
+        assertThat(geotrekDbCallback.counter, is(-1));
+
+        // check that valid geotrek trail is returned
+        assertThat(geotrekDbCallback.geotrekTrail.getName(), is("dummy"));
+        assertThat(geotrekDbCallback.geotrekTrail.getMaintainer(), is("maintainer"));
+        assertThat(Math.isValidEPSG3857(geotrekDbCallback.geotrekTrail.getCoordinates()), is(true));
+
+        // check that there are two calls to trail repository
+        assertThat(trailRepositoryCallback.counter, is(-1));
+
+        // check that new trail is inserted into the database
+        assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-1"));
+        assertThat(trailRepositoryCallback.trail.getTrailname(), is("dummy"));
+        assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
+
+        // check that trail existing trail is deleted
+        assertThat(trailRepositoryCallback.trail_id, is("geotrek-1"));
     }
 
     private void mockGeotrekDbServiceFindTrails(List<GeotrekTrail> geotrekTrails, Long id) throws IOException {
@@ -302,6 +359,18 @@ public class GeotrekTrailServiceTest {
         return new LineString(seq, geometryFactory);
     }
 
+    LineString extendedWgs84LineString(){
+        GeometryFactory geometryFactory = new GeometryFactory();
+        Coordinate[] coordinates = new Coordinate[]{
+                new Coordinate(-74.006, 40.7128),
+                new Coordinate(90, 0),
+                new Coordinate(0, 51.5074),
+                new Coordinate(0, 69)
+        };
+        CoordinateSequence seq = new CoordinateArraySequence(coordinates);
+        return new LineString(seq, geometryFactory);
+    }
+
     LineString epsg3857LineString(){
         GeometryFactory geometryFactory = new GeometryFactory();
         Coordinate[] coordinates1 = new Coordinate[]{
@@ -317,10 +386,21 @@ public class GeotrekTrailServiceTest {
         GeotrekTrail geotrekTrail;
         int counter = 1;
 
-        private final Call<Long> postResponse;
+        private final Call<GeotrekTrail> firstPostResponse;
+        private final Call<GeotrekTrail> secondPostResponse;
+        private final Call<List<GeotrekTrail>> trailCallback;
 
-        public GeotrekDbCallback(Call<Long> postResponse){
-            this.postResponse = postResponse;
+        public GeotrekDbCallback(Call<GeotrekTrail> firstPostResponse){
+            this.secondPostResponse = null;
+            this.trailCallback = null;
+            this.firstPostResponse = firstPostResponse;
+        }
+
+        public GeotrekDbCallback(Call<GeotrekTrail> firstPostResponse, Call<GeotrekTrail> secondPostResponse,
+                                 Call<List<GeotrekTrail>> trailCallback){
+            this.firstPostResponse = firstPostResponse;
+            this.secondPostResponse = secondPostResponse;
+            this.trailCallback = trailCallback;
         }
 
         @Override
@@ -334,15 +414,24 @@ public class GeotrekTrailServiceTest {
         }
 
         @Override
-        public Call<Long> postTrail(GeotrekTrail geotrekTrail) {
+        public Call<GeotrekTrail> postTrail(GeotrekTrail geotrekTrail) {
             this.geotrekTrail = geotrekTrail;
             this.counter -= 1;
-            return this.postResponse;
+            if (this.counter == 0){
+                return this.firstPostResponse;
+            } else if (this.counter == -1){
+                return this.secondPostResponse;
+            }
+            return null;
         }
 
         @Override
         public Call<List<GeotrekTrail>> findTrails(Long id) {
-            return null;
+            return this.trailCallback;
+        }
+
+        @Override
+        public void deleteTrails(List<GeotrekTrail> geotrekTrails) {
         }
     }
 

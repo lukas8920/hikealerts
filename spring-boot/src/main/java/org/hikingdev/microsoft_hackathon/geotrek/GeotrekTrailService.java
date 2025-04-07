@@ -27,6 +27,7 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class GeotrekTrailService {
@@ -119,7 +120,7 @@ public class GeotrekTrailService {
 
         logger.info("Valid input, start with database insertion.");
         for(GeotrekTrail geotrekTrail: geotrekTrails){
-            Response<Long> response = null;
+            Response<GeotrekTrail> response = null;
             try {
                 Trail trail = this.trailMapper.map(geotrekTrail);
 
@@ -127,17 +128,8 @@ public class GeotrekTrailService {
                 geotrekTrail.setCoordinates(convertedLinestring);
 
                 response = this.geotrekDbService.postTrail(geotrekTrail).execute();
-                Long id = response.body();
-                if (id != null){
-                    trail.setTrailId("geotrek-" + id);
-
-                    if (trail.getTrailname() != null && !trail.getTrailname().trim().equals("")
-                            && trail.getTrailId() != null){
-                        this.iTrailRepository.save(trail);
-                    }
-                } else {
-                    logger.error("No id received for {}", geotrekTrail.getName());
-                }
+                GeotrekTrail persistedGeotrekTrail = response.body();
+                handleDatabaseTrail(geotrekTrail, trail, persistedGeotrekTrail);
             } catch (IOException e) {
                 logger.error("Error while waiting for response from geotrekDbService for {}, {}", geotrekTrail.getId(), e.getMessage());
                 if (response != null){
@@ -151,6 +143,52 @@ public class GeotrekTrailService {
             }
         }
         logger.info("Successfully saved all trails in the geotrek and ms database");
+    }
+
+    private void handleDatabaseTrail(GeotrekTrail incoming, Trail outputTrail, GeotrekTrail existing) {
+        if (existing != null){
+            if (existing.getCoordinates().getNumPoints() < incoming.getCoordinates().getNumPoints()){
+                try {
+                    Long extractedId = existing.getId().startsWith("geotrek-") ? Long.valueOf(existing.getId().substring(8)) : Long.valueOf(existing.getId());
+                    Response<List<GeotrekTrail>> connectedTrails = this.geotrekDbService.findTrails(extractedId).execute();
+
+                    List<GeotrekTrail> trailsToDelete = connectedTrails.body();
+                    if (trailsToDelete != null){
+                        AtomicInteger sum = new AtomicInteger();
+                        trailsToDelete.forEach(t -> {
+                            int i = this.iTrailRepository.delete("geotrek-" + t.getId(), List.of(incoming.getMaintainer()));
+                            sum.addAndGet(i);
+                        });
+                        logger.info("Deleted existing connected trails in the database: {}", sum);
+                    } else {
+                        logger.error("Error processing null trails to delete.");
+                        return;
+                    }
+
+                    this.geotrekDbService.deleteTrails(trailsToDelete);
+
+                    Response<GeotrekTrail> trailResponse = this.geotrekDbService.postTrail(incoming).execute();
+                    GeotrekTrail persistedTrail = trailResponse.body();
+                    handleDatabaseTrail(incoming, outputTrail, persistedTrail);
+                } catch (IOException e){
+                    logger.error("Error while querying geotrek database {}", e.getMessage());
+                }
+            } else {
+                String id = existing.getId();
+                if (id != null){
+                    outputTrail.setTrailId(id.startsWith("geotrek-") ? id : "geotrek-" + id);
+                    if (outputTrail.getTrailname() != null && !outputTrail.getTrailname().trim().equals("")
+                            && outputTrail.getTrailId() != null){
+                        this.iTrailRepository.save(outputTrail);
+                        logger.info("Trail persisted in both Geotrek DB and MS DB.");
+                    }
+                } else {
+                    logger.error("No id received for {}", incoming.getName());
+                }
+            }
+        } else {
+            logger.error("No valid GeotrekTrail ");
+        }
     }
 
     public void deleteTrail(String id) throws BadRequestException {

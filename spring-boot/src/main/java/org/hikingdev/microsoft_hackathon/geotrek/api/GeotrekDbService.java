@@ -4,10 +4,7 @@ import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekTrail;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.GeotrekUser;
 import org.hikingdev.microsoft_hackathon.geotrek.entities.Salt;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 import java.util.List;
 
@@ -19,8 +16,11 @@ public interface GeotrekDbService {
     Call<Salt> getSalt();
 
     @POST("/v1/geotrek/trail")
-    Call<Long> postTrail(@Body GeotrekTrail geotrekTrail);
+    Call<GeotrekTrail> postTrail(@Body GeotrekTrail geotrekTrail);
 
     @GET("/v1/geotrek/trail")
     Call<List<GeotrekTrail>> findTrails(@Query("id") Long id);
+
+    @DELETE("/v1/geotrek/trail")
+    void deleteTrails(@Body List<GeotrekTrail> geotrekTrails);
 }
