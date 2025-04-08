@@ -22,5 +22,5 @@ public interface GeotrekDbService {
     Call<List<GeotrekTrail>> findTrails(@Query("id") Long id);
 
     @DELETE("/v1/geotrek/trail")
-    void deleteTrails(@Body List<GeotrekTrail> geotrekTrails);
+    void deleteTrails(@Query("id") List<GeotrekTrail> geotrekTrails);
 }
