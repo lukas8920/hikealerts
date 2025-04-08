@@ -26,6 +26,7 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
@@ -311,8 +312,10 @@ public class GeotrekTrailServiceTest {
         when(trailsCallback.execute()).thenReturn(response3);
         when(response3.body()).thenReturn(List.of(persistedTrail));
 
+        Call<Void> deleteCallback = mock(Call.class);
+
         TrailRepositoryCallback trailRepositoryCallback = new TrailRepositoryCallback(null, null, null);
-        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(firstGeotrekCall, secondGeotrekCall, trailsCallback);
+        GeotrekDbCallback geotrekDbCallback = new GeotrekDbCallback(firstGeotrekCall, secondGeotrekCall, trailsCallback, deleteCallback);
 
         GeotrekTrailService geotrekTrailService = new GeotrekTrailService(null, null, this.trailMapper,
                 trailRepositoryCallback, null, geotrekDbCallback);
@@ -389,18 +392,21 @@ public class GeotrekTrailServiceTest {
         private final Call<GeotrekTrail> firstPostResponse;
         private final Call<GeotrekTrail> secondPostResponse;
         private final Call<List<GeotrekTrail>> trailCallback;
+        private final Call<Void> deleteCallback;
 
         public GeotrekDbCallback(Call<GeotrekTrail> firstPostResponse){
             this.secondPostResponse = null;
             this.trailCallback = null;
+            this.deleteCallback = null;
             this.firstPostResponse = firstPostResponse;
         }
 
         public GeotrekDbCallback(Call<GeotrekTrail> firstPostResponse, Call<GeotrekTrail> secondPostResponse,
-                                 Call<List<GeotrekTrail>> trailCallback){
+                                 Call<List<GeotrekTrail>> trailCallback, Call<Void> deleteCallback){
             this.firstPostResponse = firstPostResponse;
             this.secondPostResponse = secondPostResponse;
             this.trailCallback = trailCallback;
+            this.deleteCallback = deleteCallback;
         }
 
         @Override
@@ -432,7 +438,7 @@ public class GeotrekTrailServiceTest {
 
         @Override
         public Call<Void> deleteTrails(List<GeotrekTrail> geotrekTrails) {
-            return null;
+            return this.deleteCallback;
         }
     }
 
