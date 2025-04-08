@@ -104,7 +104,7 @@ public class GeotrekTrailService {
 
     public void persistTrails(List<GeotrekTrail> geotrekTrails) throws BadRequestException {
         if (geotrekTrails == null || geotrekTrails.size() > MAX_TRAILS || geotrekTrails.size() < MIN_TRAILS ){
-            logger.error("Provided list of trails needs to be within allowed limits.");
+            logger.error("Provided list of trails needs to be within allowed limits - {}", geotrekTrails != null ? geotrekTrails.size() : null);
             throw new BadRequestException("Invalid input for multiple geotrek trails.");
         }
         for (GeotrekTrail t: geotrekTrails){
