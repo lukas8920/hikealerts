@@ -437,7 +437,7 @@ public class GeotrekTrailServiceTest {
         }
 
         @Override
-        public Call<Void> deleteTrails(List<GeotrekTrail> geotrekTrails) {
+        public Call<Void> deleteTrails(List<String> ids) {
             return this.deleteCallback;
         }
     }

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class GeotrekTrailService {
@@ -165,7 +166,8 @@ public class GeotrekTrailService {
                         return;
                     }
 
-                    this.geotrekDbService.deleteTrails(trailsToDelete).execute();
+                    List<String> ids = trailsToDelete.stream().map(GeotrekTrail::getId).toList();
+                    this.geotrekDbService.deleteTrails(ids).execute();
 
                     Response<GeotrekTrail> trailResponse = this.geotrekDbService.postTrail(incoming).execute();
                     GeotrekTrail persistedTrail = trailResponse.body();
