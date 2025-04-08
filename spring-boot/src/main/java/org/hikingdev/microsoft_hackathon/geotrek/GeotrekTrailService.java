@@ -123,7 +123,7 @@ public class GeotrekTrailService {
         for(GeotrekTrail geotrekTrail: geotrekTrails){
             Response<GeotrekTrail> response = null;
             try {
-                Trail trail = this.trailMapper.map(geotrekTrail);
+                Trail trail = this.trailMapper.map(geotrekTrail, geotrekTrail.getCountry());
 
                 LineString convertedLinestring = Math.convertLinestringToEPSG3857(geotrekTrail.getCoordinates());
                 geotrekTrail.setCoordinates(convertedLinestring);

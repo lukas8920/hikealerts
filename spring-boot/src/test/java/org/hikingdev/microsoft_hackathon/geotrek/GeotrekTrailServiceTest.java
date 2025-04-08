@@ -26,7 +26,6 @@ import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 import java.io.IOException;
@@ -280,6 +279,7 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-1"));
         assertThat(trailRepositoryCallback.trail.getTrailname(), is("dummy"));
         assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
+        assertThat(trailRepositoryCallback.trail.getCountry(), is("ZZ"));
 
         WKBReader wkbReader = new WKBReader();
         LineString resultLinestring = (LineString) wkbReader.read(trailRepositoryCallback.trail.getCoordinates());
@@ -304,6 +304,7 @@ public class GeotrekTrailServiceTest {
         GeotrekTrail outputTrail = new GeotrekTrail();
         outputTrail.setId("geotrek-1");
         outputTrail.setCoordinates(lineString1);
+        outputTrail.setCountry("ZZ");
         when(secondGeotrekCall.execute()).thenReturn(response2);
         when(response2.body()).thenReturn(outputTrail);
 
@@ -337,6 +338,7 @@ public class GeotrekTrailServiceTest {
         assertThat(trailRepositoryCallback.trail.getTrailId(), is("geotrek-1"));
         assertThat(trailRepositoryCallback.trail.getTrailname(), is("dummy"));
         assertThat(trailRepositoryCallback.trail.getMaintainer(), is("maintainer"));
+        assertThat(trailRepositoryCallback.trail.getCountry(), is("ZZ"));
 
         // check that trail existing trail is deleted
         assertThat(trailRepositoryCallback.trail_id, is("geotrek-1"));
