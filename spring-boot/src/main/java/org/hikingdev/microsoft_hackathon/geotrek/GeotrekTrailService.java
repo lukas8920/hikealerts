@@ -165,7 +165,7 @@ public class GeotrekTrailService {
                         return;
                     }
 
-                    this.geotrekDbService.deleteTrails(trailsToDelete);
+                    this.geotrekDbService.deleteTrails(trailsToDelete).execute();
 
                     Response<GeotrekTrail> trailResponse = this.geotrekDbService.postTrail(incoming).execute();
                     GeotrekTrail persistedTrail = trailResponse.body();
